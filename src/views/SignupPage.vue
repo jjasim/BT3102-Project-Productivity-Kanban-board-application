@@ -1,23 +1,23 @@
 <template>
     <div id="screenfiller">
         <div class="login-container">
-            <h2 id="login-statement">Log into your WorkWise account</h2>
+            <h2 id="login-statement">Create a WorkWise account</h2>
             <form>
-            <input 
-                class="form-control" 
-                type="email" 
-                v-model="email" required placeholder="Email">
+            <input class="form-control" type="text" v-model="name" required placeholder="Full Name">
+            <br><br>
+            <input class="form-control" type="text" v-model="username" required placeholder="Preferred Username">
+            <br><br>
+            <input class="form-control" type="email" v-model="email" required placeholder="Email">
             <br><br>
             <input class="form-control" type="password" v-model="password" required placeholder="Password">
             <br><br>
-            <button class="btn btn-primary" type="submit">Log In</button>
+            <input class="form-control" type="text" v-model="companyCode" required placeholder="Company Code">
+            <br><br>
+            <button class="btn btn-primary" type="submit">Sign Up</button>
             </form>
             <div class="login-bottom">
-                Forgot your password?
-            </div>
-            <div class="login-bottom">
-                Dont have an account? 
-                <router-link to="/signup">Sign up today!~</router-link> 
+                Have an account?
+                <router-link to="/login">Log in here</router-link> 
             </div>
         </div>        
     </div>
@@ -28,8 +28,11 @@
 export default {
   data() {
     return {
-      email: '',
-      password: '',
+        name: '', 
+        username: '',
+        email: '',
+        password: '',
+        companyCode: ''
     };
   },
   methods: {
@@ -65,7 +68,7 @@ html, body {
 .login-container {
     display: block;
     width: 345px;
-    height: 450px;
+    height: 640px;
     text-align:center;
     background: #FFFFFF;
     mix-blend-mode: normal;
@@ -117,6 +120,6 @@ input {
     font-family: 'Josefin Sans', sans-serif;
     font-size: small;
     color: #FF9190;
-    padding-top: 0.58rem;
+    padding-top: 0.9rem;
 }
 </style>
