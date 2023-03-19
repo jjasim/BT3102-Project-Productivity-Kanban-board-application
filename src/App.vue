@@ -26,5 +26,12 @@ export default {
 </script>
 
 <style>
-
+.error {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: small;
+    text-align: center;
+    font-size: 12px;
+    color: red;
+    padding-bottom: 0.5rem;
+}
 </style>
