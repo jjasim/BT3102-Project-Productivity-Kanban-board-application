@@ -5,12 +5,14 @@
 <script>
 import LoginPage from './views/LoginPage.vue';
 import SignupPage from './views/SignupPage.vue';
+import ProjectTaskPage from './views/ProjectTaskPage.vue';
 import { RouterView } from 'vue-router';
 export default {
   name: 'App',
   components:{
     LoginPage,
-    SignupPage
+    SignupPage,
+    ProjectTaskPage
   },
   data(){
     return {
