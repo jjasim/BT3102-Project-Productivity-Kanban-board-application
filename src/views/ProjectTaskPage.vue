@@ -210,13 +210,17 @@
         <button class="Tasks"><span>Tasks</span></button>
       </div>
 
-      
+      <div>
+        <SideBar />
+      </div>
 
     </div>
   </div>
 </template>
 
 <script>
+import SideBar from "@/views/SideBar.vue"
+
 export default {
   name: "ProjectTaskPage",
   data() {
@@ -241,6 +245,7 @@ export default {
       this.editElemPopupVisible = true;
     },
   },
+  components: {SideBar}
 };
 </script>
 
