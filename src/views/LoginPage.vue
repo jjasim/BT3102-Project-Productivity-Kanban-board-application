@@ -10,14 +10,17 @@
             <br><br>
             <input class="form-control" type="password" v-model="password" required placeholder="Password">
             <br><br>
-            <button class="btn btn-primary" type="submit">Log In</button>
+            <div v-show = "error" class="error">
+                {{ this.errorMsg }}
+            </div>
+            <button class="btn btn-primary" type="submit" @click.prevent="login">Log In</button>
             </form>
             <div class="login-bottom">
                 Forgot your password?
             </div>
             <div class="login-bottom">
                 Dont have an account? 
-                <router-link to="/signup">Sign up today!~</router-link> 
+                <router-link to="/signup">Sign up today!</router-link> 
             </div>
         </div>        
     </div>
@@ -25,16 +28,32 @@
   </template>
 
 <script>
-export default {
+import app from "../firebase/init.js"
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { collection, getDocs, getFirestore, doc, addDoc } from "firebase/firestore"
+import { auth, db } from "../firebase/init.js"
+import { getDoc, setDoc } from "firebase/firestore"
+import { useRouter } from "vue-router";export default {
   data() {
     return {
       email: '',
       password: '',
+      error: false,
+      errorMsg: ''
     };
   },
   methods: {
-    login() {
-      // TODO: implement login logic
+    async login() {
+        try {
+            const loginUser = await signInWithEmailAndPassword(auth, this.email, this.password);
+            console.log("user created")
+            this.$router.push('/home')
+            return;
+        } catch(err) {
+            this.errorMsg = err.message
+            this.error = true;
+        }
+
     },
   },
 }
@@ -65,7 +84,7 @@ html, body {
 .login-container {
     display: block;
     width: 345px;
-    height: 450px;
+    height: 475px;
     text-align:center;
     background: #FFFFFF;
     mix-blend-mode: normal;
@@ -117,6 +136,6 @@ input {
     font-family: 'Josefin Sans', sans-serif;
     font-size: small;
     color: #FF9190;
-    padding-top: 0.58rem;
+    padding-top: 0.5rem;
 }
 </style>

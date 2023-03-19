@@ -13,8 +13,11 @@
             <br><br>
             <input class="form-control" type="text" v-model="companyCode" required placeholder="Company Code">
             <br><br>
-            <button class="btn btn-primary" type="submit">Sign Up</button>
+            <button class="btn btn-primary" type="submit" @click.prevent="signUp">Sign Up</button>
             </form>
+            <div v-show = "error" class="error">
+                {{ this.errorMsg }}
+            </div>
             <div class="login-bottom">
                 Have an account?
                 <router-link to="/login">Log in here</router-link> 
@@ -25,6 +28,14 @@
   </template>
 
 <script>
+import app from "../firebase/init.js"
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { collection, getDocs, getFirestore, doc, addDoc } from "firebase/firestore"
+import { auth, db } from "../firebase/init.js"
+import { getDoc, setDoc } from "firebase/firestore"
+import { useRouter } from "vue-router";
+
+
 export default {
   data() {
     return {
@@ -32,15 +43,36 @@ export default {
         username: '',
         email: '',
         password: '',
-        companyCode: ''
+        companyCode: '',
+        error: false,
+        errorMsg: ''
     };
   },
   methods: {
-    login() {
-      // TODO: implement login logic
+    async signUp() {
+        try {
+            const createUser = await signInWithEmailAndPassword(auth, this.email, this.password);
+            console.log("user created")
+            const collectionRef = collection(db, "users");
+            const userDoc = {
+                uid : createUser.user.uid,
+                name : this.name,
+                username : this.username,
+                email : this.email,
+                companyCode : this.companyCode
+            }
+            await addDoc(collectionRef, userDoc);
+            console.log("doc ccreatesd")
+            this.$router.push('/home')
+            return;
+        } catch(err) {
+            this.errorMsg = err.message
+            this.error = true;
+        }
     },
-  },
+},
 }
+
 </script>
 
 
@@ -120,6 +152,6 @@ input {
     font-family: 'Josefin Sans', sans-serif;
     font-size: small;
     color: #FF9190;
-    padding-top: 0.9rem;
+    padding-top: 0.5rem;
 }
 </style>
