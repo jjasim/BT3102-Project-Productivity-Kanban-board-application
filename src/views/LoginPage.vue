@@ -83,7 +83,7 @@ html, body {
 .login-container {
     display: block;
     width: 345px;
-    height: 475px;
+    height: 480px;
     text-align:center;
     background: #FFFFFF;
     mix-blend-mode: normal;

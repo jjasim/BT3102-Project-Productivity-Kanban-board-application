@@ -238,6 +238,8 @@ export default {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           this.user = user; 
+        } else {
+          this.$router.push("/login");
         }
       })
     },
