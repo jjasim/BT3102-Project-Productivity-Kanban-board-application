@@ -1,11 +1,11 @@
 <template>
-  <div class="sidebar-sidebar">
+  <div class="sidebar-sidebar" v-if="user">
       <!-- user's name -->
       <div class="SideBar-Name">
-        <span class="sidebar-usersname"><span>Adam</span></span>
+        <span class="sidebar-usersname"><span>{{ user.email }}</span></span>
         <img
             alt="Icon"
-            src="src/assets/sidebar-person-icon"
+            src="src/assets/sidebar-person-icon.png"
             class="UserIcon"
           />
       </div>
@@ -14,7 +14,7 @@
       <div class="sidebar-points">
         <span class="sidebar-pointstext"><span>900 points</span></span>
         <img
-          src="src/assets/sidebar-points-vector"
+          src="src/assets/sidebar-points-vector.png"
           alt="Icon"
           class="sidebar-pointsvector"
         />
@@ -31,7 +31,7 @@
       </div>
       <div class="sidebar-firstproj">
           <img
-            src="src/assets/sidebar-pointer-vector"
+            src="src/assets/sidebar-pointer-vector.png"
             alt="Icon"
             class="sidebar-pointer1"
           />
@@ -39,7 +39,7 @@
         </div>
         <div class="sidebar-secondproj">
           <img
-            src="src/assets/sidebar-pointer-vector"
+            src="src/assets/sidebar-pointer-vector.png"
             alt="Icon"
             class="sidebar-pointer2"
           />
@@ -52,13 +52,13 @@
             <span class="addProjPopupText" id="myPopup">Popup text...</span>
           </div>
           <img
-            src="src/assets/sidebar-plus-vector"
+            src="src/assets/sidebar-plus-vector.png"
             alt="Icon"
             class="sidebar-vector2"
           />
         </div>
         <img
-          src="src/assets/sidebar-pencil-vector"
+          src="src/assets/sidebar-pencil-vector.png"
           alt="Icon"
           class="sidebar-pencil"
         />
@@ -71,19 +71,36 @@
         
         <!-- signout -->
         <div class="sidebar-signout">
-            <button class="sidebar-signouttext" onclick="signOut()"><span>Sign out</span></button>
+            <button class="sidebar-signouttext" @click.prevent="signOut"><span>Sign out</span></button>
         </div>
       </div>
   </template>
   
   <script>
+import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
+
   export default {
     name: 'Sidebar',
     data() {
-      return {addProjPopupVisible: false}
+      return {
+        user : false,
+        addProjPopupVisible: false
+      }
+    },
+    mounted() {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          this.user = user; 
+        }
+      })
     },
     methods: {
-      signOut() {
+      async signOut() {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        await signOut(auth, user);
+        this.$router.push("/login")
       },
       showAddProjPopup() {
       var popup = document.getElementById("myPopup");
