@@ -1,9 +1,9 @@
 <template>
     <div id="calendar-display" class="flex-column">
         <div class="calendar-header">
-            <h1>ProjectName tasks</h1>
+            <h1> {{title}} tasks</h1>
         </div>
-        <sidebar />
+        <Sidebar />
 
         <div id="calendar-body" class="flex-row">
             <div id="calendar-proper">
@@ -24,32 +24,52 @@
                 </calendar-view> 
             </div>
             
-            <div class="box" id="add-item">
-                <h1 class="title">Add an item</h1>
-                <div class="field">
-                    <label class="label">Title</label>
-                        <div class="control">
-                            <input v-model="state.newItemTitle" class="input" type="text" />
+            <div id="options" class="flex-column">
+                <div id="users-section" class="flex-column">
+
+                    <div id="users" class="flex-column">
+                        <h1>Users In Project</h1>
+                        <div id="users-rows" class="flex-column">
+                            <div id="users-columns" class="flex-row">
+                                <img src="../assets/default-user-icon.png" alt="">
+                                <h2>Adam</h2>
+                            </div>
+                        </div>
+                        <div id="add-users">
+                            <a href="">+ Add Users</a>
                         </div>
                     </div>
 
-                <div class="field">
-                    <label class="label">Start date</label>
-                        <div class="control">
-                            <input v-model="state.newItemStartDate" class="input" type="date" />
-                        </div>
-                    </div>
+                    <div class="box" id="add-item">
+                        <h1 class="title">Add an item</h1>                        
+                        <div class="field">
+                            <label class="label">Title</label>
+                                <div class="control">
+                                    <input v-model="state.newItemTitle" class="input" type="text" />
+                                </div>
+                            </div>
 
-                <div class="field">
-                    <label class="label">End date</label>
-                    <div class="control">
-                        <input v-model="state.newItemEndDate" class="input" type="date" />
+                        <div class="field">
+                            <label class="label">Start date</label>
+                                <div class="control">
+                                    <input v-model="state.newItemStartDate" class="input" type="date" />
+                                </div>
+                            </div>
+
+                        <div class="field">
+                            <label class="label">End date</label>
+                            <div class="control">
+                                <input v-model="state.newItemEndDate" class="input" type="date" />
+                            </div>
                     </div>
-			</div>
-		    <button class="button is-info" @click="clickTestAddItem">Add Item</button>
-	        </div>
+                    <button class="button is-info" @click="clickTestAddItem">Add Item</button>
+                    </div>
+                </div>
+
+                For testing, to be removed
+
+            </div>
         </div>
-
 
     </div>
 
@@ -57,7 +77,6 @@
 </template>
 
 <script setup lang="ts">
-    import { defineComponent } from 'vue';
 
     import { 
         CalendarView, 
@@ -81,7 +100,7 @@
     import "../../node_modules/vue-simple-calendar/dist/css/default.css"
     import "../../node_modules/vue-simple-calendar/dist/css/holidays-us.css"
     import "./CalendarFiles/CalendarViewHeader.vue"
-    //import { Sidebar } from "./Sidebar.vue"
+    import Sidebar from "./SideBar.vue"
 
 
     // Gets this month
@@ -179,6 +198,20 @@
     }
 </script>
 
+<script lang="ts">
+    export default {
+        name: 'CalendarPage',
+        data() {
+            return {
+                title: 'Test Title'
+            }
+        },
+        components: {
+            Sidebar,
+        }
+    }
+</script>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Yeseva+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
@@ -244,7 +277,8 @@ time, mark, audio, video {
 
     .calendar-header h1 {
         font-size: 2em;
-        padding: 0.5em;
+        padding-top: 1.2em;
+        padding-bottom: 0.5em;
     }
 
     .flex-row {
@@ -255,8 +289,8 @@ time, mark, audio, video {
     }
 
     #calendar-body {
-        width: 35vw;
-        height: 65vh;
+        width: 45vw;
+        height: 75vh;
     }
 
     #add-item {
@@ -294,5 +328,27 @@ time, mark, audio, video {
 
     .cv-weeks {
         font-family: Cambria;
+    }
+
+    #users img {
+        height: 7vh;
+        width: 9vh;
+    }
+
+    #users {
+        padding-bottom: 3em;
+    }
+
+    #users h1 {
+        padding-bottom: 1em;
+        font-size: larger;
+    }
+
+    #users-rows {
+        padding-bottom: 1em;
+    }
+
+    #add-users a:link {
+        text-decoration: none;
     }
 </style>
