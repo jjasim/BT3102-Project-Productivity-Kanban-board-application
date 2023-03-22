@@ -219,7 +219,8 @@
 </template>
 
 <script>
-import SideBar from "@/views/SideBar.vue"
+import SideBar from "@/views/SideBar.vue";
+import Modal from "@/components/Addproj.vue";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 export default {
