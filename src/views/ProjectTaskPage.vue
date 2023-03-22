@@ -1,158 +1,14 @@
 <template>
   <div id="screenfiller" v-if="user">
     <div class="ProjectTaskPage-container">
-      <!-- Add List -->
-      <div class="ProjectTaskPage-addlist">
-        <img
-          alt="line11124"
-          src="/playground_assets/line11124-ajqm.svg"
-          class="ProjectTaskPage-line1"
-        />
-
-        <span>&#43;</span>
-        <span class="AddList">
-          <button onclick="showListUserPopup">Add List</button>
-        </span>
+      <div class="Sidebar">
+        <SideBar />
       </div>
 
-      <!-- Project Title -->
-      <div class="ProjectTaskPage-projtitle">
-        <span class="ProjectTaskPage-Dayddmonth"
-          ><span>Day, dd Month</span></span
-        >
-        <span class="ProjectTaskPage-Today"><span>Today</span></span>
-        <span class="ProjectTaskPage-projectnumtasks"
-          ><span>Project Num Tasks</span></span
-        >
+      <div class="KanbanBoard">
+        <KanbanBoard />
       </div>
-
-      <!-- To Do -->
-      <div class="ProjectTaskPage-todo">
-        <!-- 
-            <h3>To Do</h3>
-        <button onclick="showAddCardPopup">Add Card</button> -->
-        <div class="ProjectTaskPage-bottom">
-          <div class="ProjectTaskPage-addcard">
-            <span>&#43;</span>
-            <span class="AddCard">
-              <button onclick="showAddCardPopup">Add Card</button>
-            </span>
-          </div>
-        </div>
-
-        <!-- Task 1 -->
-        <div class="ProjectTaskPage-task1">
-          <span class="ProjectTaskPage-Title">
-            <span> Title </span>
-          </span>
-          <div class="ProjectTaskPage-EditElem">
-            <span class="EditElem">
-                <button onclick="showEditElemPopup">Edit</button>
-            </span>
-          </div>
-          <div class="ProjectTaskPage-Stakeholders">
-            <span class="Stakeholders"><span>Stakeholders:</span></span>
-            <span class="Names"><span>Bob,Adam</span></span>
-          </div>
-
-          <div class="ProjectTaskPage-Due">
-            <span class="ProjectTaskPage-DueDate">
-              <span> Due: </span>
-            </span>
-            <span class="ddmonthyyyy"><span>ddmonthyyyy</span></span>
-          </div>
-          <span class="points"><span>+100 points</span></span>
-        </div>
-        <span class="Todo"><span>To Do</span></span>
-      </div>
-
-      <!-- In Progress -->
-      <div class="ProjectTaskPage-InProgess">
-
-        <div class="ProjectTaskPage-bottom">
-          <img
-            alt="line11123"
-            src="/playground_assets/line11123-klc.svg"
-            class="InProgess-line"
-          />
-          <div class="ProjectTaskPage-addcard">
-            <span>&#43;</span>
-            <span class="AddCard">
-              <button onclick="showAddCardPopup">Add Card</button>
-            </span>
-          </div>
-        </div>
-        <span class="InProgress"><span>In Progress</span></span>
-        <!-- Task 2 -->
-        <div class="ProjectTaskPage-task2">
-          <span class="ProjectTaskPage-Title">
-            <span> Title </span>
-          </span>
-          <div class="ProjectTaskPage-EditElem">
-            <span class="EditElem">
-                <button onclick="showEditElemPopup">Edit</button>
-            </span>
-          </div>
-          <div class="ProjectTaskPage-Stakeholders">
-            <span class="Stakeholders"><span>Stakeholders:</span></span>
-            <span class="Names"><span>Bob,Adam</span></span>
-          </div>
-          <div class="ProjectTaskPage-Due">
-            <span class="ProjectTaskPage-DueDate">
-              <span>
-                Due:
-              </span>
-            </span>
-            <span class="ddmonthyyyy"><span>ddmonthyyyy</span></span>
-          </div>
-          <span class="points"><span>+100 points</span></span>
-        </div>
-      </div>
-
-      <!-- Done -->
-      <div class="ProjectTaskPage-Done">
-        <span class="Done"><span>Done</span></span>
-        <div class="ProjectTaskPage-bottom">
-          <img
-            alt="line11123"
-            src="/playground_assets/line11123-klc.svg"
-            class="InProgess-line"
-          />
-          <div class="ProjectTaskPage-addcard">
-            <span>&#43;</span>
-            <span class="AddCard">
-              <button onclick="showAddCardPopup">Add Card</button>
-            </span>
-          </div>
-        </div>
-        <!-- Task 3 -->
-        <div class="ProjectTaskPage-task3">
-          <span class="ProjectTaskPage-Title">
-            <span> Title </span>
-          </span>
-          <div class="ProjectTaskPage-EditElem">
-            <span class="EditElem">
-              <button onclick="showEditElemPopup">Edit</button>
-            </span>
-          </div>
-          <div class="ProjectTaskPage-Stakeholders">
-            <span class="Stakeholders"><span>Stakeholders:</span></span>
-            <span class="Names"><span>Bob,Adam</span></span>
-          </div>
-          <div class="ProjectTaskPage-Due">
-            <span class="ProjectTaskPage-DueDate">
-              <span>
-                Due:
-              </span>
-            </span>
-            <span class="ddmonthyyyy"><span>ddmonthyyyy</span></span>
-          </div>
-          <span class="points"><span>+100 points</span></span>
-        </div>
-      </div>
-
-
-      <!-- Users in Project -->
+      
       <div class="ProjectTaskPage-UsersInProj">
         <span class="UserHeader">
           <span>
@@ -203,22 +59,12 @@
 
       </div>
 
-      <div class="Calendar-Tabs">
-        <button class="Calendar"><span>Calendar</span></button>
-      </div>
-      <div class="Tasks-Tabs">
-        <button class="Tasks"><span>Tasks</span></button>
-      </div>
-
-      <div>
-        <SideBar />
-      </div>
-
     </div>
   </div>
 </template>
 
 <script>
+import KanbanBoard from "@/components/Kanban/KanbanBoard.vue";
 import SideBar from "@/views/SideBar.vue";
 import Modal from "@/components/Addproj.vue";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
@@ -258,21 +104,29 @@ export default {
       this.editElemPopupVisible = true;
     },
   },
-  components: {SideBar}
+  components: {SideBar, KanbanBoard}
 };
 </script>
 
 <style scoped>
 .ProjectTaskPage-container {
-  width: 100%;
-  height: 1024px;
   display: flex;
-  overflow: hidden;
-  position: relative;
-  align-items: flex-start;
-  flex-shrink: 0;
-  border-color: transparent;
-  background-color: rgba(255, 255, 255, 1);
+  flex-direction: row;
+}
+
+.Sidebar {
+  flex: 1;
+}
+
+.KanbanBoard {
+  flex: 2;
+  max-width: calc(100% - 100px); 
+}
+
+.ProjectTaskPage-UsersInProj {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .ProjectTaskPage-addlist {
@@ -841,28 +695,6 @@ export default {
   flex-direction: row;
   justify-content: flex-start;
   background-color: rgba(208, 255, 180, 1);
-}
-.ProjectTaskPage-UsersInProj {
-  top: 199px;
-  left: 1205px;
-  width: 160px;
-  height: 330px;
-  display: flex;
-  padding: 0;
-  position: absolute;
-  align-self: auto;
-  box-sizing: border-box;
-  align-items: flex-start;
-  flex-shrink: 1;
-  border-color: transparent;
-  border-style: none;
-  border-width: 0;
-  margin-right: 0;
-  border-radius: 0px 0px 0px 0px;
-  margin-bottom: 0;
-  flex-direction: row;
-  justify-content: flex-start;
-  background-color: transparent;
 }
 .UserHeader {
   color: rgba(0, 0, 0, 1);
