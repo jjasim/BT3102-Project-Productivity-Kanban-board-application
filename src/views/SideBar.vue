@@ -73,16 +73,67 @@
         <div class="sidebar-signout">
             <button class="sidebar-signouttext" @click.prevent="signOut"><span>Sign out</span></button>
         </div>
+
+        <!-- add project -->
+        <div class="sidebar-addproj">
+          <div class="sidebar-addprojtext" @click="showModal">Add Project</div>
+          <img
+            src="src/assets/sidebar-plus-vector.png"
+            alt="Icon"
+            class="sidebar-vector2"
+          />
+
+          <Modal v-show="isModalVisible" @close="closeModal">
+          <template v-slot:header>
+              Add project
+          </template>
+            
+          <template v-slot:body>
+                <section class="addproject-projtitle">
+                  <div for="project title" class="addproject-projtitletext">Project title:</div>
+                </section>  
+                <section>
+                <form>
+                  <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" required>
+                </form>
+              </section>
+                <section class="addproject-adduser">
+                  <div for="authorised users" class="addproject-userstitle">Authorised Users:</div>
+                </section>
+                
+                <form>
+                  <input type="text" class="addproject-inputbg" placeholder="Username" required>
+                </form>
+                
+        </template>
+
+        <template v-slot:footer>
+            <section class="addproject-edit">
+                <button class="addproject-addtext">Add</button>
+            </section>
+        </template>
+        </Modal>
+        </div>
+        <img
+          src="src/assets/sidebar-pencil-vector.png"
+          alt="Icon"
+          class="sidebar-pencil"
+        />
       </div>
   </template>
   
   <script>
+import Modal from '@/components/Addproj.vue';
 import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
 
   export default {
     name: 'Sidebar',
+    components: {Modal},
     data() {
       return {
+        addProjPopupVisible: false,
+        isModalVisible: false,
+      }
         user : false,
         addProjPopupVisible: false
       }
@@ -102,11 +153,13 @@ import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
         await signOut(auth, user);
         this.$router.push("/login")
       },
-      showAddProjPopup() {
-      var popup = document.getElementById("myPopup");
-      popup.classList.toggle("show");
+      showModal() {
+        this.isModalVisible = true;
       },
-    },
+      closeModal() {
+        this.isModalVisible = false;
+      }
+    }
   }
 
   </script>
