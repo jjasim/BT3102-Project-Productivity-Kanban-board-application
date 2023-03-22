@@ -46,8 +46,7 @@ import { useRouter } from "vue-router";export default {
     async login() {
         try {
             const loginUser = await signInWithEmailAndPassword(auth, this.email, this.password);
-            console.log("user created")
-            this.$router.push('/home')
+            this.$router.push('/projecttaskpage')
             return;
         } catch(err) {
             this.errorMsg = err.message
@@ -84,7 +83,7 @@ html, body {
 .login-container {
     display: block;
     width: 345px;
-    height: 475px;
+    height: 480px;
     text-align:center;
     background: #FFFFFF;
     mix-blend-mode: normal;
@@ -136,6 +135,6 @@ input {
     font-family: 'Josefin Sans', sans-serif;
     font-size: small;
     color: #FF9190;
-    padding-top: 0.5rem;
+    padding-top: 0.75rem;
 }
 </style>

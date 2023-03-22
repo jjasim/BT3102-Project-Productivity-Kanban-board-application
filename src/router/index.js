@@ -1,10 +1,17 @@
 import { createRouter, createWebHistory } from "vue-router";
+import LandingPage from '@/components/LandingPage.vue';
 import LoginPage from '@/views/LoginPage.vue';
 import SignupPage from '@/views/SignupPage.vue';
 import ProjectTaskPage from '@/views/ProjectTaskPage.vue';
 import HomePage from '@/views/HomePage.vue';
+import Calendar from '@/views/Calendar.vue';
 
 const routes = [
+    {
+        path: '/',
+        name: 'Landing Page',
+        component: LandingPage
+    },
     {
         path: '/login',
         name: 'Login',
@@ -24,6 +31,11 @@ const routes = [
         path: '/projecttaskpage',
         name: 'Project Task Page',
         component: ProjectTaskPage,
+    },
+    {
+        path: '/calendar',
+        name: 'Calendar Page',
+        component: Calendar,
     }
 
 ]

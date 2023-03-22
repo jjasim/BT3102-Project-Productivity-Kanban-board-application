@@ -1,5 +1,5 @@
 <template>
-  <div id="screenfiller">
+  <div id="screenfiller" v-if="user">
     <div class="ProjectTaskPage-container">
       <!-- Add List -->
       <div class="ProjectTaskPage-addlist">
@@ -221,6 +221,7 @@
 <script>
 import SideBar from "@/views/SideBar.vue";
 import Modal from "@/components/Addproj.vue";
+import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 export default {
   name: "ProjectTaskPage",
@@ -230,8 +231,19 @@ export default {
       addUserPopupVisible: false,
       addListPopupVisible: false,
       editElemPopupVisible: false,
+      user : false 
     };
   },
+    mounted() {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          this.user = user; 
+        } else {
+          this.$router.push("/login");
+        }
+      })
+    },
   methods: {
     showAddCardPopup() {
       this.addCardPopupVisible = true;

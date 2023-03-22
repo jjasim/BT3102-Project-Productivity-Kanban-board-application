@@ -13,11 +13,11 @@
             <br><br>
             <input class="form-control" type="text" v-model="companyCode" required placeholder="Company Code">
             <br><br>
-            <button class="btn btn-primary" type="submit" @click.prevent="signUp">Sign Up</button>
-            </form>
             <div v-show = "error" class="error">
                 {{ this.errorMsg }}
             </div>
+            <button class="btn btn-primary" type="submit" @click.prevent="signUp">Sign Up</button>
+            </form>
             <div class="login-bottom">
                 Have an account?
                 <router-link to="/login">Log in here</router-link> 
@@ -29,7 +29,7 @@
 
 <script>
 import app from "../firebase/init.js"
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { collection, getDocs, getFirestore, doc, addDoc } from "firebase/firestore"
 import { auth, db } from "../firebase/init.js"
 import { getDoc, setDoc } from "firebase/firestore"
@@ -51,7 +51,7 @@ export default {
   methods: {
     async signUp() {
         try {
-            const createUser = await signInWithEmailAndPassword(auth, this.email, this.password);
+            const createUser = await createUserWithEmailAndPassword(auth, this.email, this.password);
             console.log("user created")
             const collectionRef = collection(db, "users");
             const userDoc = {
@@ -62,6 +62,11 @@ export default {
                 companyCode : this.companyCode
             }
             await addDoc(collectionRef, userDoc);
+            const user = createUser;
+            updateProfile(user, {
+                displayName : this.username
+            })
+
             console.log("doc ccreatesd")
             this.$router.push('/home')
             return;
@@ -152,6 +157,6 @@ input {
     font-family: 'Josefin Sans', sans-serif;
     font-size: small;
     color: #FF9190;
-    padding-top: 0.5rem;
+    padding-top: 0.57rem;
 }
 </style>
