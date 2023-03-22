@@ -123,7 +123,7 @@
   </template>
   
   <script>
-import Modal from '@/components/Addproj.vue';
+import Modal from '@/components/Modal.vue';
 import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
 
   export default {
