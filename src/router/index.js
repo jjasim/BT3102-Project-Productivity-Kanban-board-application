@@ -3,6 +3,8 @@ import LoginPage from '@/views/LoginPage.vue';
 import SignupPage from '@/views/SignupPage.vue';
 import ProjectTaskPage from '@/views/ProjectTaskPage.vue';
 import HomePage from '@/views/HomePage.vue';
+import KanbanBoard from '@/components/Kanban/KanbanBoard.vue'
+
 
 const routes = [
     {
@@ -24,7 +26,13 @@ const routes = [
         path: '/projecttaskpage',
         name: 'Project Task Page',
         component: ProjectTaskPage,
+    },
+    {
+        path: '/kanban',
+        name: 'Kanban',
+        component: KanbanBoard,
     }
+    
 
 ]
 
