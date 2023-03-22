@@ -133,9 +133,7 @@ import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
       return {
         addProjPopupVisible: false,
         isModalVisible: false,
-      }
-        user : false,
-        addProjPopupVisible: false
+        user : false
       }
     },
     mounted() {
