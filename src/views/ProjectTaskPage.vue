@@ -219,7 +219,8 @@
 </template>
 
 <script>
-import SideBar from "@/views/SideBar.vue"
+import SideBar from "@/views/SideBar.vue";
+import Modal from "@/components/Addproj.vue";
 
 export default {
   name: "ProjectTaskPage",
