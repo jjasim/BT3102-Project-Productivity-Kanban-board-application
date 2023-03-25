@@ -10,7 +10,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
-    "firebase": "^9.17.2",
+    "firebase": "^9.18.0",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
     "vue-simple-calendar": "^6.3.1"

@@ -8,7 +8,8 @@ import SignupPage from './views/SignupPage.vue';
 import ProjectTaskPage from './views/ProjectTaskPage.vue';
 import { RouterView } from 'vue-router';
 import SideBar from './views/SideBar.vue';
-import Addproj from './components/Addproj.vue';
+import Modal from './components/Modal.vue';
+import dropdown from './components/Dropdown.vue';
 
 export default {
   name: 'App',
@@ -17,7 +18,8 @@ export default {
     SignupPage,
     ProjectTaskPage,
     SideBar,
-    Addproj
+    Modal,
+    dropdown
   },
   data(){
     return {

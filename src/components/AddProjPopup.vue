@@ -1,30 +1,39 @@
 <template>
-  <div class="addproject-addproject">
-    <div class="addproject-popuptitle">
-      <span class="addproject-popuptitle"><span>Add Project</span></span>
-    </div>
-    <div class="addproject-details">
-      <div class="addproject-projtitle">
-        <form>
-          <label for="project title" class="addproject-projtitletext">Project title:</label>
-          <input type="text" class="addproject-bg" placeholder="eg. Stakeholder Analysis" required>
-        </form>
-      </div>
-      <div class="addproject-adduser">
-        <form>
-          <label for="authorised users" class="addproject-userstitle">Authorised Users:</label>
-          <input type="text" class="addproject-userbg" placeholder="Username" required>
-          <br><br>
-        </form>
-      </div>
-      <div class="addproject-edit">
-        <button class="addproject-addtext">Add</button>
-      </div>
-    </div>
-  </div>
+         <Modal v-show="isModalVisible" @close="closeModal">
+          <template v-slot:header>
+              Add project
+          </template>
+            
+          <template v-slot:body>
+                <section class="addproject-addprojtitle">
+                  <div for="project title" class="addproject-projtitletext">Project title:</div>
+                  
+                <form>
+                  <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" required>
+                </form>
+              </section>
+                <section class="addproject-adduser">
+                  <div for="authorised users" class="addproject-userstext">Authorised Users:</div>
+                
+                <form>
+                  <input type="text" class="addproject-inputbg" placeholder="Username" required>
+                </form>
+              </section> 
+                
+          </template>
+
+        <template v-slot:footer>
+            <section class="addproject-pushbuttons">
+                <button class="addproject-addbutton" @click="closeModal">Add</button>
+            </section>
+        </template>
+        </Modal>
 </template>
 
 <script>
+import Modal from '@/components/Modal.vue';
+import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
+
 export default {
   name: 'AddProjectPopup',
   props: {
@@ -32,25 +41,33 @@ export default {
   },
   data(){
     return {
-      applicants:[
-      {
-      previous: '',
-      expiration:''
+        addProjPopupVisible: false,
+        isModalVisible: false,
+        user : false,
       }
-    ]
-    }
   },
-  methods : {
-    addVisa(){
-      this.applicants.push({
-        previous:'',
-        expiration: ''
+  mounted() {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          this.user = user; 
+        }
       })
     },
-    deleteVisa(counter){
-      this.applicants.splice(counter,1);
+    methods: {
+      async signOut() {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        await signOut(auth, user);
+        this.$router.push("/login")
+      },
+      showModal() {
+        this.isModalVisible = true;
+      },
+      closeModal() {
+        this.isModalVisible = false;
+      }
     }
-  }
 }
 </script>
 
