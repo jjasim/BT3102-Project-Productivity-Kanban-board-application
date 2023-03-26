@@ -83,7 +83,7 @@ html, body {
 .login-container {
     display: block;
     width: 345px;
-    height: 480px;
+    height: 475px;
     text-align:center;
     background: #FFFFFF;
     mix-blend-mode: normal;
@@ -135,6 +135,6 @@ input {
     font-family: 'Josefin Sans', sans-serif;
     font-size: small;
     color: #FF9190;
-    padding-top: 0.75rem;
+    padding-top: 0.8rem;
 }
 </style>

@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import LandingPage from './components/LandingPage.vue';
 import LoginPage from './views/LoginPage.vue';
 import SignupPage from './views/SignupPage.vue';
 import ProjectTaskPage from './views/ProjectTaskPage.vue';
@@ -14,6 +15,7 @@ import dropdown from './components/Dropdown.vue';
 export default {
   name: 'App',
   components:{
+    LandingPage,
     LoginPage,
     SignupPage,
     ProjectTaskPage,

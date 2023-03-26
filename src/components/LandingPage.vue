@@ -486,8 +486,8 @@ html, body {
   border-radius: 49px;
 } */
 .signup-btn3 {
-  top: 512px;
-  left: 595px;
+  top: 30%;
+  left: 50%;
   color: rgba(255, 255, 255, 1);
   width: 161px;
   height: 50px;
