@@ -2,7 +2,7 @@
     <div class="card">
       <div class="card-contents">
         <p 
-        class="">
+        class="card-text">
         {{task.title}}
         </p>
       </div>
@@ -42,6 +42,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
+
 .card {
     padding-left: 0.75rem;
     padding-right: 0.75rem; 
@@ -52,7 +54,7 @@ export default {
     border-width: 1px; 
     border-color: #ffffff; 
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); 
-}
+  }
 
 .card-contents {
     display: flex; 
@@ -61,7 +63,7 @@ export default {
 
 .card-text {
     color: #374151; 
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; 
+    font-family: 'Josefin Sans', sans-serif;
     font-size: 0.875rem;
     line-height: 1.25rem; 
     font-weight: 600; 

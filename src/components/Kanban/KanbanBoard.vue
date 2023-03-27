@@ -54,7 +54,8 @@
             {
               id: 2,
               title: "Provide documentation on integrations",
-              date: "Sep 12"
+              date: "Sep 12",
+              type: "Feature Request"
             },
             {
               id: 3,
@@ -155,6 +156,29 @@
               type: "Feature Request"
             }
           ]
+        },
+        {
+          title: "Done",
+          tasks: [
+            {
+              id: 14,
+              title: "Add discount code to checkout page",
+              date: "Sep 14",
+              type: "Feature Request"
+            },
+            {
+              id: 15,
+              title: "Design shopping cart dropdown",
+              date: "Sep 9",
+              type: "Design"
+            },
+            {
+              id: 16,
+              title: "Add discount code to checkout page",
+              date: "Sep 14",
+              type: "Feature Request"
+            }
+          ]
         }
       ]
     };
@@ -162,19 +186,19 @@
   };
   </script>
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
+* {
+  font-family: 'Josefin Sans', sans-serif;
+}
 #kanban {
     display: flex; 
-    background-color: #E5E7EB; 
-    justify-content: center; 
-    align-items: center; 
     width: 100vw; 
     min-height: 100vh; 
+    padding-left: 1rem;
 }
 
 .cards {
     display: flex; 
-    overflow-x: scroll; 
-    padding-top: 3rem;
     padding-bottom: 3rem; 
     min-height: 100vh; 
 }
@@ -192,7 +216,7 @@
 
 .col-title {
     color: #374151; 
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; 
+    font-family: 'Josefin Sans', sans-serif;
     font-size: 0.875rem;
     line-height: 1.25rem; 
     font-weight: 600; 
