@@ -7,7 +7,7 @@
           aria-describedby="modalDescription"
         >
           <header class="modal-header">
-            <span class="addproject-popuptitle"><slot name="header">
+            <span class="modal-popuptitle"><slot name="header">
           This is the default title!
         </slot></span>
         <button
@@ -20,7 +20,7 @@
       </header>
 
       <section class="modal-body">
-        <span class="addproject-details">
+        <span class="modal-details">
         <slot name="body">
           This is the default body!
         </slot>
@@ -75,35 +75,32 @@
     background-color: rgba(255, 255, 255, 1);
     display: flex;
     position: fixed;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
     align-self: auto;
     flex-direction: column;
-  }
-
-  .modal-header,
-  .modal-footer {
-    padding: 15px;
-    display: flex;
+    flex-wrap: wrap;
   }
 
   .modal-header {
-    border-bottom: 1px solid #eeeeee;
-    justify-content: space-between;
-    position: relative;
+  padding: 15px;
+    display: flex;
+    width: 93%;
   }
 
-
   .modal-footer {
-    border-top: 1px solid rgba(94, 114, 235, 1);
     flex-direction: row;
     justify-content: flex-end;
+    padding: 15px;
     display: flex;
+    width: 93%;
   }
 
   .modal-body {
     position: relative;
-    padding: 20px 10px;
+    padding: 20px 10px ;
+    width: auto;
+    width: 90%;
   }
 
   .btn-close {
@@ -113,7 +110,6 @@
     font-weight: bold;
     color: rgba(94, 114, 235, 1);
     background: transparent;
-    float: right;
     border-radius: 22px;
   }
 
@@ -127,54 +123,41 @@
     transition: opacity .5s ease;
   }
 
-  .addproject-popuptitle {
+  .modal-popuptitle {
   color: rgba(0, 0, 0, 1);
-  width: 596px;
+  padding: 2%;
   height: auto;
+  width: 100%;
   font-size: 50px;
-align-self: auto;
-font-style: Regular;
-text-align: left;
-font-family: Yeseva One;
-font-weight: 400;
-line-height: normal;
-font-stretch: normal;
-text-decoration: none;
-}
+  font-style: Regular;
+  text-align: left;
+  font-family: Yeseva One;
+  font-weight: 400;
+  }
   
-  .addproject-details {
+  .modal-details {
     position: relative;
     padding: 20px 10px;
     align-self: auto;
     box-sizing: border-box;
-    align-items: flex-start;
     flex-shrink: 1;
-border-color: transparent;
-border-style: none;
-border-width: 0;
-margin-right: 0;
-border-radius: 0px 0px 0px 0px;
-margin-bottom: 0;
-justify-content: flex-start;
-background-color: transparent;
+    width: auto;
+  }
+
+.addproject-addprojtitle {
+  height: auto;  
+  padding: 3%;
 }
 
-.addproject-projtitle {
-    width: 625px;
-  height: 107px;  
-  border-color: transparent;
-  border-style: none;
-  border-width: 0;
-  border-radius: 0px 0px 0px 0px;
-  background-color: transparent;
+.addproject-adduser {
+width: auto;
+padding: 3%;
 }
 
 .addproject-projtitletext {
   color: rgba(0, 0, 0, 1);
   height: auto;
-  position: absolute;
   font-size: 25px;
-  align-self: auto;
   font-style: Regular;
   text-align: left;
   font-family: Josefin Sans;
@@ -182,14 +165,13 @@ background-color: transparent;
   line-height: normal;
   font-stretch: normal;
   text-decoration: none;
+  padding: 1%;
 }
 
-.addproject-userstitle {
+.addproject-userstext {
   color: rgba(0, 0, 0, 1);
   height: auto;
-  position: absolute;
   font-size: 25px;
-  align-self: auto;
   font-style: Regular;
   text-align: left;
   font-family: Josefin Sans;
@@ -197,78 +179,80 @@ background-color: transparent;
   line-height: normal;
   font-stretch: normal;
   text-decoration: none;
+  padding: 1%;
+}
+
+.addproject-currentusers {
+  color: rgba(0, 0, 0, 1);
+  height: auto;
+  font-size: 17px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Josefin Sans;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+  padding-top: 1%;
+}
+.addproject-addeduserstext {
+  color: rgba(0, 0, 0, 1);
+  height: auto;
+  font-size: 20px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Josefin Sans;
+  font-weight: 400;
+  line-height: normal;
+  font-stretch: normal;
+  text-decoration: none;
+  padding-top: 3%;
 }
 
 .addproject-inputbg {
 width: 347px;
 height: 42px;
-position: absolute;
 border-color: rgba(0, 0, 0, 1);
 border-style: solid;
 border-width: 1px;
 border-radius: 22px;
 }
 
-.addproject-adduser {
-top: 50px;
-left: 0px;
-width: 625px;
-height: 107px;
-padding: 0;
-position: absolute;
-align-self: auto;
-box-sizing: border-box;
-align-items: flex-start;
-flex-shrink: 1;
-border-color: transparent;
-border-style: none;
-border-width: 0;
-border-radius: 0px 0px 0px 0px;
-display: flex;
-justify-content: space-around;
-flex-direction: column;
-background-color: transparent;
+.addproject-pushbuttons{
+  height: auto;
+  padding-top: 1%;
+  padding-left: 67%;
 }
 
-.addproject-edit {
-top: 373px;
-left: 579px;
-width: 75px;
-height: 24px;
-padding: 0;
-position: absolute;
-align-self: auto;
-box-sizing: border-box;
-align-items: flex-start;
-flex-shrink: 1;
-border-color: transparent;
-border-style: none;
-border-width: 0;
-margin-right: 0;
-border-radius: 0px 0px 0px 0px;
-margin-bottom: 0;
-display: flex;
-justify-content: flex-start;
-flex-direction: column;
+.addproject-addbutton {
+  color: rgba(255, 255, 255, 1);
+  font-size: 18px;
+  font-style: Regular;
+  text-align: center;
+  font-family: Josefin Sans;
+  font-weight: 400;
+  border: none;
+  cursor: pointer;
+  background: transparent;  
+  border-radius: 22px;
+  padding: 3%;
 background-color: rgba(94, 114, 235, 1);
 }
 
-.addproject-addtext {
-top: 5px;
-left: 13px;
-color: rgba(255, 255, 255, 1);
-width: 49px;
-height: auto;
-position: absolute;
-font-size: 18px;
-align-self: auto;
-font-style: Regular;
-text-align: center;
-font-family: Josefin Sans;
-font-weight: 400;
-line-height: normal;
-font-stretch: normal;
-text-decoration: none;
+.addproj-adduser-btn {
+  color: rgba(94, 114, 235, 1);
+  width: auto;
+  height: auto;
+  font-size: 18px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Josefin Sans;
+  font-weight: 400;
+  border: none;
+  cursor: pointer;
+  background: transparent;  
+  padding-top: 1%;
+  padding-left: 67%;
 }
 
 </style>
