@@ -95,7 +95,7 @@ let project1 = {name: "Project 1"};
       return {
         addProjPopupVisible: false,
         isModalVisible: false,
-        user : false
+        user : false,
         arrayOfObjects: [project1],
       }
     },
