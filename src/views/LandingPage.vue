@@ -8,7 +8,7 @@
             <SignUpBtn/>
         </div>
     </div>
-    <v-carousel cycle :show-arrows="false" hide-delimiters interval="3000" height="635px">
+    <v-carousel cycle :show-arrows="false" hide-delimiters interval="3000" height="650px">
         <v-carousel-item 
             v-for="(image, i) in images" 
             :key="i"
@@ -104,33 +104,38 @@ export default {
 </script>
 
 <style scoped>
+
+* {
+    padding: 0;
+    margin: 0;
+}
 /* Header */
 .header {
     background-color: rgba(19, 13, 111, 1);
-    padding: 30px;
-    float: left;
-    width: 100%;
-    position: relative;
-}
+    display: flex;
+    padding: 20px;
 
+}
 .logo {
     color: rgba(254,193,149,1);
     font-size: 50px;
     font-style: Regular;
     font-family: Yeseva One;
     font-weight: 400;
-    float: left;
+    padding: 5px 0px 0px 50px;
 }
 
 .login {
-    float: left;
-    padding-left: 47%;
+    padding-top: 10px;
+    padding-left: 45%;
+    padding-right: 3%;
+
 }
 
 .signup {
-    float: left;
-    padding-left: 3%;
+    padding-top: 10px;
     padding-right: 10%;
+
 }
 
 /* Carousel Component */
@@ -201,14 +206,14 @@ export default {
     font-weight: 400px;
     text-align: left;
     float: left;
-    width:  55%;
-    padding: 100px 100px 0px 50px;
+    width:  50%;
+    padding: 70px 0px 0px 30px;
 }
 
 .productive {
     float: left;
-    width: 45%;
-    height: 50%;
+    width: 48%;
+    height: 300px;
 }
 
 #image {
@@ -217,6 +222,6 @@ export default {
 }
 
 .signup2 {
-    padding: 20px 0px 0px 270px;
+    padding: 20px 0px 50px 270px;
 }
 </style>
