@@ -76,7 +76,7 @@
 
 <script>
 import LogInBtn from "../components/LandingPage/LogInBtn.vue"
-import SignUpBtn from "../components/LandingPage/LogInBtn.vue"
+import SignUpBtn from "../components/LandingPage/SignUpBtn.vue"
 
 export default {
     components : {
