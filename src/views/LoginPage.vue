@@ -135,6 +135,6 @@ input {
     font-family: 'Josefin Sans', sans-serif;
     font-size: small;
     color: #FF9190;
-    padding-top: 0.8rem;
+    padding-top: 0.7rem;
 }
 </style>

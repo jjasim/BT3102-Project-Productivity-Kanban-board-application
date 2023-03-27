@@ -63,9 +63,6 @@ export default {
             }
             await addDoc(collectionRef, userDoc);
             const user = createUser;
-            updateProfile(user, {
-                displayName : this.username
-            })
 
             console.log("doc ccreatesd")
             this.$router.push('/home')
@@ -157,6 +154,6 @@ input {
     font-family: 'Josefin Sans', sans-serif;
     font-size: small;
     color: #FF9190;
-    padding-top: 0.57rem;
+    padding-top: 0.5rem;
 }
 </style>
