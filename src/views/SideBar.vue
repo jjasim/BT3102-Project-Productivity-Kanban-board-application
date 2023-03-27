@@ -74,11 +74,12 @@
             </template>
           </Modal>
         
-    <div class="sidebar-footer"></div>
-    <!-- signout -->
-      <button class="sidebar-signout" @click.prevent="signOut"><span>Sign out</span></button>
+      <div class="sidebar-footer">
+        <!-- signout -->
+        <button class="sidebar-signout" @click.prevent="signOut"><span>Sign out</span></button>
+      </div>
     </div>
-  </template>
+</template>
   
   <script>
 import Modal from '@/components/Modal.vue';
@@ -163,7 +164,11 @@ let project1 = {name: "Project 1"};
     background-color: #5E72EB;
     padding-top: 3%; 
     align-content: space-between;
+    top: 0;
+    left: 0;
+    bottom: 0;
   }
+
   .sidebar-header {
     height: 20%;
     width: 100%;
@@ -336,5 +341,5 @@ a {
   from {opacity: 0;}
   to {opacity:1 ;}
 }
-  </style>
+</style>
   

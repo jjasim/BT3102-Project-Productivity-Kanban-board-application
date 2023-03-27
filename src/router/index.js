@@ -29,7 +29,7 @@ const routes = [
         component: HomePage
     },
     {
-        path: '/projecttaskpage',
+        path: '/tasks',
         name: 'Project Task Page',
         component: ProjectTaskPage,
     },
