@@ -41,7 +41,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .card {
     padding-left: 0.75rem;
     padding-right: 0.75rem; 

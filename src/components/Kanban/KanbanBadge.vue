@@ -21,7 +21,7 @@
   };
 </script>
 
-<style>
+<style scoped>
 .badge {
     display: flex; 
     padding-left: 0.75rem;
