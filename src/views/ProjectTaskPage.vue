@@ -66,7 +66,9 @@
 <script>
 import KanbanBoard from "@/components/Kanban/KanbanBoard.vue";
 import SideBar from "@/views/SideBar.vue";
-import Modal from "@/components/Addproj.vue";
+import Modal from "@/components/Modal.vue";
+import dropdown from '@/components/Dropdown.vue';
+
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 export default {
@@ -104,7 +106,7 @@ export default {
       this.editElemPopupVisible = true;
     },
   },
-  components: {SideBar, KanbanBoard}
+  components: {SideBar, Modal, dropdown, KanbanBoard}
 };
 </script>
 

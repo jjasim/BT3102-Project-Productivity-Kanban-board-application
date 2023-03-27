@@ -1,139 +1,102 @@
 <template>
-  <div class="sidebar-sidebar" v-if="user">
-      <!-- user's name -->
+  <div class="sidebar-bg" v-if="user">
+    <div class="sidebar-header" >
+       <!-- user's name -->
       <div class="SideBar-Name">
-        <span class="sidebar-usersname"><span>{{ user.email }}</span></span>
         <img
             alt="Icon"
             src="src/assets/sidebar-person-icon.png"
             class="UserIcon"
           />
+        <span class="sidebar-usersname"><span>{{ user.email }}</span></span>
       </div>
-
       <!-- users points -->
       <div class="sidebar-points">
-        <span class="sidebar-pointstext"><span>900 points</span></span>
         <img
           src="src/assets/sidebar-points-vector.png"
           alt="Icon"
           class="sidebar-pointsvector"
         />
+        <span class="sidebar-pointstext"><span>900 points</span></span>
       </div>
-
+    </div>
+    <div class="sidebar-body" >
       <!-- home -->
       <div class="sidebar-homebutton">
         <router-link to="/signup">Home</router-link>
       </div>
-
       <!-- team projects -->
-      <div class="sidebar-projectstitle">
-        <span class="sidebar-projectstext"><span>Team Projects</span></span>
-      </div>
-      <div class="sidebar-firstproj">
-          <img
-            src="src/assets/sidebar-pointer-vector.png"
-            alt="Icon"
-            class="sidebar-pointer1"
-          />
-          <span class="sidebar-project1"><router-link to="/projecttaskpage">Project 1</router-link></span>
-        </div>
-        <div class="sidebar-secondproj">
-          <img
-            src="src/assets/sidebar-pointer-vector.png"
-            alt="Icon"
-            class="sidebar-pointer2"
-          />
-          <span class="sidebar-project2"><router-link to="/signup">Project 2</router-link></span>
-        </div>
-
+      <dropdown class="my-dropdown-toggle"
+          :options="arrayOfObjects" 
+          :selected="object" 
+          v-on:updateOption="methodToRunOnSelect" 
+          :closeOnOutsideClick="boolean">
+      </dropdown>
         <!-- add project -->
-        <div class="sidebar-addproj">
-          <div class="sidebar-addprojtext" onclick="showAddProjPopup">Add Project
-            <span class="addProjPopupText" id="myPopup">Popup text...</span>
-          </div>
-          <img
-            src="src/assets/sidebar-plus-vector.png"
-            alt="Icon"
-            class="sidebar-vector2"
-          />
-        </div>
-        <img
-          src="src/assets/sidebar-pencil-vector.png"
-          alt="Icon"
-          class="sidebar-pencil"
-        />
-
-        <!-- analytics -->
+        <div class="sidebar-addproj" @click="showModal">+ Add Project</div>
+          <!-- analytics -->
         <div class="sidebar-analyticsbutton">
           <router-link to="/signup">Analytics</router-link>
         </div>
-
-        
-        <!-- signout -->
-        <div class="sidebar-signout">
-            <button class="sidebar-signouttext" @click.prevent="signOut"><span>Sign out</span></button>
-        </div>
-
-        <!-- add project -->
-        <div class="sidebar-addproj">
-          <div class="sidebar-addprojtext" @click="showModal">Add Project</div>
-          <img
-            src="src/assets/sidebar-plus-vector.png"
-            alt="Icon"
-            class="sidebar-vector2"
-          />
-
-          <Modal v-show="isModalVisible" @close="closeModal">
-          <template v-slot:header>
-              Add project
-          </template>
-            
-          <template v-slot:body>
-                <section class="addproject-projtitle">
-                  <div for="project title" class="addproject-projtitletext">Project title:</div>
-                </section>  
-                <section>
-                <form>
-                  <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" required>
-                </form>
-              </section>
-                <section class="addproject-adduser">
-                  <div for="authorised users" class="addproject-userstitle">Authorised Users:</div>
-                </section>
-                
-                <form>
-                  <input type="text" class="addproject-inputbg" placeholder="Username" required>
-                </form>
-                
-        </template>
-
-        <template v-slot:footer>
-            <section class="addproject-edit">
-                <button class="addproject-addtext">Add</button>
-            </section>
-        </template>
-        </Modal>
-        </div>
-        <img
-          src="src/assets/sidebar-pencil-vector.png"
-          alt="Icon"
-          class="sidebar-pencil"
-        />
       </div>
+        <!-- add project pop up -->
+          <Modal v-show="isModalVisible" @close="closeModal">
+            <template v-slot:header>
+              Add project
+            </template>
+            
+            <template v-slot:body>
+              <form>
+              <div class="addproject-addprojtitle">
+                <div class="addproject-projtitletext">Project title:</div>
+                
+                  <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newProjName" required>
+                
+              </div>
+                <div class="addproject-adduser">
+                  <div class="addproject-userstext">Authorised Users:</div>
+                
+                  <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" required>
+                  <input type='button' class="addproj-adduser-btn" value='Add user' id='add' @click="addUser()">
+                
+                <div class="addproject-addeduserstext">Added users:</div>
+                <ul class="addproject-currentusers" id='list'>
+                    <li>{{  user.email  }}</li>
+                </ul>
+              </div> 
+            </form>
+            </template>
+
+            <template v-slot:footer>
+              <div class="addproject-pushbuttons">
+                <button class="addproject-addbutton" @click="addData">Add project</button>
+              </div>
+            </template>
+          </Modal>
+        
+    <div class="sidebar-footer"></div>
+    <!-- signout -->
+      <button class="sidebar-signout" @click.prevent="signOut"><span>Sign out</span></button>
+    </div>
   </template>
   
   <script>
-import Modal from '@/components/Addproj.vue';
-import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
+import Modal from '@/components/Modal.vue';
+import dropdown from '@/components/Dropdown.vue';
+import { getAuth, onAuthStateChanged } from "@firebase/auth";
+
+let project1 = {name: "Project 1"};
+
 
   export default {
     name: 'Sidebar',
-    components: {Modal},
+    components: {Modal, dropdown},
     data() {
       return {
         addProjPopupVisible: false,
         isModalVisible: false,
         user : false
+        arrayOfObjects: [project1],
       }
     },
     mounted() {
@@ -155,7 +118,31 @@ import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
         this.isModalVisible = true;
       },
       closeModal() {
+        document.getElementById("newUsers").value = "";
+        document.getElementById("newProjName").value = "";
+        document.getElementById("list").innerHTML = "<li>" + this.user.email + "</li>";
         this.isModalVisible = false;
+      },
+      addData() {
+        var emailList = document.getElementById("list");
+        var projname = document.getElementById("newProjName").value;
+        let newProj = {name: projname};
+        this.arrayOfObjects.push(newProj);
+        document.getElementById("newUsers").value = "";
+        document.getElementById("newProjName").value = "";
+        document.getElementById("list").innerHTML = "<li>" + this.user.email + "</li>";
+        this.isModalVisible = false;
+      },
+      addUser() {
+        var input = document.getElementById("newUsers").value;
+        var list = document.getElementById("list");
+        var item = document.createElement("li");
+        item.append(document.createTextNode(input));
+        list.append(item);
+        document.getElementById("newUsers").value = "";
+      },
+      methodToRunOnSelect(payload) {
+            this.object = payload;
       }
     }
   }
@@ -163,145 +150,79 @@ import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
   </script>
   
   <style scoped>
-  .sidebar-sidebar {
-    margin: 0;
-    padding: 0;
-    width: 236px;
-    height: 1024px;
+  .sidebar-bg {
+    width: 16%;
+    height: 100%;
     display: flex;
-    position: absolute;
+    position: fixed;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-shrink: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: #5E72EB;
+    padding-top: 3%; 
+    align-content: space-between;
+  }
+  .sidebar-header {
+    height: 20%;
+    width: 100%;
+    display: flex;
     overflow: hidden;
     align-self: auto;
     box-sizing: border-box;
-    align-items: center;
     flex-shrink: 1;
     border-color: transparent;
     border-style: none;
-    border-width: 0;
-    margin-right: 0;
     border-radius: 0px 0px 0px 0px;
-    top: 0; right: 0; bottom: 0; left: 0;
-    margin-bottom: 0;
     flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding-left: 3%;
+  }
+  .sidebar-body {
+    height: 60%;
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+    align-self: auto;
+    box-sizing: border-box;
+    flex-shrink: 1;
+    border-color: transparent;
+    border-style: none;
+    border-radius: 0px 0px 0px 0px;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .sidebar-footer {
+    height: 20%;
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-shrink: 1;
+    flex-direction: row;
     justify-content: center;
-    background-color: #5E72EB;
-    background-size: 100% 50%;
-    height: 100%;
+    align-items: center;
   }
-  .sidebar-firstproj {
-    top: 300px;
-    left: 67px;
-    width: 89.00000762939453px;
-    height: 15px;
-    display: flex;
-    padding: 0;
-    position: absolute;
+
+  .SideBar-Name{
     align-self: auto;
-    box-sizing: border-box;
-    align-items: flex-start;
-    flex-shrink: 1;
-    border-color: transparent;
-    border-style: none;
-    border-width: 0;
-    border-radius: 0px 0px 0px 0px;
+    width: auto;
     flex-direction: row;
-    justify-content: flex-start;
-    background-color: transparent;
+    justify-content: space-around;
+    align-items: center;
   }
-  .sidebar-pointer1 {
-    top: 2px;
-    left: 0px;
-    width: 6px;
-    height: 10px;
-    position: absolute;
-  }
-  .sidebar-project1 {
-    left: 13.000005722045898px;
-    color: rgba(255, 255, 255, 1);
-    width: 76px;
-    height: auto;
-    position: absolute;
-    font-size: 20px;
-    align-self: auto;
-    font-style: Regular;
-    text-align: left;
-    font-family: Josefin Sans;
-    font-weight: 400;
-    line-height: normal;
-    font-stretch: normal;
-    text-decoration: none;
-  }
-  .sidebar-secondproj {
-    top: 333px;
-    left: 67px;
-    width: 104.00000762939453px;
-    height: 15px;
-    display: flex;
-    padding: 0;
-    position: absolute;
-    align-self: auto;
-    box-sizing: border-box;
-    align-items: flex-start;
-    flex-shrink: 1;
-    border-color: transparent;
-    border-style: none;
-    border-width: 0;
-    border-radius: 0px 0px 0px 0px;
-    flex-direction: row;
-    justify-content: flex-start;
-    background-color: transparent;
-  }
-  .sidebar-pointer2 {
-    top: 2px;
-    left: 0px;
-    width: 6px;
-    height: 10px;
-    position: absolute;
-  }
-  .sidebar-project2 {
-    left: 13.000005722045898px;
-    color: rgba(255, 255, 255, 1);
-    width: 91px;
-    height: auto;
-    position: absolute;
-    font-size: 20px;
-    align-self: auto;
-    font-style: Regular;
-    text-align: left;
-    font-family: Josefin Sans;
-    font-weight: 400;
-    line-height: normal;
-    font-stretch: normal;
-    text-decoration: none;
-  }
+
   .sidebar-addproj {
-    top: 366px;
-    left: 67px;
-    width: 134px;
-    height: 15px;
-    display: flex;
-    padding: 0;
-    position: absolute;
     align-self: auto;
-    box-sizing: border-box;
-    align-items: flex-start;
-    flex-shrink: 1;
-    border-color: transparent;
-    border-style: none;
-    border-width: 0;
-    border-radius: 0px 0px 0px 0px;
-    flex-direction: row;
-    justify-content: flex-start;
     background-color: transparent;
-  }
-  .sidebar-addprojtext {
-    left: 16.000003814697266px;
+    margin-left: 5%;
     color: rgba(255, 255, 255, 1);
-    width: 118px;
     height: auto;
-    position: absolute;
+    width: 100%;
     font-size: 20px;
-    align-self: auto;
     font-style: Regular;
     text-align: left;
     font-family: Josefin Sans;
@@ -309,66 +230,11 @@ import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
     line-height: normal;
     font-stretch: normal;
     text-decoration: none;
+    padding: 10px;
   }
-  .sidebar-vector2 {
-    top: 1px;
-    left: 0px;
-    width: 12px;
-    height: 12px;
-    position: absolute;
-  }
-  
-  .sidebar-projectstext {
-    top: 259px;
-    left: 3px;
-    color: rgba(255, 255, 255, 1);
-    width: 191px;
-    height: auto;
-    position: absolute;
-    font-size: 25px;
-    align-self: auto;
-    font-style: Regular;
-    text-align: center;
-    font-family: Josefin Sans;
-    font-weight: 400;
-    line-height: normal;
-    font-stretch: normal;
-    text-decoration: none;
-  }
-  .sidebar-vector3 {
-    top: 86px;
-    left: 47px;
-    width: 21px;
-    height: 25px;
-    position: absolute;
-  }
-  .sidebar-homebutton {
-    top: 208px;
-    left: 3px;
-    color: rgba(255, 255, 255, 1);
-    width: 107px;
-    height: auto;
-    position: absolute;
-    font-size: 25px;
-    align-self: auto;
-    font-style: Regular;
-    text-align: center;
-    font-family: Josefin Sans;
-    font-weight: 400;
-    line-height: normal;
-    font-stretch: normal;
-    text-decoration: none;
-    background: none;
-  }
+
   .sidebar-usersname {
-    top: 88px;
-    left: 87px;
     color: rgba(255, 255, 255, 1);
-    width: 107px;
-    height: auto;
-    position: absolute;
-    font-size: 25px;
-    align-self: auto;
     font-style: Regular;
     text-align: left;
     font-family: Josefin Sans;
@@ -376,18 +242,12 @@ import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
     line-height: normal;
     font-stretch: normal;
     text-decoration: none;
+    height: auto;
+    font-size: 20px;
   }
   .sidebar-points {
-    top: 138px;
-    left: 45px;
-    width: 137px;
-    height: 24px;
     display: flex;
-    padding: 0;
-    position: absolute;
-    align-self: auto;
-    box-sizing: border-box;
-    align-items: flex-start;
+    padding: 1%;
     flex-shrink: 1;
     border-color: transparent;
     border-style: none;
@@ -396,15 +256,13 @@ import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
     flex-direction: row;
     justify-content: flex-start;
     background-color: transparent;
+    align-items: center;
+    margin-top: 5%;
   }
   .sidebar-pointstext {
-    top: 2px;
-    left: 40px;
     color: rgba(255, 255, 255, 1);
     height: auto;
-    position: absolute;
     font-size: 20px;
-    align-self: auto;
     font-style: Regular;
     text-align: center;
     font-family: Josefin Sans;
@@ -414,66 +272,47 @@ import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
     text-decoration: none;
   }
   .sidebar-pointsvector {
-    top: 0px;
-    left: 0px;
-    width: 25px;
-    height: 24px;
-    position: absolute;
+    padding: 3%;
   }
-  .sidebar-pencil {
-    top: 296px;
-    left: 171px;
-    width: 23px;
-    height: 23px;
-    position: absolute;
-  }
-  .sidebar-analyticsbutton{
-    top: 410px;
-    left: -17px;
+  .sidebar-homebutton {
     color: rgba(255, 255, 255, 1);
-    width: 191px;
     height: auto;
-    position: absolute;
     font-size: 25px;
     align-self: auto;
     font-style: Regular;
-    text-align: center;
+    text-align: left;
     font-family: Josefin Sans;
     font-weight: 400;
     line-height: normal;
     font-stretch: normal;
     text-decoration: none;
     background: none;
+    margin-left: 5%;
+    margin-top: 5%;
   }
-  
+  .sidebar-analyticsbutton{
+    color: rgba(255, 255, 255, 1);
+    height: auto;
+    font-size: 25px;
+    align-self: auto;
+    font-style: Regular;
+    text-align: left;
+    font-family: Josefin Sans;
+    font-weight: 400;
+    line-height: normal;
+    font-stretch: normal;
+    text-decoration: none;
+    background: none;
+    margin-left: 5%;
+    margin-top: 5%;
+  }
 
   .sidebar-signout {
-  top: 962px;
-  left: 80px;
-  width: 75px;
-  height: 24px;
-  display: flex;
-  padding: 0;
-  position: absolute;
-  align-self: auto;
-  box-sizing: border-box;
-  align-items: flex-start;
-  flex-shrink: 1;
   border-color: transparent;
-  border-style: none;
-  border-width: 0;
-  border-radius: 0px 0px 0px 0px;
-  flex-direction: row;
-  justify-content: flex-start;
-}
-.sidebar-signouttext {
-  top: 5px;
-  left: 9px;
   color: rgba(94, 114, 235, 1);
-  height: auto;
-  position: absolute;
+  padding: 2%;
+  width: 40%;
   font-size: 15px;
-  align-self: auto;
   font-style: Regular;
   text-align: center;
   font-family: Josefin Sans;
@@ -482,59 +321,9 @@ import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth';
   border-radius: 12px;
 }
 
-  .UserIcon {
-  top: 74px;
-  left: 34px;
-  width: 47px;
-  height: 47px;
-  position: absolute;
-}
-
 a { 
   text-decoration: none; 
   color: white 
-}
-
-/* Popup container */
-.sidebar-addprojtext {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-}
-
-/* The actual popup (appears on top) */
-.sidebar-addprojtext .addProjPopupText {
-  visibility: hidden;
-  width: 160px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -80px;
-}
-
-/* Popup arrow */
-.sidebar-addprojtext .addProjPopupText::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-/* Toggle this class when clicking on the popup container (hide and show the popup) */
-.sidebar-addprojtext .show {
-  visibility: visible;
-  -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s
 }
 
 /* Add animation (fade in the popup) */

@@ -3,21 +3,25 @@
 </template>
 
 <script>
+import LandingPage from './views/LandingPage.vue';
 import LoginPage from './views/LoginPage.vue';
 import SignupPage from './views/SignupPage.vue';
 import ProjectTaskPage from './views/ProjectTaskPage.vue';
 import { RouterView } from 'vue-router';
 import SideBar from './views/SideBar.vue';
-import Addproj from './components/Addproj.vue';
+import Modal from './components/Modal.vue';
+import dropdown from './components/Dropdown.vue';
 
 export default {
   name: 'App',
   components:{
+    LandingPage,
     LoginPage,
     SignupPage,
     ProjectTaskPage,
     SideBar,
-    Addproj
+    Modal,
+    dropdown
   },
   data(){
     return {

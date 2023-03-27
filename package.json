@@ -17,6 +17,8 @@
     "vue-simple-calendar": "^6.3.1",
     "vue3-draggable": "^2.0.9",
     "vuedraggable": "^4.1.0"
+    "vuedraggable": "^4.1.0",
+    "vuetify": "^3.1.11"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
