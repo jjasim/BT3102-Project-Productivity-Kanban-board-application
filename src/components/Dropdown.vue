@@ -8,7 +8,7 @@
         <ul class="dropdown-menu" v-if="showMenu">
             <li v-for="(option, idx) in options" :key="idx">
                 <a class="sidebar-proj" @click="updateOption(option)">
-                    <router-link to="/projecttaskpage">
+                    <router-link to="/tasks">
                     {{ option.name }}
                     </router-link>
                 </a>

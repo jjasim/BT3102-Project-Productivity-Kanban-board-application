@@ -1,6 +1,8 @@
 <template>
     <div class="header">
-      <div class="project-name">Project 1</div>
+      <div class="project-name">
+        Project 1
+    </div>
       <div class="buttons">
         <button @click="goToTasks">Tasks</button>
         <button @click="goToCalendar">Calendar</button>
@@ -37,9 +39,11 @@
   .project-name {
     font-size: 35px;
     font-weight: bold;
+    align-items: center;
   }
   .buttons {
     display: flex;
+    align-items: center;
     gap: 10px;
   }
   button {

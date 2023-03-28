@@ -84,7 +84,7 @@
   <script>
 import Modal from '@/components/Modal.vue';
 import dropdown from '@/components/Dropdown.vue';
-import { getAuth, onAuthStateChanged } from "@firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
 
 let project1 = {name: "Project 1"};
 
@@ -324,11 +324,15 @@ let project1 = {name: "Project 1"};
   font-weight: 400;
   background: white;
   border-radius: 12px;
+  cursor: pointer;
 }
 
 a { 
   text-decoration: none; 
   color: white 
+}
+input {
+    text-indent: 10px;
 }
 
 /* Add animation (fade in the popup) */
