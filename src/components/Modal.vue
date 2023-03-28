@@ -80,6 +80,7 @@
     align-self: auto;
     flex-direction: column;
     flex-wrap: wrap;
+
   }
 
   .modal-header {
