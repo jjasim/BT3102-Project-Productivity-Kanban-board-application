@@ -27,7 +27,7 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { IHeaderProps } from "./IHeaderProps"
+import { IHeaderProps } from "vue-simple-calendar/dist/src/IHeaderProps"
 defineProps({
 	headerProps: {
 		type: Object as () => IHeaderProps,
@@ -43,3 +43,6 @@ const emit = defineEmits<{
 }>()
 const onInput = (d: Date): void => emit("input", d)
 </script>
+
+<style scoped>
+</style>
