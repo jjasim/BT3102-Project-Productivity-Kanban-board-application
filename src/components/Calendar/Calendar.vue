@@ -1,11 +1,8 @@
 <template>
     <div id="calendar-display" class="flex-column">
-        <div class="calendar-header">
-            <h1> {{title}} tasks</h1>
-        </div>
-        <Sidebar />
 
         <div id="calendar-body" class="flex-row">
+
             <div id="calendar-proper">
                 <calendar-view
                     :items="state.items"
@@ -16,31 +13,15 @@
                     :show-weekday="true"
                     :show-week-numbers="true"
                     :disablePast = "true"
-                    class = "theme-default holiday-us-traditional holiday-us-official"
+                    class = "holiday-us-traditional holiday-us-official"
                     id = "calendar-body">
                     <template #header="{ headerProps }">
                             <CalendarViewHeader :header-props="headerProps" @input="setShowDate" />
                     </template>
                 </calendar-view> 
             </div>
-            
-            <div id="options" class="flex-column">
-                <div id="users-section" class="flex-column">
 
-                    <div id="users" class="flex-column">
-                        <h1>Users In Project</h1>
-                        <div id="users-rows" class="flex-column">
-                            <div id="users-columns" class="flex-row">
-                                <img src="../assets/default-user-icon.png" alt="">
-                                <h2>Adam</h2>
-                            </div>
-                        </div>
-                        <div id="add-users">
-                            <a href="">+ Add Users</a>
-                        </div>
-                    </div>
-
-                    <div class="box" id="add-item">
+            <div class="box" id="add-item" v-if="addItems">
                         <h1 class="title">Add an item</h1>                        
                         <div class="field">
                             <label class="label">Title</label>
@@ -63,14 +44,8 @@
                             </div>
                     </div>
                     <button class="button is-info" @click="clickTestAddItem">Add Item</button>
-                    </div>
                 </div>
-
-                For testing, to be removed
-
-            </div>
         </div>
-
     </div>
 
 
@@ -87,20 +62,21 @@
     import {
         ICalendarItem,
         INormalizedCalendarItem,
-    } from "./CalendarFiles/ICalendarItem"
+    } from  "vue-simple-calendar/dist/src/ICalendarItem"    
 
     import {
         onMounted,
         reactive,
-        computed
+        //computed
     } from "vue"
 
-    import "../../node_modules/vue-simple-calendar/dist/style.css"
+    import "../../../node_modules/vue-simple-calendar/dist/style.css"
     // The next two lines are optional themes
-    import "../../node_modules/vue-simple-calendar/dist/css/default.css"
-    import "../../node_modules/vue-simple-calendar/dist/css/holidays-us.css"
-    import "./CalendarFiles/CalendarViewHeader.vue"
-    import Sidebar from "./SideBar.vue"
+    import "../../../node_modules/vue-simple-calendar/dist/css/default.css"
+    import "../../../node_modules/vue-simple-calendar/dist/css/holidays-us.css"
+    import "./CalendarViewHeader.vue"
+    import Sidebar from "../../views/SideBar.vue"
+    import UsersInProject from "@/components/UsersInProject/UsersInProject.vue"
 
 
     // Gets this month
@@ -148,7 +124,7 @@
         newItemStartDate: "",
         newItemEndDate: "",
         newItemColor:"",
-        useDefaultTheme: true,
+        useDefaultTheme: false,
         useHolidayTheme: true,
         useTodayIcons: false,
         items: [
@@ -178,15 +154,15 @@
             endDate: CalendarMath.fromIsoStringToLocalDate(state.newItemEndDate),
             title: state.newItemTitle,
             id: "e" + Math.random().toString(36).substring(2, 11),
-            color: "#ff0000"
+            //color: "#ff0000"
         })
 	state.message = "You added a calendar item!"
     }
-
+/*
     const deleteItemById = (id: string): void => {
         state.items = state.items.filter((item: ICalendarItem): boolean => item.id !== id)
     }
-
+*/
     // For moving items around on calendar (check if its needed)
     const onDrop = (item: INormalizedCalendarItem, date: Date): void => {
         state.message = `You dropped ${item.id} on ${date.toLocaleDateString()}`
@@ -199,8 +175,14 @@
 </script>
 
 <script lang="ts">
+    import { getFirestore, collection, doc, getDoc} from 'firebase/firestore';
+    import { initializeApp } from "firebase/app";
+
     export default {
-        name: 'CalendarPage',
+        name: 'Calendar',
+        props: {
+            addItems: Boolean,
+        },
         data() {
             return {
                 title: 'Test Title'
@@ -208,65 +190,47 @@
         },
         components: {
             Sidebar,
+            UsersInProject,
+        },
+        mounted() {
+            // Initialize Firebase
+            const firebaseConfig = {
+                apiKey: "AIzaSyBPB1jmwH-3h1YmBAkkekTF8eDto4pfo9c",
+                authDomain: "workwise-b1604.firebaseapp.com",
+                projectId: "workwise-b1604",
+                storageBucket: "workwise-b1604.appspot.com",
+                messagingSenderId: "218806215802",
+                appId: "1:218806215802:web:258458dab46639a66e07c3"
+            };
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app)
+
+            const usersRef = collection(db, 'calendarTags');
+            console.log(usersRef);
+
+            // Get a reference to the document with ID "abc123" in the "users" collection
+            const userRef2 = doc(db, 'calendarTags', 'e0');
+
+            // Fetch the document data and log it to the console
+            console.log("we are outside")
+            getDoc(userRef2).then(docSnapshot => {
+                if (docSnapshot.exists()) {
+                const userData = docSnapshot.data();
+                const userName = userData.title;
+                console.log("we are inside")
+                console.log(userName);
+                } else {
+                console.log('No such document!');
+                }
+                });
         }
-    }
+    };
 </script>
 
-<style scoped>
+<style>
 @import url('https://fonts.googleapis.com/css2?family=Yeseva+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
-
-    html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-    article, aside, details, figcaption, figure, 
-    footer, header, hgroup, menu, nav, section {
-	    display: block;
-    }
-    body {
-        line-height: 1;
-    }
-    ol, ul {
-        list-style: none;
-    }
-    blockquote, q {
-        quotes: none;
-    }
-    blockquote:before, blockquote:after,
-    q:before, q:after {
-        content: '';
-        content: none;
-    }
-    table {
-        border-collapse: collapse;
-        border-spacing: 0;
-    }
-
-    #app {
-        height: 100vh;
-        width: 100vw;
-        font-family: 'Josefin Sans', sans-serif;
-
-    }
 
     .flex-column {
         display: flex;
@@ -279,6 +243,7 @@ time, mark, audio, video {
         font-size: 2em;
         padding-top: 1.2em;
         padding-bottom: 0.5em;
+        font-family: 'Josefin Sans', sans-serif;
     }
 
     .flex-row {
@@ -289,8 +254,8 @@ time, mark, audio, video {
     }
 
     #calendar-body {
-        width: 45vw;
-        height: 75vh;
+        width: 55vw;
+        height: 85vh;
     }
 
     #add-item {
@@ -303,19 +268,16 @@ time, mark, audio, video {
         display: flex;
         flex-direction: row-reverse;
         justify-content: left;
+        font-family: 'Josefin Sans', sans-serif;
     }
 
     .currentPeriod {
         font-size: 0 !important;
     }
 
-    .previousYear, .previousPeriod, .currentPeriod, .nextPeriod, .nextYear {
-        background: none !important;
-        border: none !important;
-    }
-
     .cv-header-days {
         border-width: 0 !important;
+        font-family: 'Josefin Sans', sans-serif;
     }
 
     .cv-header-day {
@@ -350,5 +312,23 @@ time, mark, audio, video {
 
     #add-users a:link {
         text-decoration: none;
+    }
+
+    .previousYear, .previousPeriod, .currentPeriod, .nextPeriod, .nextYear {
+        background: none !important;
+        border: none !important;
+    }
+
+    .cv-day.past {
+        background-color: none;
+    }
+
+    .cv-day.today .cv-day-number{
+        background-color: pink;
+        border-radius: 50%;
+    }
+
+    .cv-day.outsideOfMonth {
+        background-color: #f7f7f7 !important;
     }
 </style>
