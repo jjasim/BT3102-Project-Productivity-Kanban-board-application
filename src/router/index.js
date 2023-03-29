@@ -38,8 +38,6 @@ const routes = [
         name: 'Calendar Page',
         component: Calendar,
     }
-    
-
 ]
 
 const router = createRouter({

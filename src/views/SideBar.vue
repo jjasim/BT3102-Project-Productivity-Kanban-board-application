@@ -23,7 +23,7 @@
     <div class="sidebar-body" >
       <!-- home -->
       <div class="sidebar-homebutton">
-        <router-link to="/signup">Home</router-link>
+        <router-link to="/home">Home</router-link>
       </div>
       <!-- team projects -->
       <dropdown class="my-dropdown-toggle"
@@ -151,6 +151,10 @@ let project1 = {name: "Project 1"};
   </script>
   
   <style scoped>
+  @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
+  * {
+    font-family: 'Josefin Sans', sans-serif;
+  }
   .sidebar-bg {
     width: 16%;
     height: 100%;
@@ -286,7 +290,7 @@ let project1 = {name: "Project 1"};
     align-self: auto;
     font-style: Regular;
     text-align: left;
-    font-family: Josefin Sans;
+    font-family: 'Josefin Sans';
     font-weight: 400;
     line-height: normal;
     font-stretch: normal;

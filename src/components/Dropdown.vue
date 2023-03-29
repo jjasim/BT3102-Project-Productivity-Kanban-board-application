@@ -8,7 +8,7 @@
         <ul class="dropdown-menu" v-if="showMenu">
             <li v-for="(option, idx) in options" :key="idx">
                 <a class="sidebar-proj" @click="updateOption(option)">
-                    <router-link to="/projecttaskpage">
+                    <router-link to="/tasks">
                     {{ option.name }}
                     </router-link>
                 </a>
@@ -73,6 +73,10 @@
 </script>
 
 <style>
+ @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
+  * {
+    font-family: 'Josefin Sans', sans-serif;
+  }
 
 .btn-group {
   position: relative;
