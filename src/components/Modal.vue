@@ -256,4 +256,8 @@ background-color: rgba(94, 114, 235, 1);
   padding-left: 67%;
 }
 
+.input {
+  text-indent: 10px;
+}
+
 </style>

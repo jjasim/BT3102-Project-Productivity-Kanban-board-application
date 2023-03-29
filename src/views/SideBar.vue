@@ -15,9 +15,9 @@
         <img
           src="src/assets/sidebar-points-vector.png"
           alt="Icon"
-          class="sidebar-pointsvector"
+          class="sidebar-pointsvector" 
         />
-        <span class="sidebar-pointstext"><span>900 points</span></span>
+        <span class="sidebar-pointstext"><span>900 Points</span></span>
       </div>
     </div>
     <div class="sidebar-body" >
