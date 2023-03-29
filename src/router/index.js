@@ -6,7 +6,6 @@ import ProjectTaskPage from '@/views/ProjectTaskPage.vue';
 import HomePage from '@/views/HomePage.vue';
 import KanbanBoard from '@/components/Kanban/KanbanBoard.vue'
 import CalendarPage from '@/views/CalendarPage.vue';
-import Calendar from '../components/Calendar/Calendar.vue';
 
 const routes = [
     {
@@ -38,14 +37,7 @@ const routes = [
         path: '/calendar',
         name: 'Calendar Page',
         component: CalendarPage,
-    },
-    {
-        path: '/calendartest',
-        name: 'Calendar',
-        component: Calendar,
     }
-    
-
 ]
 
 const router = createRouter({

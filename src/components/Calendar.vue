@@ -70,12 +70,12 @@
         //computed
     } from "vue"
 
-    import "../../../node_modules/vue-simple-calendar/dist/style.css"
+    import "../../node_modules/vue-simple-calendar/dist/style.css"
     // The next two lines are optional themes
-    import "../../../node_modules/vue-simple-calendar/dist/css/default.css"
-    import "../../../node_modules/vue-simple-calendar/dist/css/holidays-us.css"
-    import "./CalendarViewHeader.vue"
-    import Sidebar from "../../views/SideBar.vue"
+    import "../../node_modules/vue-simple-calendar/dist/css/default.css"
+    import "../../node_modules/vue-simple-calendar/dist/css/holidays-us.css"
+    //import "../../../node_modules/vue-simple-calendar/dist/src/CalendarViewHeader.vue"
+    import Sidebar from "../views/SideBar.vue"
     import UsersInProject from "@/components/UsersInProject/UsersInProject.vue"
 
 
