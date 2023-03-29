@@ -319,6 +319,10 @@
         border: none !important;
     }
 
+    .previousYear:hover, .previousPeriod:hover, .currentPeriod:hover, .nextPeriod:hover, .nextYear:hover {
+        cursor: pointer;
+    }
+
     .cv-day.past {
         background-color: none;
     }
