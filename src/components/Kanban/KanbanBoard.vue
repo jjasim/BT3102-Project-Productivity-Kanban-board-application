@@ -7,7 +7,7 @@
             class="col"
           >
             <div class="col-header">
-              <p>{{column.title}}</p>
+              <p>{{column.name}}</p>
               <button class="add-card-button" @click="showModal">+ Add Card</button>
             </div>
             <!-- Draggable component comes from vuedraggable. It provides drag & drop functionality -->
@@ -34,20 +34,46 @@
             <template v-slot:header>
               Add Card
             </template>
-            
+            <template v-slot:body>
+              <form>
+              <div class="addproject-addprojtitle">
+                <div class="addproject-projtitletext">Card title:</div>
+                
+                  <input type="text" class="addproject-inputbg" placeholder="Card title..." id="newProjName" required>
+                
+                </div>
+                <div class="addproject-addprojtitle">
+                <div class="addproject-projtitletext">Due Date:</div>
+                
+                  <input type="date" class="addproject-inputbg" id="newProjName">
+                
+                </div>
+                <div class="addproject-adduser">
+                  <div class="addproject-userstext">Authorised Users:</div>
+                
+                  <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" required>
+                  <input type='button' class="addproj-adduser-btn" value='Add user' id='add'>
+              
+              </div> 
+            </form>
+            </template>
             <template v-slot:footer>
               <div class="addproject-pushbuttons">
-                <button class="addproject-addbutton">Add project</button>
+                <button class="addproject-addbutton">Add Card</button>
               </div>
             </template>
           </Modal>
   </template>
   
   <script>
+  import { collection, getDocs, getFirestore, doc, addDoc } from "firebase/firestore"
+  import { auth, db } from "../../firebase/init.js"
+  import { getAuth, onAuthStateChanged } from "@firebase/auth";
   import KanbanCard from "./KanbanCard.vue";
   import draggable from "vuedraggable";
   import KanbanCreateList from "./KanbanCreateList.vue";
   import Modal from "../Modal.vue"
+  import { useLists } from "./KanbanAPI";
   export default {
     name: "KanbanBoard",
     display: "Simple",
@@ -62,7 +88,11 @@
       createList(listName) {
         this.columns.push({
           title: listName,
-          tasks: []
+          tasks: [
+            {
+
+            }
+          ]
         });
         console.log(this.columns)
       },
@@ -75,44 +105,8 @@
     },
     data() {
     return {
-      isModalVisible : false, 
-      columns: [
-        {
-          title: "Backlog",
-          tasks: [
-            {
-              id: 1,
-              title: "Add discount code to checkout page",
-              date: "Sep 14",
-              type: "Feature Request"
-            },
-            {
-              id: 2,
-              title: "Provide documentation on integrations",
-              date: "Sep 12",
-              type: "Feature Request"
-            },
-            {
-              id: 3,
-              title: "Design shopping cart dropdown",
-              date: "Sep 9",
-              type: "Design"
-            },
-            {
-              id: 4,
-              title: "Add discount code to checkout page",
-              date: "Sep 14",
-              type: "Feature Request"
-            },
-            {
-              id: 5,
-              title: "Test checkout flow",
-              date: "Sep 15",
-              type: "QA"
-            }
-          ]
-        }
-      ]
+      isModalVisible : false,
+      columns: useLists()
     };
   }
   };
@@ -194,4 +188,16 @@
   background: #F7FAFC;
   border: 1px solid #4299e1;
 }
+
+input {
+    text-indent: 8px;
+}
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+  padding-right: 1rem;
+  
+}
+
+
 </style>
