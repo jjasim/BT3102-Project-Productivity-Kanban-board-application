@@ -13,6 +13,9 @@
 
 <script>
 import KanbanBadge from "./KanbanBadge.vue";
+import { collection, getDocs, getFirestore, doc, addDoc } from "firebase/firestore"
+import { auth, db } from "../../firebase/init.js"
+import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 export default {
     components: {
@@ -25,10 +28,18 @@ export default {
     };
   },
   methods: {
-    createList() {
+    async createList() {
+        const auth = getAuth();
         this.$emit("create-list", this.newListName);
-      this.addingList = false;
-      this.newListName = "";
+        const collectionRef = collection(db, "lists");
+        const listDoc = {
+            userUID: auth.currentUser.uid,
+            name : this.newListName
+        }
+        await addDoc(collectionRef, listDoc);
+        console.log("list created")
+        this.addingList = false;
+        this.newListName = "";
     },
     cancelListCreation() {
       this.addingList = false;

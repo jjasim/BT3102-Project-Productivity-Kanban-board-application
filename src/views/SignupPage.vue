@@ -44,6 +44,8 @@ export default {
         email: '',
         password: '',
         companyCode: '',
+        points : 0,
+        projects : [],
         error: false,
         errorMsg: ''
     };
@@ -59,7 +61,9 @@ export default {
                 name : this.name,
                 username : this.username,
                 email : this.email,
-                companyCode : this.companyCode
+                companyCode : this.companyCode,
+                points : this.points,
+                projects : this.projects
             }
             await addDoc(collectionRef, userDoc);
             const user = createUser;
