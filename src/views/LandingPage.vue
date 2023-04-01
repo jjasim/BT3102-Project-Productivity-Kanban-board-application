@@ -3,12 +3,10 @@
         <h1 class="logo">WorkWise</h1>
         <div class="login">
             <LogInBtn/>
-        </div>
-        <div class="signup">
             <SignUpBtn/>
         </div>
     </div>
-    <v-carousel cycle :show-arrows="false" hide-delimiters interval="3000" height="650px">
+    <v-carousel cycle :show-arrows="false" hide-delimiters interval="3000" height="680px">
         <v-carousel-item 
             v-for="(image, i) in images" 
             :key="i"
@@ -22,7 +20,10 @@
         <p class="typed">Work well, Work wise.</p>
     </div>
 
-    <p class="text">Join over 1000 teams worldwide using WorkWise</p>
+    <div class="text">
+        <span>Join over 1000 teams worldwide using WorkWise</span>
+    </div>
+    
 
     <div class="logos">
         <img
@@ -57,19 +58,18 @@
             />
     </div>
 
-    <div class="description">
+    <div class="bottom">
+        <div class="description">
         <p> We provide a solution to your productivity woes by incorporating useful features such as a Kanban Board, Collaborative Calendar, Analytics Dashboard and a Reward System all into one simple application.</p>
         <div class="signup2">
             <SignUpBtn/>
         </div>
+        </div>
         
+        <div class="productive">
+            <img src="@/assets/LP/Picture4.jpg" id="image"/>
+        </div>
     </div>
-        
-    <div class="productive">
-        <img src="@/assets/LP/Picture4.jpg" id="image"/>
-    </div>
-    
-
         
 
 </template>
@@ -103,17 +103,21 @@ export default {
 
 </script>
 
-<style scoped>
 
-* {
-    padding: 0;
+<style type="text/css">
+body { 
     margin: 0;
+    padding: 0;
 }
+</style>
+
+<style scoped>
 /* Header */
 .header {
     background-color: rgba(19, 13, 111, 1);
     display: flex;
-    padding: 20px;
+    justify-content: space-between;
+    padding: 0px;
 
 }
 .logo {
@@ -122,20 +126,19 @@ export default {
     font-style: Regular;
     font-family: Yeseva One;
     font-weight: 400;
-    padding: 5px 0px 0px 50px;
+    padding: 0px 0px 0px 40px;
 }
 
 .login {
-    padding-top: 10px;
-    padding-left: 45%;
-    padding-right: 3%;
+    padding-left: 40%;
+    padding-top: 40px;
 
 }
 
 .signup {
-    padding-top: 10px;
-    padding-right: 10%;
-
+    padding-top: 40px;
+    padding-left: 3%;
+    padding-right: 5%;
 }
 
 /* Carousel Component */
@@ -147,7 +150,7 @@ export default {
     place-items: center;
     width: 670px;
     position: absolute;
-    top: 400px;
+    top: 450px;
     left: 100px;
     color: white;
 }
@@ -185,19 +188,22 @@ export default {
     height: 100%;
     padding: 15px;
 }
-.text {
-    color: rgb(254,193,149,1);
-    font-size: 50px;
-    font-style: Regular;
-    font-family: Josefin Sans;
-    font-weight: 900;
-    text-align: center;
-    padding: 50px 0px 10px 0px;
-    background-color: rgba(19, 13, 111, 1);
-}
+    .text {
+        color: rgb(254,193,149,1);
+        font-size: 50px;
+        font-style: Regular;
+        font-family: Josefin Sans;
+        font-weight: 900;
+        text-align: center;
+        padding: 50px 0px 10px 0px;
+        background-color: rgba(19, 13, 111, 1);
+    }
 
 /* Description */
 
+.bottom {
+    height: 420px;
+}
 .description {
     color: black;
     font-size: 30px;
@@ -206,14 +212,14 @@ export default {
     font-weight: 400px;
     text-align: left;
     float: left;
-    width:  50%;
-    padding: 70px 0px 0px 30px;
+    width: 47%;
+    padding: 70px 20px 0px 30px;
 }
 
 .productive {
     float: left;
-    width: 48%;
-    height: 300px;
+    width: 49%;
+    height: 100%;
 }
 
 #image {
@@ -222,6 +228,6 @@ export default {
 }
 
 .signup2 {
-    padding: 20px 0px 50px 270px;
+    padding: 40px 0px 50px 250px;
 }
 </style>

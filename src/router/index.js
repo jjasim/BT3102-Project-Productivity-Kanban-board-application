@@ -5,7 +5,7 @@ import SignupPage from '@/views/SignupPage.vue';
 import ProjectTaskPage from '@/views/ProjectTaskPage.vue';
 import HomePage from '@/views/HomePage.vue';
 import KanbanBoard from '@/components/Kanban/KanbanBoard.vue'
-import Calendar from '@/views/Calendar.vue';
+import CalendarPage from '@/views/CalendarPage.vue';
 
 const routes = [
     {
@@ -36,7 +36,7 @@ const routes = [
     {
         path: '/calendar',
         name: 'Calendar Page',
-        component: Calendar,
+        component: CalendarPage,
     }
 ]
 

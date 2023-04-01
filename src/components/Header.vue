@@ -1,9 +1,11 @@
 <template>
     <div class="header">
-      <div class="project-name">Project 1</div>
+      <div class="project-name">
+        Project 1
+    </div>
       <div class="buttons">
-        <button @click="goToTasks">Tasks</button>
-        <button @click="goToCalendar">Calendar</button>
+        <button @click="goToTasks" :class="{ 'nav-button': true, 'clicked': $route.path === '/tasks'}" >Tasks</button>
+        <button @click="goToCalendar" :class="{ 'nav-button': true, 'clicked': $route.path == '/calendar' }">Calendar</button>
       </div>
     </div>
   </template>
@@ -11,13 +13,22 @@
   <script>
   export default {
     name: "Header",
+    mounted() {
+      const button = document.querySelector('.nav-button');
+      console.log(button);
+  
+      button.addEventListener('click', () => {
+        button.classList.add('clicked');
+        console.log("clicked!")
+      });
+    },
     methods: {
-        goToCalendar() {
-            this.$router.push("/calendar")
-        },
-        goToTasks() {
-            this.$router.push("/tasks")
-        }
+      goToCalendar() {
+        this.$router.push("/calendar")
+      },
+      goToTasks() {
+        this.$router.push("/tasks")
+      }
     }
   };
   </script>
@@ -32,16 +43,20 @@
     justify-content: space-between;
     align-items: center;
     height: 50px;
+    width: 60vw;
     padding: 5px 20px;
   }
   .project-name {
     font-size: 35px;
     font-weight: bold;
+    align-items: center;
   }
   .buttons {
     display: flex;
+    align-items: center;
     gap: 10px;
   }
+
   button {
     padding: 10px 20px;
     font-size: 16px;
@@ -50,9 +65,14 @@
     border: none;
     border-radius: 49px;
     cursor: pointer;
+    text-align: center;
   }
-.btn:hover {
-    cursor: pointer;
-}
+
+  button.clicked {
+    background-color: #130D6F;
+  }
+  .btn:hover {
+      cursor: pointer;
+  }
   </style>
   

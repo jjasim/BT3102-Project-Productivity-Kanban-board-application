@@ -4,8 +4,6 @@
     <div class="Sidebar">
       <SideBar />
     </div>
-
-
     <div class="Wrapper">
       <div class="Header">
         <Header />
@@ -74,11 +72,13 @@ export default {
 .ProjectTaskPage-container {
   display: flex;
   flex-direction: row;
+  z-index: 0;
 }
 
 .Sidebar {
   max-width: 17%;
   flex: 1;
+  z-index: 1;
 }
 .Wrapper {
   display: flex;

@@ -80,6 +80,7 @@
     align-self: auto;
     flex-direction: column;
     flex-wrap: wrap;
+
   }
 
   .modal-header {
@@ -254,6 +255,10 @@ background-color: rgba(94, 114, 235, 1);
   background: transparent;  
   padding-top: 1%;
   padding-left: 67%;
+}
+
+.input {
+  text-indent: 10px;
 }
 
 </style>

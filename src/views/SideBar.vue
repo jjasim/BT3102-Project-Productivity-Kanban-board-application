@@ -11,9 +11,9 @@
         <span class="sidebar-usersname"><span>{{ user.email }}</span></span>
       </div>
       <!-- users points -->
-      <div class="sidebar-points">
         <CIcon :icon="cilGem" size="custom"></CIcon>
         <span class="sidebar-pointstext"><span>900 points</span></span>
+        <span class="sidebar-pointstext"><span>900 Points</span></span>
       </div>
     </div>
     <div class="sidebar-body" >
@@ -82,7 +82,7 @@ import Modal from '@/components/Modal.vue';
 import dropdown from '@/components/Dropdown.vue';
 import { CIcon } from '@coreui/icons-vue';
 import { cilGem } from '@coreui/icons';
-import { getAuth, onAuthStateChanged } from "@firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
 
 let project1 = {name: "Project 1"};
 
@@ -330,11 +330,15 @@ let project1 = {name: "Project 1"};
   font-weight: 400;
   background: white;
   border-radius: 12px;
+  cursor: pointer;
 }
 
 a { 
   text-decoration: none; 
   color: white 
+}
+input {
+    text-indent: 10px;
 }
 
 .icon {
