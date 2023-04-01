@@ -69,7 +69,7 @@ export default {
             const user = createUser;
 
             console.log("doc ccreatesd")
-            this.$router.push('/home')
+            this.$router.push('/login')
             return;
         } catch(err) {
             this.errorMsg = err.message

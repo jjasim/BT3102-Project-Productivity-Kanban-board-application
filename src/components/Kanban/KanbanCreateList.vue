@@ -19,7 +19,7 @@ import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 export default {
     components: {
-        KanbanBadge
+        KanbanBadge,
     },
     data() {
     return {
@@ -30,13 +30,14 @@ export default {
   methods: {
     async createList() {
         const auth = getAuth();
-        this.$emit("create-list", this.newListName);
         const collectionRef = collection(db, "lists");
         const listDoc = {
-            userUID: auth.currentUser.uid,
-            name : this.newListName
+            userUID : auth.currentUser.uid,
+            name : this.newListName,
         }
-        await addDoc(collectionRef, listDoc);
+        const docRef = await addDoc(collectionRef, listDoc);
+        const id = docRef.id;
+        this.$emit("create-list", {id, name : this.newListName});
         console.log("list created")
         this.addingList = false;
         this.newListName = "";

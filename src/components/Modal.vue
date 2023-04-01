@@ -10,13 +10,8 @@
             <span class="modal-popuptitle"><slot name="header">
           This is the default title!
         </slot></span>
-        <button
-          type="button"
-          class="btn-close"
-          @click="close"
-        >
-          x
-        </button>
+        <CIcon class="btn-close" :icon="cilX" size="sm" @click="close"/>
+
       </header>
 
       <section class="modal-body">
@@ -38,8 +33,19 @@
 </template>
         
 <script>
+  import { CIcon } from '@coreui/icons-vue';
+  import { cilX } from '@coreui/icons'; 
+
   export default {
     name: 'Modal',
+    components: {
+      CIcon
+    },
+    setup() {
+      return {
+        cilX
+      }
+    },
     methods: {
       close() {
         this.$emit('close');
@@ -105,13 +111,12 @@
   }
 
   .btn-close {
-    border: none;
-    font-size: 20px;
+    max-height: 40px;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem; 
+    padding-left: 0.75rem;
+    padding-right: 0.75rem; 
     cursor: pointer;
-    font-weight: bold;
-    color: rgba(94, 114, 235, 1);
-    background: transparent;
-    border-radius: 22px;
   }
 
   .modal-fade-enter,
