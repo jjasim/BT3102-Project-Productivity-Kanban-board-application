@@ -11,10 +11,8 @@
         <span class="sidebar-usersname"><span>{{ user.email }}</span></span>
       </div>
       <!-- users points -->
-        <CIcon :icon="cilGem" size="custom"></CIcon>
-        <span class="sidebar-pointstext"><span>900 points</span></span>
-        <span class="sidebar-pointstext"><span>900 Points</span></span>
-      </div>
+      <CIcon :icon="cilGem" size="custom"></CIcon>
+      <span class="sidebar-pointstext"><span>900 points</span></span>
     </div>
     <div class="sidebar-body" >
       <!-- home -->
