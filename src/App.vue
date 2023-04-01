@@ -1,5 +1,8 @@
 <template>
-  <RouterView />
+  <RouterView v-if="!mobile"/>
+  <div v-else class="mobile-message flex flex-column">
+    <mobile-device></mobile-device>
+  </div>
 </template>
 
 <script>
@@ -11,6 +14,7 @@ import { RouterView } from 'vue-router';
 import SideBar from './views/SideBar.vue';
 import Modal from './components/Modal.vue';
 import dropdown from './components/Dropdown.vue';
+import MobileDevice from './views/MobileDevice.vue';
 
 export default {
   name: 'App',
@@ -21,16 +25,30 @@ export default {
     ProjectTaskPage,
     SideBar,
     Modal,
-    dropdown
+    dropdown,
+    MobileDevice
   },
   data(){
     return {
-      refreshComp: 0
+      refreshComp: 0,
+      mobile: null
     }
+  },
+  created() {
+    this.checkScreenSize();
+    window.addEventListener("resize", this.checkScreenSize);
   },
   methods: {
     change(){
       this.refreshComp += 1
+    },
+    checkScreenSize() {
+      const windowWidth = window.innerWidth;
+      if (windowWidth <= 750) {
+        this.mobile = true;
+        return; 
+      }
+      this.mobile = false;
     }
   }
 }

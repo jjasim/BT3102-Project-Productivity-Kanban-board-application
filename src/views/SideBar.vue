@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar-bg" v-if="user">
+  <div class="sidebar-bg" v-if="user" >
     <div class="sidebar-header" >
        <!-- user's name -->
       <div class="SideBar-Name">
@@ -8,7 +8,7 @@
             src="src/assets/sidebar-person-icon.png"
             class="UserIcon"
           />
-        <span class="sidebar-usersname"><span>{{ user.email }}</span></span>
+        <span class="sidebar-usersname"><span>{{ userDetails[0].username }}</span></span>
       </div>
       <!-- users points -->
       <div class="sidebar-points">
@@ -17,7 +17,7 @@
           alt="Icon"
           class="sidebar-pointsvector" 
         />
-        <span class="sidebar-pointstext"><span>900 Points</span></span>
+        <span class="sidebar-pointstext"><span>{{ userDetails[0].points }}</span></span>
       </div>
     </div>
     <div class="sidebar-body" >
@@ -84,6 +84,7 @@
   <script>
 import Modal from '@/components/Modal.vue';
 import dropdown from '@/components/Dropdown.vue';
+import { getUser } from '../components/SidebarAPI/index.js';
 import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
 
 let project1 = {name: "Project 1"};
@@ -98,13 +99,14 @@ let project1 = {name: "Project 1"};
         isModalVisible: false,
         user : false,
         arrayOfObjects: [project1],
+        userDetails: getUser()
       }
     },
     mounted() {
       const auth = getAuth();
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          this.user = user; 
+          this.user = user;
         }
       })
     },

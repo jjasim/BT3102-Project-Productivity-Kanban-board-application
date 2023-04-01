@@ -3,12 +3,11 @@
       <div class="card-contents">
         <p 
         class="card-text">
-        {{task.title}}
+        {{task.taskName}}
         </p>
       </div>
       <div class="card-bottom">
-        <span class="card-date">{{task.date}}</span>
-        <kanban-badge v-if="task.type" :color="badgeColor">{{task.type}}</kanban-badge>
+        <!-- <span class="card-date">{{task.date}}</span> -->
       </div>
     </div>
   </template>
