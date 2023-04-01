@@ -8,6 +8,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@coreui/icons": "^3.0.1",
+    "@coreui/icons-vue": "^2.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
     "firebase": "^9.18.0",
@@ -15,6 +17,7 @@
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
     "vue-simple-calendar": "^6.3.1",
+    "vue3-datepicker": "^0.3.4",
     "vue3-draggable": "^2.0.9",
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.1.12"
