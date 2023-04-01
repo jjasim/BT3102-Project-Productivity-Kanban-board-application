@@ -12,11 +12,7 @@
       </div>
       <!-- users points -->
       <div class="sidebar-points">
-        <img
-          src="src/assets/sidebar-points-vector.png"
-          alt="Icon"
-          class="sidebar-pointsvector"
-        />
+        <CIcon :icon="cilGem" size="custom"></CIcon>
         <span class="sidebar-pointstext"><span>900 points</span></span>
       </div>
     </div>
@@ -84,6 +80,8 @@
   <script>
 import Modal from '@/components/Modal.vue';
 import dropdown from '@/components/Dropdown.vue';
+import { CIcon } from '@coreui/icons-vue';
+import { cilGem } from '@coreui/icons';
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 let project1 = {name: "Project 1"};
@@ -91,10 +89,14 @@ let project1 = {name: "Project 1"};
 
   export default {
     name: 'Sidebar',
-    components: {Modal, dropdown},
-    data() {
+    components: {Modal, dropdown, CIcon},
+    setup() {
       return {
-        addProjPopupVisible: false,
+        cilGem
+      }
+    },
+    data() {
+      return { 
         isModalVisible: false,
         user : false,
         arrayOfObjects: [project1],
@@ -333,6 +335,12 @@ let project1 = {name: "Project 1"};
 a { 
   text-decoration: none; 
   color: white 
+}
+
+.icon {
+  height: 24px;
+  padding: 2%;
+  color: white;
 }
 
 /* Add animation (fade in the popup) */

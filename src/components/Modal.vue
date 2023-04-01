@@ -216,6 +216,7 @@ border-color: rgba(0, 0, 0, 1);
 border-style: solid;
 border-width: 1px;
 border-radius: 22px;
+font-size: 19px;
 }
 
 .addproject-pushbuttons{

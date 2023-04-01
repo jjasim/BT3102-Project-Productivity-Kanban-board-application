@@ -1,7 +1,7 @@
 <template>
       <form @submit.prevent="addItem" autocomplete="off">
         <div class="todolisttitle">Tasks</div>
-        <label> Your tasks today: {{ isComplete }} / {{ totalItems }}</label>
+        <label> Completed tasks today: {{ isComplete }} / {{ totalItems }}</label>
 
       <!-- Show added items in list view-->
       <ul class="task-list">
@@ -9,84 +9,59 @@
         <!-- v-bind to check whether item is completed or not-->
         <li class="task-list-item" v-for="(item, index) in items" :key="index" v-bind:class="{completed: item.completed}">
           <div class="item-details">
-            <input type="checkbox" 
+            <input class="checkbox" type="checkbox" 
             v-model="item.completed"/>
-            <span class="item-title">
-              {{ item.text }}</span>
-            <div class="item-d">
-              <img
-                src="src/assets/ToDoList-calendar.png"
-                alt="Icon"
-              />
-              <a class="item-duedate">{{ item.due }}</a>
+            <span class="item-title">{{ item.text }}</span>
+            <div>
+              <a class="item-duedate"><CIcon :icon="cilCalendar" size="custom"/> {{ item.due }}</a>
               <a class="item-location">in {{  item.location }}</a>
             </div>
-          </div>
-          <!-- delete item on click-->
-          <a class="item-points">+ {{ item.points }} points</a>
+        </div>
+          <div class="item-points">+ {{ item.points }} points</div>
           <button v-on:click= "deleteItem(index)"
-            class="button btn-delete"> - </button>
+            class="button btn-delete"><CIcon :icon="cilTrash" size="custom"></CIcon> </button>
         </li>
       </ul>
 
       <!-- to add new item into the list -->
       <div class="task">
-      <input
-        type="text"
-        class="task-input"
-        v-model="newItem"
-        placeholder="Add individual task"
-      />
-
-      <div class="sidebar-addproj" @click="showModal">
-        <CIcon :icon="cilCalendar" size="xl"/>
-        Add individual task
+      <div class="task-input" @click="showModal"><CIcon :icon="cilLibraryAdd" size="custom"/> Add individual task</div>
       </div>
-
-          <!-- Add item on click -->
-          <button  class="button btn-add">Add</button>
-          <Modal v-show="isModalVisible" @close="closeModal">
-            <template v-slot:header>
-              Add project
-            </template>
+      
+      <!-- add project pop up -->
+      <Modal v-show="isModalVisible" @close="closeModal">
+        <template v-slot:header>
+          Add individual task
+        </template>
             
-            <template v-slot:body>
-              <form>
-              <div class="addproject-addprojtitle">
-                <div class="addproject-projtitletext">Project title:</div>
-                
-                  <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newProjName" required>
-                
+        <template v-slot:body>
+          <form>
+            <div class="addproject-addprojtitle">
+              <div class="addproject-projtitletext">Task:</div>
+                <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newTaskName" required>  
               </div>
-                <div class="addproject-adduser">
-                  <div class="addproject-userstext">Authorised Users:</div>
-                
-                  <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" required>
-                  <input type='button' class="addproj-adduser-btn" value='Add user' id='add' @click="addUser()">
-                
-                <div class="addproject-addeduserstext">Added users:</div>
-                <ul class="addproject-currentusers" id='list'>
-                    <li>{{  user.email  }}</li>
-                </ul>
+              <div class="addproject-adduser">
+                <div class="addproject-userstext">Due date:</div>
+                  <Datepicker class="addproject-inputbg" id="dueDate" v-model="picked" placeholder="YYYY-MM-DD"></Datepicker>
               </div> 
             </form>
             </template>
 
             <template v-slot:footer>
               <div class="addproject-pushbuttons">
-                <button class="addproject-addbutton" @click="addData">Add project</button>
+                <button class="addproject-addbutton" @click="addData">Add task</button>
               </div>
             </template>
           </Modal>
-      </div>
-      
+
       </form>
   </template>
   
   <script>
   import Modal from '@/components/Modal.vue';
   import { CIcon } from '@coreui/icons-vue';
-  import { cilCalendar } from '@coreui/icons';
+  import { cilCalendar, cilLibraryAdd, cilTrash } from '@coreui/icons';
+  import Datepicker from '@/components/Datepicker/Datepicker.vue';
 
   let task = {text: "Task 1", points: 100, due: "due date", completed: false, location: "Individual Tasks"};
 
@@ -95,6 +70,8 @@
       return {
         newItem: "", //item before adding into array
         items: [task], //store items in array
+        isModalVisible: false,
+        picked: new Date(),
       };
     },
     computed: {
@@ -114,12 +91,31 @@
       },
       deleteItem(index) {
         this.items.splice(index, 1); //remove item
-      }
+      },
+      showModal() {
+        this.isModalVisible = true;
+      },
+      closeModal() {
+        document.getElementById("dueDate").value = "";
+        document.getElementById("newTaskName").value = "";
+        this.isModalVisible = false;
+      },
+      addData() {
+        var taskName = document.getElementById("newTaskName").value;
+        var dueDate = document.getElementById("dueDate").value; 
+        let newTask = {text: taskName, points: 100, due: dueDate, completed: false, location: "Individual Tasks"};
+        this.items.push(newTask);
+        document.getElementById("dueDate").value = "";
+        document.getElementById("newTaskName").value = "";
+        this.isModalVisible = false;
+      },
     },
-    components: {Modal, CIcon},
+    components: {Modal, CIcon, Datepicker},
     setup() {
       return {
-        cilCalendar 
+        cilCalendar,
+        cilLibraryAdd,
+        cilTrash,
       }
   }
   };
@@ -191,14 +187,7 @@ ul {
   text-decoration: line-through;
 }
 .task-input{
-  background-color: #fff;
-  box-sizing: border-box;
-  display: inline-block;
-  padding: 10px 6px;
-  margin: 0 0 5px 0;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  flex: 1 0 auto;
+  color: #616161;
 }
 .btn-add{
   flex-shrink: 0;
@@ -212,11 +201,9 @@ ul {
 
 .btn-delete{
   margin-left: auto;
-  height: 34px;
   border: none;
-  border-radius: 5px;
-  background-color: #ff2c2c;
-  color: white;
+  background: none;
+  color: #616161;
   float: right;
 }
 .task-list {
@@ -234,36 +221,27 @@ ul {
   border-bottom-color: black;
   border-bottom: 9px;
 }
-.task-list-item input:checked + a{
+.item-details input:checked + div{
   color: grey;
 }
-.task-list-item input:checked + span{
+.item-details input:checked + span{
   text-decoration: line-through;
 }
 
 .item-details {
   flex-direction: column;
   width: 100%;
+  justify-content: space-around;
 }
 
 .item-title {
   font-style: Regular;
   font-family: Josefin Sans;
-  font-weight: 400;
-  line-height: normal;
-  font-stretch: normal;
-  text-decoration: none;
-  height: auto;
   font-size: 23px;
-  flex-direction: row;
-}
-
-.item_d{
-  flex-direction: row;
-  margin-left: 5%;
 }
 
 .item-duedate {
+  margin: 0% 1% 0% 3%;
   color: #FEC195;
   padding: 5px;
   font-size: 20px;
@@ -290,5 +268,12 @@ ul {
 
 .item-points {
   color: #FF9190;
+}
+.checkbox {
+  color:#5E72EB;
+}
+
+.icon {
+  height: 20px;
 }
   </style>

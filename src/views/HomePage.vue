@@ -9,8 +9,7 @@
         <span class="Homepage-greeting-hellotext">Hello, {{ user.email }}</span>
         <div class="Homepage-date">
           <span class="Homepage-todaytext">Today</span>
-          <span class="Homepage-datetext">Thursday,</span>
-          <span class="Homepage-datetext">16 Feb</span>
+          <span class="Homepage-datetext">{{currentDate()}}</span>
         </div>
       </div>
 
@@ -18,7 +17,6 @@
     <div class="ToDoList">
       <ToDoList />
     </div>
-     <!-- add project pop up -->
      
   </div>
   </div>
@@ -34,9 +32,9 @@ export default {
   data() {
     return {
       user : false, 
+      todaysdate: new Date().toLocaleString,
     }
   },
-  
   mounted() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
@@ -45,7 +43,13 @@ export default {
       }
     })
   },
-
+  methods: {
+    currentDate() {
+      const current = new Date();
+      const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
+      return date;
+    }
+  },
   components: {SideBar, ToDoList}
 }
 </script>
