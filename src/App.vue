@@ -9,6 +9,7 @@
 import LandingPage from './views/LandingPage.vue';
 import LoginPage from './views/LoginPage.vue';
 import SignupPage from './views/SignupPage.vue';
+import HomePage from './views/HomePage.vue';
 import ProjectTaskPage from './views/ProjectTaskPage.vue';
 import { RouterView } from 'vue-router';
 import SideBar from './views/SideBar.vue';
@@ -22,6 +23,7 @@ export default {
     LandingPage,
     LoginPage,
     SignupPage,
+    HomePage,
     ProjectTaskPage,
     SideBar,
     Modal,

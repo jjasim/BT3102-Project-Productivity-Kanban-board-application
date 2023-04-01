@@ -73,6 +73,10 @@
 </script>
 
 <style>
+ @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
+  * {
+    font-family: 'Josefin Sans', sans-serif;
+  }
 
 .btn-group {
   position: relative;
