@@ -11,10 +11,10 @@
           <div class="item-details">
             <input class="checkbox" type="checkbox" 
             v-model="item.completed"/>
-            <span class="item-title">{{ item.text }}</span>
+            <span class="item-title">{{ item.name }}</span>
             <div>
-              <a class="item-duedate"><CIcon :icon="cilCalendar" size="custom"/> {{ item.due }}</a>
-              <a class="item-location">in {{  item.location }}</a>
+              <a class="item-duedate"><CIcon :icon="cilCalendar" size="custom"/> {{  `${item.endDate.getDate()}/${item.endDate.getMonth()+1}/${item.endDate.getFullYear()}` }}</a>
+              <a class="item-location">in {{ item.location }}</a>
             </div>
         </div>
           <div class="item-points">+ {{ item.points }} points</div>
@@ -59,20 +59,20 @@
   
   <script>
   import Modal from '@/components/Modal.vue';
+  import { getCards } from '../components/ToDoListAPI/index.js';
   import { CIcon } from '@coreui/icons-vue';
   import { cilCalendar, cilLibraryAdd, cilTrash } from '@coreui/icons';
   import Datepicker from '@/components/Datepicker/Datepicker.vue';
-
-  let task = {text: "Task 1", points: 100, due: "due date", completed: false, location: "Individual Tasks"};
+  import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
   export default {
-    data() {
-      return {
-        newItem: "", //item before adding into array
-        items: [task], //store items in array
-        isModalVisible: false,
-        picked: new Date(),
-      };
+    mounted() {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          this.user = user;
+        }
+      })
     },
     computed: {
       totalItems() {
@@ -81,6 +81,15 @@
       isComplete() {
         return this.items.filter(item => item.completed).length; //to get completed [checkbox: checked] 
       }
+    },
+    data() {
+      return {
+        newItem: "", //item before adding into array
+        items: getCards(),
+        isModalVisible: false,
+        picked: new Date(),
+        user: false,
+      };
     },
     methods: {
       addItem() {

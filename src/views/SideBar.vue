@@ -14,8 +14,7 @@
       <div>
       <CIcon :icon="cilGem" size="custom"></CIcon>
       <span class="sidebar-pointstext"><span>{{ userDetails[0].points }}</span></span>
->>>>>>> main
-    </div>
+      </div>
     </div>
     <div class="sidebar-body" >
       <!-- home -->
@@ -24,7 +23,7 @@
       </div>
       <!-- team projects -->
       <dropdown class="my-dropdown-toggle"
-          :options="arrayOfObjects" 
+          :options="arrayOfProjects" 
           :selected="object" 
           v-on:updateOption="methodToRunOnSelect" 
           :closeOnOutsideClick="boolean">
@@ -58,7 +57,7 @@
                 
                 <div class="addproject-addeduserstext">Added users:</div>
                 <ul class="addproject-currentusers" id='list'>
-                    <li>{{  user.email  }}</li>
+                    <li>{{  userDetails[0].username  }}</li>
                 </ul>
               </div> 
             </form>
@@ -81,28 +80,29 @@
   <script>
 import Modal from '@/components/Modal.vue';
 import dropdown from '@/components/Dropdown.vue';
-import { getUser } from '../components/SidebarAPI/index.js';
+import { getUser } from '../components/SidebarAPI/userinfo.js';
+import { getProjects } from '../components/SidebarAPI/projects.js';
 import { CIcon } from '@coreui/icons-vue';
 import { cilGem } from '@coreui/icons';
 import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
-
-let project1 = {name: "Project 1"};
-
 
   export default {
     name: 'Sidebar',
     components: {Modal, dropdown, CIcon},
     setup() {
       return {
-        cilGem
+        cilGem,
       }
     },
     data() {
       return { 
         isModalVisible: false,
         user : false,
-        arrayOfObjects: [project1],
-        userDetails: getUser()
+        arrayOfProjects: getProjects(),
+        userDetails: getUser(),
+        object: {
+              name: 'Team Projects',
+            }
       }
     },
     mounted() {
@@ -148,7 +148,7 @@ let project1 = {name: "Project 1"};
         document.getElementById("newUsers").value = "";
       },
       methodToRunOnSelect(payload) {
-            this.object = payload;
+          this.object = payload;
       }
     }
   }
@@ -304,6 +304,11 @@ let project1 = {name: "Project 1"};
     margin-left: 5%;
     margin-top: 5%;
   }
+
+  .sidebar-homebutton:hover {
+  background: #e1e1e1;
+  cursor: pointer;
+}
   .sidebar-analyticsbutton{
     color: rgba(255, 255, 255, 1);
     height: auto;
@@ -320,6 +325,10 @@ let project1 = {name: "Project 1"};
     margin-left: 5%;
     margin-top: 5%;
   }
+  .sidebar-analyticsbutton:hover {
+  background: #e1e1e1;
+  cursor: pointer;
+}
 
   .sidebar-signout {
   border-color: transparent;
