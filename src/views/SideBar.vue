@@ -46,7 +46,7 @@
               <div class="addproject-addprojtitle">
                 <div class="addproject-projtitletext">Project title:</div>
                 
-                  <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newProjName" required>
+                  <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newProjName" v-model="projName" required>
                 
               </div>
                 <div class="addproject-adduser">
@@ -65,7 +65,7 @@
 
             <template v-slot:footer>
               <div class="addproject-pushbuttons">
-                <button class="addproject-addbutton" @click="addData">Add project</button>
+                <button class="addproject-addbutton" type="submit" @click.prevent="addData">Add project</button>
               </div>
             </template>
           </Modal>
@@ -84,7 +84,9 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
 import { getProjects } from '../components/SidebarAPI/projects.js';
 import { CIcon } from '@coreui/icons-vue';
 import { cilGem } from '@coreui/icons';
+import { auth, db } from "../firebase/init.js"
 import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
+import { collection, getDocs, doc, addDoc, setDoc } from "firebase/firestore";
 
   export default {
     name: 'Sidebar',
@@ -102,7 +104,10 @@ import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
         userDetails: getUser(),
         object: {
               name: 'Team Projects',
-            }
+            },
+        projName: '',
+        projUsers: [],
+        userIds: [],
       }
     },
     mounted() {
@@ -124,20 +129,34 @@ import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
         this.isModalVisible = true;
       },
       closeModal() {
+        this.isModalVisible = false;
         document.getElementById("newUsers").value = "";
         document.getElementById("newProjName").value = "";
-        document.getElementById("list").innerHTML = "<li>" + this.user.email + "</li>";
-        this.isModalVisible = false;
+        document.getElementById("list").innerHTML = "<li>" + this.user.username + "</li>";
       },
-      addData() {
-        var emailList = document.getElementById("list");
-        var projname = document.getElementById("newProjName").value;
-        let newProj = {name: projname};
-        this.arrayOfObjects.push(newProj);
-        document.getElementById("newUsers").value = "";
-        document.getElementById("newProjName").value = "";
-        document.getElementById("list").innerHTML = "<li>" + this.user.email + "</li>";
-        this.isModalVisible = false;
+      async addData() {
+        try {
+          this.projUsers = document.getElementById("list");
+          const querySnapshot = await getDocs(query(collection(db, 'users'), where('username', 'in', this.projUsers)));
+          const userIds = querySnapshot.docs.map((doc) => doc.id);
+          const docRef = await addDoc(collection(db, 'projects'), {
+            name: this.projName,
+            users: this.userIds
+          });
+          console.log('Document written with ID: ', docRef.id);
+          this.projName = '';
+          this.projUsers = [];
+          this.userIds = [];
+          let newProj = {name: projname};
+          this.arrayOfObjects.push(newProj);
+          this.isModalVisible = false;
+          document.getElementById("newUsers").value = "";
+          document.getElementById("newProjName").value = "";
+          document.getElementById("list").innerHTML = "<li>" + this.user.username + "</li>";
+        } catch(err) {
+            this.errorMsg = err.message
+            this.error = true;
+        }
       },
       addUser() {
         var input = document.getElementById("newUsers").value;

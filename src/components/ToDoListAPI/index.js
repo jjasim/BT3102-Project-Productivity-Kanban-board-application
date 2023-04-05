@@ -12,6 +12,7 @@ export const getCards = () => {
         let unsubscribe = onSnapshot(cardsQuery, (snapshot) => {
             snapshot.docs.forEach((doc) => {
             const card = {
+                id: doc.id,
                 completed: doc.get('completed'),
                 endDate: doc.get('endDate').toDate(),
                 listID: doc.get('listID'), 
@@ -39,6 +40,7 @@ export const getCards = () => {
         let unsubscribe = onSnapshot(indivQuery, (indivSnapshot) => {
             indivSnapshot.docs.forEach((doc) => {
             const card = {
+                id: doc.id,
                 completed: doc.get('completed'),
                 endDate: doc.get('endDate').toDate(),
                 name: doc.get('Name'),

@@ -1,5 +1,6 @@
 <template>
-      <form @submit.prevent="addItem" autocomplete="off">
+  <div class="todolist-bg">
+      <form @submit.prevent="addData" autocomplete="off">
         <div class="todolisttitle">Tasks</div>
         <label> Completed tasks today: {{ isComplete }} / {{ totalItems }}</label>
 
@@ -7,10 +8,10 @@
       <ul class="task-list">
         <!-- v-for to iterates over the items array and create a list of item for each item in the array -->
         <!-- v-bind to check whether item is completed or not-->
-        <li class="task-list-item" v-for="(item, index) in items" :key="index" v-bind:class="{completed: item.completed}">
+        <li class="task-list-item" v-for="(item) in items" :key="item.id" v-bind:class="{completed: item.completed}">
           <div class="item-details">
             <input class="checkbox" type="checkbox" 
-            v-model="item.completed"/>
+            v-model="item.completed" v-on:change="clickChecked(item)"/>
             <span class="item-title">{{ item.name }}</span>
             <div>
               <a class="item-duedate"><CIcon :icon="cilCalendar" size="custom"/> {{  `${item.endDate.getDate()}/${item.endDate.getMonth()+1}/${item.endDate.getFullYear()}` }}</a>
@@ -35,10 +36,10 @@
         </template>
             
         <template v-slot:body>
-          <form>
+          <form @submit.prevent="addData" >
             <div class="addproject-addprojtitle">
               <div class="addproject-projtitletext">Task:</div>
-                <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newTaskName" required>  
+                <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newTaskName" v-model="newItem" required>  
               </div>
               <div class="addproject-adduser">
                 <div class="addproject-userstext">Due date:</div>
@@ -49,21 +50,24 @@
 
             <template v-slot:footer>
               <div class="addproject-pushbuttons">
-                <button class="addproject-addbutton" @click="addData">Add task</button>
+                <button class="addproject-addbutton" type="submit" @click.prevent="addData">Add task</button>
               </div>
             </template>
           </Modal>
 
       </form>
+    </div>
   </template>
   
   <script>
   import Modal from '@/components/Modal.vue';
-  import { getCards } from '../components/ToDoListAPI/index.js';
+  import { getCards } from '@/components/ToDoListAPI/index.js';
   import { CIcon } from '@coreui/icons-vue';
   import { cilCalendar, cilLibraryAdd, cilTrash } from '@coreui/icons';
   import Datepicker from '@/components/Datepicker/Datepicker.vue';
-  import { getAuth, onAuthStateChanged } from "@firebase/auth";
+  import { auth, db } from "../firebase/init.js"
+  import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
+  import { collection, getDocs, doc, addDoc, setDoc, updateDoc } from "firebase/firestore";
 
   export default {
     mounted() {
@@ -89,13 +93,26 @@
         isModalVisible: false,
         picked: new Date(),
         user: false,
+        completed: false,
       };
     },
     methods: {
-      addItem() {
-        if (this.newItem !== "") {
-          this.items.push({text: this.newItem, points: 100, due: "due date", completed: false, location: "individual"}); //check if input field is empty, if not empty then push [input] into array [items] and mark not completed [checkbox: unchecked]
-          this.newItem = ""; //input becomes empty
+      async addData() {
+        try {
+          await addDoc(collection(db, 'individualtasks'), {
+            Name: this.newItem,
+            points: 100,
+            endDate: this.picked,
+            completed: false,
+            uid: auth.currentUser.uid,
+          });
+          this.isModalVisible = false;
+          this.newItem = "";
+          this.picked = new Date();
+          document.getElementById("newTaskName").value = "";
+        } catch(err) {
+            this.errorMsg = err.message
+            this.error = true;
         }
       },
       deleteItem(index) {
@@ -105,18 +122,21 @@
         this.isModalVisible = true;
       },
       closeModal() {
+        this.isModalVisible = false;
         document.getElementById("dueDate").value = "";
         document.getElementById("newTaskName").value = "";
-        this.isModalVisible = false;
       },
-      addData() {
-        var taskName = document.getElementById("newTaskName").value;
-        var dueDate = document.getElementById("dueDate").value; 
-        let newTask = {text: taskName, points: 100, due: dueDate, completed: false, location: "Individual Tasks"};
-        this.items.push(newTask);
-        document.getElementById("dueDate").value = "";
-        document.getElementById("newTaskName").value = "";
-        this.isModalVisible = false;
+      async clickChecked(item) {
+        try {
+          const docRef = doc(db, 'individualtasks', item.id);
+          await updateDoc(docRef, {
+            completed: true,
+          });
+          console.log('Field updated successfully.');
+          this.completed = false;
+        } catch (error) {
+        console.error('Error updating field: ', error);
+        }
       },
     },
     components: {Modal, CIcon, Datepicker},
@@ -163,6 +183,8 @@ form {
   text-align: left;
   padding: 10px 20px 10px 20px;
   border-radius: 10px;
+  background-color: #EEEEEE;
+  width: auto;
 }
 h1{
   color: black;
@@ -224,11 +246,10 @@ ul {
   width: 100%;
   display:flex;
   align-items: center;
-  padding: 8px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  border-bottom-color: black;
-  border-bottom: 9px;
+  padding-top: 5%;
+  padding-bottom: 5%;
+  border-bottom-color: #616161;
+  border-bottom: solid;
 }
 .item-details input:checked + div{
   color: grey;
