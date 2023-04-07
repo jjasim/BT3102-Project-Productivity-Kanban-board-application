@@ -46,7 +46,7 @@ import { useRouter } from "vue-router";export default {
     async login() {
         try {
             const loginUser = await signInWithEmailAndPassword(auth, this.email, this.password);
-            this.$router.push('/tasks')
+            this.$router.push('/home')
             return;
         } catch(err) {
             this.errorMsg = err.message
