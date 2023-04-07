@@ -68,7 +68,7 @@ export default {
             await addDoc(collectionRef, userDoc);
             const user = createUser;
 
-            console.log("doc ccreatesd")
+            console.log("doc created")
             this.$router.push('/login')
             return;
         } catch(err) {

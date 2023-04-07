@@ -3,7 +3,7 @@ import LandingPage from '@/views/LandingPage.vue';
 import LoginPage from '@/views/LoginPage.vue';
 import SignupPage from '@/views/SignupPage.vue';
 import ProjectTaskPage from '@/views/ProjectTaskPage.vue';
-import KanbanBoard from '@/components/Kanban/KanbanBoard.vue'
+import HomePage from '@/views/HomePage.vue'
 import CalendarPage from '@/views/CalendarPage.vue';
 
 const routes = [
@@ -21,6 +21,11 @@ const routes = [
         path: '/signup',
         name: 'Sign Up',
         component: SignupPage
+    },
+    {
+        path: '/home',
+        name: 'Home',
+        component: HomePage
     },
     {
         path: '/tasks',

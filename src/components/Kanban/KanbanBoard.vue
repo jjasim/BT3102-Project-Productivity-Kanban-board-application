@@ -1,17 +1,17 @@
   <template>
+    <div>
       <div id="kanban">
         <div class="cards">
           <div
             v-for="column in columns"
             :key="column.id"
             class="col"
-            @click="selectedList = column"
           >
             <div class="col-header">
               <p class="col-name">{{column.name}}</p>
               <div class="options">
-                <CIcon class="plus-icon" :icon="cilPlus" size="sm" @click="showModal"/>
-                <CIcon class="trash-icon" :icon="cilTrash" size="sm" @click="deleteList(column)"/>
+                <CIcon class="plus-icon" :icon="cilPlus" size="sm" @click.prevent="showModal(column)"/>
+                <CIcon class="trash-icon" :icon="cilTrash" size="sm" @click.prevent="deleteList(column)"/>
               </div>
 
             </div>
@@ -22,13 +22,15 @@
                 class="list-group"
                 ghost-class="ghost-card"
                 group="tasks"
-                @move="move"
+                ref="listRef"
+                @end="onEnd"
                 :animation="200"
                 >
                 <template #item="{element}">
                     <kanban-card
                     :task="element"
                     class="card"
+                    @click="handleClick(element)"
                     ></kanban-card>
                 </template>
                 </draggable>
@@ -45,10 +47,13 @@
                   </div>
                   <div class="addproject-addprojtitle">
                   <div class="addproject-projtitletext">Due Date:</div>
-                  
                     <input type="date" class="addproject-inputbg" id="newProjName" v-model="endDate">
-                  
                   </div>
+                  <div class="addproject-addprojtitle">
+                  <div class="addproject-projtitletext">Description</div>
+                    <textarea class="addproject-inputbg" id="newProjName" v-model="about"></textarea>
+                  </div>
+                  
                   <div class="addproject-adduser">
                     <div class="addproject-userstext">Authorised Users:</div>
                   
@@ -60,7 +65,7 @@
               </template>
               <template v-slot:footer>
                 <div class="addproject-pushbuttons">
-                  <button class="addproject-addbutton" @click="addCard(column)">Add Card</button>
+                  <button class="addproject-addbutton" @click.prevent="addCard()">Add Card</button>
                 </div>
               </template>
             </Modal>
@@ -68,11 +73,13 @@
         </div>
         <KanbanCreateList @create-list="createList" />
       </div>
+    </div>
+
 
   </template>
   
   <script>
-  import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc } from "firebase/firestore"
+  import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc, updateDoc, Timestamp} from "firebase/firestore"
   import { auth, db } from "../../firebase/init.js"
   import { getAuth, onAuthStateChanged } from "@firebase/auth";
   import KanbanCard from "./KanbanCard.vue";
@@ -94,31 +101,52 @@
         Modal,
         CIcon
     },
+    data() {
+    return {
+      isModalVisible : false,
+      taskName: "",
+      endDate: new Date(),
+      selectedList: null,
+      columns: useLists(),
+      clickedTask: "",
+      listFrom: "",
+      listTo: "",
+      about: ""
+    };
+  },
     setup() {
       return {
         cilPlus, 
-        cilTrash
+        cilTrash, 
       }
     },
     methods: {
-      async addCard(list) {
-        this.selectedList = list;
+      async addCard() {
         const auth = getAuth();
-        const taskCollectionRef = collection(db, `lists/${list.id}/tasks`);
+        const taskCollectionRef = collection(db, `lists/${this.selectedList.id}/tasks`);
+        const firebaseDate = Timestamp.fromDate(new Date(this.endDate));
         const taskDoc = {
           listID: this.selectedList.id, // use the selected list to set the listID property
           taskName: this.taskName,
+          endDate: firebaseDate,
+          isChecked: false,
+          about: this.about
         };
         await addDoc(taskCollectionRef, taskDoc);
         console.log("card added");
         this.taskName = "";
+        this.endDate = new Date();
+        this.selectedList = null;
         this.isModalVisible = false;
+        this.about = "";
       },
-      showModal() {
+      showModal(list) {
         this.isModalVisible = true; 
+        this.selectedList = list
       },
       closeModal() {
         this.isModalVisible = false;
+        this.taskName = "";
       },
       async deleteList(column) {
         const collectionRef = collection(db, "lists");
@@ -129,18 +157,37 @@
           const document = doc(taskCollection, taskDoc.id)
           deleteDoc(document); 
         })
+        console.log(column);
         await deleteDoc(listDoc);
-      }
-    },
-    data() {
-    return {
-      isModalVisible : false,
-      columns: useLists(),
-      taskName: "",
-      selectedList: null
+      },
+      onEnd(event) {
+        const listFromId = event.from.getAttribute("data-list-id");
+        const listToId = event.to.getAttribute("data-list-id");
+        console.log(listFromId)
+        // Only do something if the task was moved to a different list
+        if (listFromId !== listToId) {
+          const task = event.item.__vue__.task;
+          const taskIndex = event.newIndex;
+          const oldList = this.columns.find(list => list.id === listFromId);
+          const newList = this.columns.find(list => list.id === listToId);
 
-    };
-  }
+          // Remove the task from the old list
+          oldList.tasks.splice(event.oldIndex, 1);
+
+          // Add the task to the new list at the correct index
+          newList.tasks.splice(taskIndex, 0, task);
+
+          // Update the task's listID property
+          const taskRef = doc(db, `lists/${newList.id}/tasks/${task.id}`);
+          updateDoc(taskRef, {
+            listID: newList.id
+          });
+        }
+      }, 
+      handleClick(element) {
+        this.clickedTask = element.id;
+      }
+    }
   };
   </script>
 <style scoped>
@@ -260,6 +307,14 @@ input[type="date"]::-webkit-inner-spin-button,
 input[type="date"]::-webkit-calendar-picker-indicator {
   padding-right: 1rem;
   
+}
+textarea.addproject-inputbg {
+  border: none;
+  background-color: #edf2f7;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
 
