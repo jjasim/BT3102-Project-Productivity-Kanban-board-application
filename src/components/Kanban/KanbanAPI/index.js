@@ -18,7 +18,7 @@ export const useLists = () => {
         };
         
         // Fetch tasks for the current list and listen for changes
-        const tasksQuery = query(collection(db, `lists/${doc.id}/tasks`));
+        const tasksQuery = query(collection(db, `lists/${doc.id}/tasks`), orderBy("endDate", "asc"));
         let unsubscribeTasks = onSnapshot(tasksQuery, (tasksSnapshot) => {
           const tasksData = tasksSnapshot.docs.map((taskDoc) => {
             const endDate = taskDoc.get('endDate').toDate()
