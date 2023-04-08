@@ -30,7 +30,6 @@
                     <kanban-card
                     :task="element"
                     class="card"
-                    @click="handleClick(element)"
                     ></kanban-card>
                 </template>
                 </draggable>
@@ -55,11 +54,13 @@
                   </div>
                   
                   <div class="addproject-adduser">
-                    <div class="addproject-userstext">Authorised Users:</div>
+                    <div class="addproject-userstext">Stakeholders:</div>
                   
-                    <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" v-model="stakeHoldersID" required>
-                    <input type='button' class="addproj-adduser-btn" value='Add user' id='add'>
-                
+                    <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" v-model="stakeHolderEmail">
+                    <input type='button' class="addproj-adduser-btn" value='Add user' id='add' @click="addStakeholder">
+                    <div>
+                      {{ this.stakeHolderArrayEmail }}
+                    </div>
                 </div> 
               </form>
               </template>
@@ -79,7 +80,7 @@
   </template>
   
   <script>
-  import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc, updateDoc, Timestamp} from "firebase/firestore"
+  import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc, updateDoc, Timestamp, query, where, setDoc} from "firebase/firestore"
   import { auth, db } from "../../firebase/init.js"
   import { getAuth, onAuthStateChanged } from "@firebase/auth";
   import KanbanCard from "./KanbanCard.vue";
@@ -107,17 +108,21 @@
       taskName: "",
       endDate: new Date(),
       selectedList: null,
-      columns: useLists(),
       clickedTask: "",
       listFrom: "",
       listTo: "",
-      about: ""
+      about: "",
+      stakeHolderEmail: "",
+      stakeHolderArrayEmail: [],
+      stakeHolderArrayID: []
     };
   },
     setup() {
+      const columns = useLists();
       return {
         cilPlus, 
         cilTrash, 
+        columns
       }
     },
     methods: {
@@ -125,20 +130,25 @@
         const auth = getAuth();
         const taskCollectionRef = collection(db, `lists/${this.selectedList.id}/tasks`);
         const firebaseDate = Timestamp.fromDate(new Date(this.endDate));
+        this.stakeHolderArrayID.push(auth.currentUser.uid)
         const taskDoc = {
           listID: this.selectedList.id, // use the selected list to set the listID property
           taskName: this.taskName,
           endDate: firebaseDate,
           isChecked: false,
-          about: this.about
+          about: this.about,
+          stakeHolderArrayID: this.stakeHolderArrayID
         };
-        await addDoc(taskCollectionRef, taskDoc);
+        const docRef = await addDoc(taskCollectionRef, taskDoc); 
+        await setDoc(doc(db, "tasks", docRef.id), taskDoc)
         console.log("card added");
         this.taskName = "";
         this.endDate = new Date();
         this.selectedList = null;
         this.isModalVisible = false;
         this.about = "";
+        this.stakeHolderArrayEmail = [];
+        this.stakeHolderArrayID = [];
       },
       showModal(list) {
         this.isModalVisible = true; 
@@ -157,35 +167,26 @@
           const document = doc(taskCollection, taskDoc.id)
           deleteDoc(document); 
         })
+        const tasksCollectionRef = collection(db, "tasks");
+        const taskQuery = query(collection(db, "tasks"), where("listID", "==", column.id));
+
+        const mainTasksDocs = await getDocs(taskQuery)
+        mainTasksDocs.forEach(taskDoc => {
+          const document = doc(tasksCollectionRef, taskDoc.id)
+          deleteDoc(document); 
+        })
         console.log(column);
         await deleteDoc(listDoc);
       },
-      onEnd(event) {
-        const listFromId = event.from.getAttribute("data-list-id");
-        const listToId = event.to.getAttribute("data-list-id");
-        console.log(listFromId)
-        // Only do something if the task was moved to a different list
-        if (listFromId !== listToId) {
-          const task = event.item.__vue__.task;
-          const taskIndex = event.newIndex;
-          const oldList = this.columns.find(list => list.id === listFromId);
-          const newList = this.columns.find(list => list.id === listToId);
-
-          // Remove the task from the old list
-          oldList.tasks.splice(event.oldIndex, 1);
-
-          // Add the task to the new list at the correct index
-          newList.tasks.splice(taskIndex, 0, task);
-
-          // Update the task's listID property
-          const taskRef = doc(db, `lists/${newList.id}/tasks/${task.id}`);
-          updateDoc(taskRef, {
-            listID: newList.id
-          });
+      async addStakeholder() {
+        const userQuery = query(collection(db, 'users'), where("email", "==", this.stakeHolderEmail));
+        const querySnapshot = await getDocs(userQuery);
+        const stakeholder = querySnapshot.docs[0];
+        if (stakeholder) {
+          this.stakeHolderArrayID.push(stakeholder.data().uid)
+          this.stakeHolderArrayEmail.push(this.stakeHolderEmail);
         }
-      }, 
-      handleClick(element) {
-        this.clickedTask = element.id;
+        this.stakeHolderEmail = "";
       }
     }
   };
@@ -217,7 +218,7 @@
     background-color: #F3F4F6; 
     border-radius: 0.25rem; 
     border-radius: 0.5rem;
-    min-width: 305.12px;
+    min-width: 295px;
 }
 
 .col-header {

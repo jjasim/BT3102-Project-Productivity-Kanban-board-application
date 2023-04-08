@@ -1,24 +1,48 @@
 <template>
   <div class="card">
-    <div class="card-contents">
-      <div class="card-left">
-        <CIcon class="circle-icon" :icon="cilCircle" size="sm"/>
-        <p class="card-text">
-          {{task.taskName}}
+    <div class="card-only" v-if="!isChecked">
+      <div class="card-contents">
+        <div class="card-left">
+          <CIcon class="circle-icon" :icon="cilCircle" size="sm" @click="toggleCheck"/>
+          <p class="card-text">
+            {{task.taskName}}
+          </p>
+        </div>
+        <CIcon class="pencil-icon" :icon="cilPencil" @click="openModal" size="sm"/>
+      </div>
+      <div class="card-body">
+        <p>
+          {{task.about}}
         </p>
       </div>
-      <CIcon class="pencil-icon" :icon="cilPencil" @click="openModal" size="sm"/>
+      <div class="card-bottom">
+        <span class="card-date">
+          {{formattedDate}}
+        </span>
+        <span class="card-date">+100 Points</span>
+      </div>
     </div>
-    <div class="card-body">
-      <p>
-        {{task.about}}
-      </p>
-    </div>
-    <div class="card-bottom">
-      <span class="card-date">
-        {{formattedDate}}
-      </span>
-      <span class="card-date">+100 Points</span>
+    <div class="card-checked" v-else>
+      <div class="card-contents">
+        <div class="card-left">
+          <CIcon class="circle-icon" :icon="cilCheckCircle" size="sm" @click="toggleCheck"/>
+          <p class="card-text">
+            {{task.taskName}}
+          </p>
+        </div>
+        <CIcon class="pencil-icon" :icon="cilPencil" @click="openModal" size="sm"/>
+      </div>
+      <div class="card-body">
+        <p>
+          {{task.about}}
+        </p>
+      </div>
+      <div class="card-bottom">
+        <span class="card-date">
+          {{formattedDate}}
+        </span>
+        <span class="card-date">+100 Points</span>
+      </div>
     </div>
     <Modal v-show="isModalVisible" @close="closeModal">
       <template v-slot:header>
@@ -32,7 +56,7 @@
           </div>
           <div class="addproject-addprojtitle">
             <div class="addproject-projtitletext">Due Date:</div>
-            <input type="date" class="addproject-inputbg" id="newProjName" v-model="formatDate">
+            <input type="date" class="addproject-inputbg" id="newProjName" v-model="formattedDate">
           </div>
           <div class="addproject-addprojtitle">
             <div class="addproject-projtitletext">Description</div>
@@ -57,9 +81,8 @@
 <script>
 import KanbanBadge from "./KanbanBadge.vue";
 import { CIcon } from '@coreui/icons-vue';
-import { cilCircle, cilPencil } from '@coreui/icons'; 
+import { cilCircle, cilPencil,cilCheckCircle } from '@coreui/icons'; 
 import Modal from "../Modal.vue"
-import { CModal, CModalHeader, CModalFooter, CModalBody, CButton} from '@coreui/vue'
 import { auth, db } from "../../firebase/init.js"
 import { updateDoc, collection, doc, Timestamp } from 'firebase/firestore';
 
@@ -76,10 +99,11 @@ data() {
     taskName: this.task.taskName, 
     about: this.task.about,
     formattedDate: this.formatDate(this.task.formattedDate),
+    isChecked: this.task.isChecked
   }
 },
 setup() {
-  return {cilCircle, cilPencil}
+  return {cilCircle, cilPencil, cilCheckCircle}
 },
 props: {
   task: {
@@ -107,7 +131,9 @@ methods: {
     this.isModalVisible = false; 
   }, 
   async editCard() {
-    const taskCollection = collection(db, `lists/${this.task.listID}/tasks`)
+    const subTaskCollection = collection(db, `lists/${this.task.listID}/tasks`)
+    const taskCollection = collection(db, "tasks");
+    const subTaskDoc = doc(subTaskCollection, this.task.id);
     const taskDoc = doc(taskCollection, this.task.id);
     const firebaseDate = Timestamp.fromDate(new Date(this.formattedDate));
     const updatedData = {
@@ -115,6 +141,7 @@ methods: {
       endDate: firebaseDate,
       about: this.about
     }
+    await updateDoc(subTaskDoc, updatedData);
     await updateDoc(taskDoc, updatedData);
     this.task.taskName = this.taskName;
     const newDate = firebaseDate.toDate()
@@ -135,13 +162,22 @@ methods: {
     const day = date.getDate();
     return `${day} ${month} ${year}`;
   },
-  formatDateModal(date) {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = `0${d.getMonth() + 1}`.slice(-2);
-    const day = `0${d.getDate()}`.slice(-2);
-    return `${year}-${month}-${day}`;
-  },
+  async toggleCheck() {
+    this.isChecked = !this.isChecked;
+    console.log(this.isChecked);
+
+    const subTaskCollection = collection(db, `lists/${this.task.listID}/tasks`)
+    const taskCollection = collection(db, "tasks");
+    const subTaskDoc = doc(subTaskCollection, this.task.id);
+    const taskDoc = doc(taskCollection, this.task.id);
+
+    const updatedData = {
+      isChecked: this.isChecked
+    }
+
+    await updateDoc(subTaskDoc, updatedData)
+    await updateDoc(taskDoc, updatedData)
+  }
 }
 };
 </script>
@@ -151,7 +187,7 @@ methods: {
 * {
   font-family: 'Josefin Sans', sans-serif;
 }
-.card {
+.card-only {
   padding-left: 0.75rem;
   padding-right: 0.75rem; 
   padding-top: 0.75rem; 
@@ -161,13 +197,27 @@ methods: {
   border-width: 1px; 
   border-color: #ffffff; 
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); 
-  max-width: 305px;
+  max-width: 295px;
+}
+
+.card-checked {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem; 
+  padding-top: 0.75rem; 
+  padding-bottom: 0.75rem; 
+  background-color: #bdbbbb; 
+  border-radius: 0.25rem; 
+  border-width: 1px; 
+  border-color: #ffffff; 
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); 
+  max-width: 295px;
 }
 
 .card-contents {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  max-height: 50px;
 }
 
 .card-left {
@@ -196,7 +246,7 @@ methods: {
 }
 
 .card-text {
-  color: #374151; 
+  color: #000000; 
   font-family: 'Josefin Sans', sans-serif;
   font-size: 1.1rem;
   line-height: 1.25rem; 
@@ -205,6 +255,7 @@ methods: {
 }
 .card-body {
   overflow-wrap: break-word;
+  color: #4B5563;
 }
 
 .card-bottom {
