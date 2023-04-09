@@ -1,13 +1,11 @@
 <template>
     <div id="screenfiller">
         <div class="login-container">
-            <h2 id="login-statement">Create a WorkWise account</h2>
+            <h2 id="login-statement">Enter your WorkWise Details</h2>
             <form>
             <input class="form-control" type="text" v-model="name" required placeholder="Full Name">
             <br><br>
             <input class="form-control" type="text" v-model="username" required placeholder="Preferred Username">
-            <br><br>
-            <input class="form-control" type="email" v-model="email" required placeholder="Email">
             <br><br>
             <input class="form-control" type="password" v-model="password" required placeholder="Password">
             <br><br>
@@ -18,14 +16,6 @@
             </div>
             <button class="btn btn-primary" type="submit" @click.prevent="signUp">Sign Up</button>
             </form>
-            <div class="text-divider">
-                or
-            </div>
-            <button class="google-btn" type="submit" @click.prevent="signUpWithGoogle">Sign up with Google</button>
-            <div class="login-bottom">
-                Have an account?
-                <router-link to="/login">Log in here</router-link> 
-            </div>
         </div>        
     </div>
 
@@ -33,7 +23,7 @@
 
 <script>
 import app from "../firebase/init.js"
-import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged} from "firebase/auth";
 import { collection, getDocs, getFirestore, doc, addDoc } from "firebase/firestore"
 import { auth, db } from "../firebase/init.js"
 import { getDoc, setDoc } from "firebase/firestore"
@@ -45,7 +35,6 @@ export default {
     return {
         name: '', 
         username: '',
-        email: '',
         password: '',
         companyCode: '',
         points : 0,
@@ -53,45 +42,41 @@ export default {
         error: false,
         errorMsg: ''
     };
-  },
-  methods: {
+  },    
+  mounted() {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          this.user = user; 
+        } else {
+          this.$router.push("/login");
+        }
+      })
+    },
+    methods: {
     async signUp() {
         try {
-            const createUser = await createUserWithEmailAndPassword(auth, this.email, this.password);
-            console.log("user created")
+            const auth = getAuth();
+            const user = auth.currentUser;
             const collectionRef = collection(db, "users");
             const userDoc = {
-                uid : createUser.user.uid,
+                uid: user.uid,
+                email: user.email, 
                 name : this.name,
                 username : this.username,
-                email : this.email,
                 companyCode : this.companyCode,
                 points : this.points,
                 projects : this.projects
             }
             await addDoc(collectionRef, userDoc);
-            const user = createUser;
 
             console.log("doc created")
-            this.$router.push('/login')
+            this.$router.push('/tasks')
             return;
         } catch(err) {
             this.errorMsg = err.message
             this.error = true;
         }
-    },
-    async signUpWithGoogle() {
-        const provider = new GoogleAuthProvider(); 
-        signInWithPopup(auth, provider)
-        .then((result) => {
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential.accessToken;
-            const user = result.user;
-            this.$router.push('/signupdetails')
-        }).catch((err) => {
-            this.errorMsg = err.message;
-            this.error = true; 
-        });
     }
 },
 }
@@ -123,7 +108,7 @@ html, body {
 .login-container {
     display: block;
     width: 345px;
-    height: 700px;
+    height: 550px;
     text-align:center;
     background: #FFFFFF;
     mix-blend-mode: normal;
@@ -185,7 +170,6 @@ input {
   padding-right: 1.5rem;
   padding-left: 1.5rem;
   padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
 
 }
 
@@ -195,19 +179,5 @@ input {
   height: 1px;
   background-color: #9D9D9D;
   flex-grow: 1;
-}
-
-.google-btn {
-    font-family: 'Josefin Sans', sans-serif;
-    font-size: large;
-    color: white;
-    width: 300px;
-    height: 43px;
-    left: 652px;
-    top: 640px;
-    background: #eb5e5e;
-    border: #130D6F;
-    border-radius: 49px; 
-    cursor: pointer;
 }
 </style>

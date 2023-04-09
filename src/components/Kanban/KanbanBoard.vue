@@ -23,7 +23,7 @@
                 ghost-class="ghost-card"
                 group="tasks"
                 ref="listRef"
-                @end="onEnd"
+                @change="onChange"
                 :animation="200"
                 >
                 <template #item="{element}">
@@ -187,6 +187,12 @@
           this.stakeHolderArrayEmail.push(this.stakeHolderEmail);
         }
         this.stakeHolderEmail = "";
+      },
+      onChange(e) {
+        let item = e.added || e.moved;
+        if (!item) {
+          return;
+        }
       }
     }
   };
