@@ -6,7 +6,7 @@
         </li>
 
         <li @click="toggleMenu()" class="dropdown-toggle dropdown-toggle-placeholder" v-if="selectedOption.name === undefined">
-            <span class="sidebar-projectstext">Team bbbbProjects</span>
+            <span class="sidebar-projectstext">Team Projects</span>
           <span class="caret"></span>
         </li>
 
@@ -30,6 +30,7 @@
                   name: '',
                 },
                 showMenu: false,
+                selectedTab: '',
             }
         },
         props: {
@@ -71,6 +72,24 @@
                 if (!$el.contains(target)) {
                   this.showMenu = false;
                 }
+            },
+
+            navigateToTab() {
+              // Use Vue Router to navigate to the selected tab based on the value
+              switch (this.selectedTab) {
+                case 'tab1':
+                  this.$router.push('/proj1');
+                  break;
+                case 'tab2':
+                  this.$router.push('/proj2');
+                  break;
+                case 'tab3':
+                  this.$router.push('/proj3');
+                  break;
+                default:
+                  this.$router.push('/home'); // Navigate to default route when no tab is selected
+                  break;
+              }
             },
         }
     }

@@ -13,6 +13,7 @@ export const getProjects = () => {
             const proj = {
                 projID: doc.id, 
                 name: doc.get('Name'),
+                link: doc.id,
             }
           projects.push(proj);    
         });

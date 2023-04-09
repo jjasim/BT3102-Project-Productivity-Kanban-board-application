@@ -1,17 +1,16 @@
 <template>
   <div class="todolist-bg">
-      <form @submit.prevent="addData" autocomplete="off">
-        <div class="todolisttitle">Tasks</div>
-        <label> Completed tasks today: {{ isComplete }} / {{ totalItems }}</label>
+    <div class="todolisttitle">Tasks</div>
+        <label> Completed tasks: {{ isComplete }} / {{ totalItems }}</label>
 
       <!-- Show added items in list view-->
-      <ul class="task-list">
+      <ul class="task-list" id="list">
         <!-- v-for to iterates over the items array and create a list of item for each item in the array -->
         <!-- v-bind to check whether item is completed or not-->
         <li class="task-list-item" v-for="(item) in items" :key="item.id" v-bind:class="{completed: item.completed}">
           <div class="item-details">
             <input class="checkbox" type="checkbox" 
-            v-model="item.completed" v-on:change="clickChecked(item)"/>
+            v-model="item.completed" v-on:change="clickChecked(item); updatePoints(item.points)"/>
             <span class="item-title">{{ item.name }}</span>
             <div>
               <a class="item-duedate"><CIcon :icon="cilCalendar" size="custom"/> {{  `${item.endDate.getDate()}/${item.endDate.getMonth()+1}/${item.endDate.getFullYear()}` }}</a>
@@ -29,7 +28,7 @@
       <div class="task-input" @click="showModal"><CIcon :icon="cilLibraryAdd" size="custom"/> Add individual task</div>
       </div>
       
-      <!-- add project pop up -->
+      <!-- add indiv task pop up -->
       <Modal v-show="isModalVisible" @close="closeModal">
         <template v-slot:header>
           Add individual task
@@ -45,21 +44,19 @@
                 <div class="addproject-userstext">Due date:</div>
                   <Datepicker class="addproject-inputbg" id="dueDate" v-model="picked" placeholder="YYYY-MM-DD"></Datepicker>
               </div> 
-            </form>
-            </template>
+          </form>
+        </template>
 
-            <template v-slot:footer>
-              <div class="addproject-pushbuttons">
-                <button class="addproject-addbutton" type="submit" @click.prevent="addData">Add task</button>
-              </div>
-            </template>
-          </Modal>
-
-      </form>
+        <template v-slot:footer>
+          <div class="addproject-pushbuttons">
+            <button class="addproject-addbutton" type="submit" @click="addData">Add task</button>
+          </div>
+        </template>
+      </Modal>
     </div>
   </template>
   
-  <script>
+  <script> 
   import Modal from '@/components/Modal.vue';
   import { getCards } from '@/components/ToDoListAPI/index.js';
   import { CIcon } from '@coreui/icons-vue';
@@ -67,7 +64,7 @@
   import Datepicker from '@/components/Datepicker/Datepicker.vue';
   import { auth, db } from "../firebase/init.js"
   import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
-  import { collection, getDocs, doc, addDoc, setDoc, updateDoc } from "firebase/firestore";
+  import { collection, getDocs, doc, addDoc, setDoc, updateDoc, where, query } from "firebase/firestore";
 
   export default {
     mounted() {
@@ -78,6 +75,23 @@
         }
       })
     },
+    data() {
+      return {
+        newItem: "", //item before adding into array
+        items: getCards(),
+        isModalVisible: false,
+        picked: new Date(),
+        completed: false,
+      };
+    },
+    components: {Modal, CIcon, Datepicker},
+    setup() {
+      return {
+        cilCalendar,
+        cilLibraryAdd,
+        cilTrash
+      }
+    },
     computed: {
       totalItems() {
         return this.items.length; //auto increment of 1 of each items added into array
@@ -86,33 +100,23 @@
         return this.items.filter(item => item.completed).length; //to get completed [checkbox: checked] 
       }
     },
-    data() {
-      return {
-        newItem: "", //item before adding into array
-        items: getCards(),
-        isModalVisible: false,
-        picked: new Date(),
-        user: false,
-        completed: false,
-      };
-    },
     methods: {
       async addData() {
         try {
-          await addDoc(collection(db, 'individualtasks'), {
+          const docRef = await addDoc(collection(db, 'individualtasks'), {
             Name: this.newItem,
             points: 100,
             endDate: this.picked,
             completed: false,
             uid: auth.currentUser.uid,
+            location: "Individual task",
           });
           this.isModalVisible = false;
           this.newItem = "";
           this.picked = new Date();
           document.getElementById("newTaskName").value = "";
-        } catch(err) {
-            this.errorMsg = err.message
-            this.error = true;
+        } catch (error) {
+          console.log("this also shouldnt run")
         }
       },
       deleteItem(index) {
@@ -126,6 +130,21 @@
         document.getElementById("dueDate").value = "";
         document.getElementById("newTaskName").value = "";
       },
+      async updatePoints(pointsAdded) {
+        try {
+          const quer = query(collection(db, 'users'), where('uid', '==', auth.currentUser.uid));
+          const userRef = await getDocs(quer);
+          const userDoc = userRef.docs[0]; 
+          const userPoints = userDoc.data().points;
+          const newPoints = userPoints + pointsAdded;
+          await updateDoc(userDoc.ref, {
+            points: newPoints 
+          })
+          console.log("user updated") 
+        } catch (error) {
+          console.log("points not updating correctly")
+        }
+      },
       async clickChecked(item) {
         try {
           const docRef = doc(db, 'individualtasks', item.id);
@@ -135,18 +154,15 @@
           console.log('Field updated successfully.');
           this.completed = false;
         } catch (error) {
-        console.error('Error updating field: ', error);
+          const docRef = doc(db, 'tasks', item.id);
+          await updateDoc(docRef, {
+            completed: true,
+          });
+          console.log('Field updated successfully.');
+          this.completed = false;
         }
-      },
-    },
-    components: {Modal, CIcon, Datepicker},
-    setup() {
-      return {
-        cilCalendar,
-        cilLibraryAdd,
-        cilTrash,
       }
-  }
+    }
   };
   </script>
   

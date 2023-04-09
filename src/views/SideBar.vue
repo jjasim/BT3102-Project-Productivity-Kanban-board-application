@@ -45,14 +45,13 @@
               <form>
               <div class="addproject-addprojtitle">
                 <div class="addproject-projtitletext">Project title:</div>
-                
                   <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newProjName" v-model="projName" required>
                 
               </div>
                 <div class="addproject-adduser">
                   <div class="addproject-userstext">Authorised Users:</div>
                 
-                  <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" required>
+                  <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers">
                   <input type='button' class="addproj-adduser-btn" value='Add user' id='add' @click="addUser()">
                 
                 <div class="addproject-addeduserstext">Added users:</div>
@@ -65,7 +64,7 @@
 
             <template v-slot:footer>
               <div class="addproject-pushbuttons">
-                <button class="addproject-addbutton" type="submit" @click.prevent="addData">Add project</button>
+                <button class="addproject-addbutton" type="submit" @click="addData()">Add project</button>
               </div>
             </template>
           </Modal>
@@ -86,7 +85,7 @@ import { CIcon } from '@coreui/icons-vue';
 import { cilGem } from '@coreui/icons';
 import { auth, db } from "../firebase/init.js"
 import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
-import { collection, getDocs, doc, addDoc, setDoc } from "firebase/firestore";
+import { collection, getDocs, doc, addDoc, setDoc, query, where } from "firebase/firestore";
 
   export default {
     name: 'Sidebar',
@@ -95,6 +94,14 @@ import { collection, getDocs, doc, addDoc, setDoc } from "firebase/firestore";
       return {
         cilGem,
       }
+    },
+    mounted() {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          this.user = user;
+        }
+      })
     },
     data() {
       return { 
@@ -105,18 +112,9 @@ import { collection, getDocs, doc, addDoc, setDoc } from "firebase/firestore";
         object: {
               name: 'Team Projects',
             },
-        projName: '',
+        projName: "",
         projUsers: [],
-        userIds: [],
       }
-    },
-    mounted() {
-      const auth = getAuth();
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          this.user = user;
-        }
-      })
     },
     methods: {
       async signOut() {
@@ -130,44 +128,48 @@ import { collection, getDocs, doc, addDoc, setDoc } from "firebase/firestore";
       },
       closeModal() {
         this.isModalVisible = false;
+        this.projName = "";
+        this.projUsers = [];
         document.getElementById("newUsers").value = "";
         document.getElementById("newProjName").value = "";
-        document.getElementById("list").innerHTML = "<li>" + this.user.username + "</li>";
+        document.getElementById("list").innerHTML = "";
+        document.getElementById("list").innerHTML = "<li>" + this.userDetails[0].username + "</li>";
       },
-      async addData() {
+      async addUser() {
         try {
-          this.projUsers = document.getElementById("list");
-          const querySnapshot = await getDocs(query(collection(db, 'users'), where('username', 'in', this.projUsers)));
-          const userIds = querySnapshot.docs.map((doc) => doc.id);
-          const docRef = await addDoc(collection(db, 'projects'), {
-            name: this.projName,
-            users: this.userIds
-          });
-          console.log('Document written with ID: ', docRef.id);
-          this.projName = '';
-          this.projUsers = [];
-          this.userIds = [];
-          let newProj = {name: projname};
-          this.arrayOfObjects.push(newProj);
-          this.isModalVisible = false;
-          document.getElementById("newUsers").value = "";
-          document.getElementById("newProjName").value = "";
-          document.getElementById("list").innerHTML = "<li>" + this.user.username + "</li>";
-        } catch(err) {
-            this.errorMsg = err.message
-            this.error = true;
-        }
-      },
-      addUser() {
         var input = document.getElementById("newUsers").value;
+        this.projUsers.push(input);
         var list = document.getElementById("list");
         var item = document.createElement("li");
         item.append(document.createTextNode(input));
         list.append(item);
         document.getElementById("newUsers").value = "";
+        } catch(error) {
+          console.log('error');
+        }
       },
-      methodToRunOnSelect(payload) {
-          this.object = payload;
+      async addData() {
+        try {
+          this.projUsers.push(this.userDetails[0].username);
+          console.log(this.projUsers);
+          console.log(this.projName);
+          const querySnapshot = await getDocs(query(collection(db, 'users'), where('username', 'in', this.projUsers)));
+          const userIds = querySnapshot.docs.map((doc) => doc.get('uid'));
+          const docRef = await addDoc(collection(db, 'projects'), {
+            Name: this.projName,
+            users: userIds,
+          });
+          this.isModalVisible = false;
+        this.projName = "";
+        this.projUsers = [];
+        document.getElementById("newUsers").value = "";
+        document.getElementById("newProjName").value = "";
+        document.getElementById("list").innerHTML = "";
+        document.getElementById("list").innerHTML = "<li>" + this.userDetails[0].username + "</li>";
+        } catch(err) {
+          console.log(err)
+          console.log("proj failed to add")
+        }
       }
     }
   }

@@ -14,7 +14,7 @@
       </div>
 
 
-    <div v-once class="ToDoList">
+    <div class="ToDoList">
       <ToDoList />
     </div>
      
