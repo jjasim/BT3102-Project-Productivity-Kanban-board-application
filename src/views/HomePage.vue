@@ -6,7 +6,7 @@
 
     <div class="Homepage-body">
       <div class="Homepage-title">
-        <span class="Homepage-greeting-hellotext">Hello, {{ user.email }}</span>
+        <span class="Homepage-greeting-hellotext">Hello, {{ userDetails[0].username }}</span>
         <div class="Homepage-date">
           <span class="Homepage-todaytext">Today</span>
           <span class="Homepage-datetext">{{currentDate()}}</span>
@@ -24,17 +24,12 @@
 
 <script>
 import { getAuth, onAuthStateChanged } from '@firebase/auth';
+import { getUser } from '../components/SidebarAPI/userinfo.js';
 import SideBar from "@/views/SideBar.vue";
 import ToDoList from "@/components/ToDoList.vue";
 
 export default {
-  name: "HomePage",
-  data() {
-    return {
-      user : false, 
-      todaysdate: new Date().toLocaleString,
-    }
-  },
+  name: "HomePage",  
   mounted() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
@@ -42,6 +37,13 @@ export default {
         this.user = user; 
       }
     })
+  },
+  data() {
+    return {
+      user : false, 
+      todaysdate: new Date().toLocaleString,
+      userDetails: getUser()
+    }
   },
   methods: {
     currentDate() {

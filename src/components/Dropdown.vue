@@ -1,7 +1,12 @@
 <template>
     <div class="btn-group">
-        <li @click="toggleMenu()" class="dropdown-toggle dropdown-toggle-placeholder">
-            <span class="sidebar-projectstext">{{placeholderText}}</span>
+      <li @click="toggleMenu()" class="dropdown-toggle" v-if="selectedOption.name !== undefined">
+          {{ selectedOption.name }}
+          <span class="caret"></span>
+        </li>
+
+        <li @click="toggleMenu()" class="dropdown-toggle dropdown-toggle-placeholder" v-if="selectedOption.name === undefined">
+            <span class="sidebar-projectstext">Team Projects</span>
           <span class="caret"></span>
         </li>
 
@@ -25,7 +30,7 @@
                   name: '',
                 },
                 showMenu: false,
-                placeholderText: 'Team Projects',
+                selectedTab: '',
             }
         },
         props: {
@@ -68,6 +73,24 @@
                   this.showMenu = false;
                 }
             },
+
+            navigateToTab() {
+              // Use Vue Router to navigate to the selected tab based on the value
+              switch (this.selectedTab) {
+                case 'tab1':
+                  this.$router.push('/proj1');
+                  break;
+                case 'tab2':
+                  this.$router.push('/proj2');
+                  break;
+                case 'tab3':
+                  this.$router.push('/proj3');
+                  break;
+                default:
+                  this.$router.push('/home'); // Navigate to default route when no tab is selected
+                  break;
+              }
+            },
         }
     }
 </script>
@@ -92,7 +115,6 @@
   color:  rgb(255, 255, 255, 1);
   padding: 10px;
   text-transform: none;
-  font-weight: 300;
   background-image: linear-gradient(#D2D2D2, #D2D2D2);
   background-size: 0 2px, 100% 1px;
   background-repeat: no-repeat;
@@ -104,6 +126,14 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  color: rgba(255, 255, 255, 1);
+  height: auto;
+  font-size: 25px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Josefin Sans;
+  font-weight: 400;
+  margin-left: 1%;
 }
 .dropdown-toggle:hover {
   background: #e1e1e1;

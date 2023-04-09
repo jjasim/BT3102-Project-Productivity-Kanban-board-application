@@ -13,6 +13,7 @@
       <!-- users points -->
       <CIcon :icon="cilGem" size="custom"></CIcon>
       <span class="sidebar-pointstext"><span>{{ userDetails[0].points }}</span></span>
+      </div>
     </div>
     <div class="sidebar-body" >
       <!-- home -->
@@ -21,7 +22,7 @@
       </div>
       <!-- team projects -->
       <dropdown class="my-dropdown-toggle"
-          :options="arrayOfObjects" 
+          :options="arrayOfProjects" 
           :selected="object" 
           v-on:updateOption="methodToRunOnSelect" 
           :closeOnOutsideClick="boolean">
@@ -43,19 +44,18 @@
               <form>
               <div class="addproject-addprojtitle">
                 <div class="addproject-projtitletext">Project title:</div>
-                
-                  <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newProjName" required>
+                  <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newProjName" v-model="projName" required>
                 
               </div>
                 <div class="addproject-adduser">
                   <div class="addproject-userstext">Authorised Users:</div>
                 
-                  <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" required>
+                  <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers">
                   <input type='button' class="addproj-adduser-btn" value='Add user' id='add' @click="addUser()">
                 
                 <div class="addproject-addeduserstext">Added users:</div>
                 <ul class="addproject-currentusers" id='list'>
-                    <li>{{  user.email  }}</li>
+                    <li>{{  userDetails[0].username  }}</li>
                 </ul>
               </div> 
             </form>
@@ -63,7 +63,7 @@
 
             <template v-slot:footer>
               <div class="addproject-pushbuttons">
-                <button class="addproject-addbutton" @click="addData">Add project</button>
+                <button class="addproject-addbutton" type="submit" @click="addData()">Add project</button>
               </div>
             </template>
           </Modal>
@@ -78,28 +78,20 @@
   <script>
 import Modal from '@/components/Modal.vue';
 import dropdown from '@/components/Dropdown.vue';
-import { getUser } from '../components/SidebarAPI/index.js';
+import { getUser } from '../components/SidebarAPI/userinfo.js';
+import { getProjects } from '../components/SidebarAPI/projects.js';
 import { CIcon } from '@coreui/icons-vue';
 import { cilGem } from '@coreui/icons';
+import { auth, db } from "../firebase/init.js"
 import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
-
-let project1 = {name: "Project 1"};
-
+import { collection, getDocs, doc, addDoc, setDoc, query, where } from "firebase/firestore";
 
   export default {
     name: 'Sidebar',
     components: {Modal, dropdown, CIcon},
     setup() {
       return {
-        cilGem
-      }
-    },
-    data() {
-      return { 
-        isModalVisible: false,
-        user : false,
-        arrayOfObjects: [project1],
-        userDetails: getUser()
+        cilGem,
       }
     },
     mounted() {
@@ -109,6 +101,19 @@ let project1 = {name: "Project 1"};
           this.user = user;
         }
       })
+    },
+    data() {
+      return { 
+        isModalVisible: false,
+        user : false,
+        arrayOfProjects: getProjects(),
+        userDetails: getUser(),
+        object: {
+              name: 'Team Projects',
+            },
+        projName: "",
+        projUsers: [],
+      }
     },
     methods: {
       async signOut() {
@@ -121,31 +126,49 @@ let project1 = {name: "Project 1"};
         this.isModalVisible = true;
       },
       closeModal() {
+        this.isModalVisible = false;
+        this.projName = "";
+        this.projUsers = [];
         document.getElementById("newUsers").value = "";
         document.getElementById("newProjName").value = "";
-        document.getElementById("list").innerHTML = "<li>" + this.user.email + "</li>";
-        this.isModalVisible = false;
+        document.getElementById("list").innerHTML = "";
+        document.getElementById("list").innerHTML = "<li>" + this.userDetails[0].username + "</li>";
       },
-      addData() {
-        var emailList = document.getElementById("list");
-        var projname = document.getElementById("newProjName").value;
-        let newProj = {name: projname};
-        this.arrayOfObjects.push(newProj);
-        document.getElementById("newUsers").value = "";
-        document.getElementById("newProjName").value = "";
-        document.getElementById("list").innerHTML = "<li>" + this.user.email + "</li>";
-        this.isModalVisible = false;
-      },
-      addUser() {
+      async addUser() {
+        try {
         var input = document.getElementById("newUsers").value;
+        this.projUsers.push(input);
         var list = document.getElementById("list");
         var item = document.createElement("li");
         item.append(document.createTextNode(input));
         list.append(item);
         document.getElementById("newUsers").value = "";
+        } catch(error) {
+          console.log('error');
+        }
       },
-      methodToRunOnSelect(payload) {
-            this.object = payload;
+      async addData() {
+        try {
+          this.projUsers.push(this.userDetails[0].username);
+          console.log(this.projUsers);
+          console.log(this.projName);
+          const querySnapshot = await getDocs(query(collection(db, 'users'), where('username', 'in', this.projUsers)));
+          const userIds = querySnapshot.docs.map((doc) => doc.get('uid'));
+          const docRef = await addDoc(collection(db, 'projects'), {
+            Name: this.projName,
+            users: userIds,
+          });
+          this.isModalVisible = false;
+        this.projName = "";
+        this.projUsers = [];
+        document.getElementById("newUsers").value = "";
+        document.getElementById("newProjName").value = "";
+        document.getElementById("list").innerHTML = "";
+        document.getElementById("list").innerHTML = "<li>" + this.userDetails[0].username + "</li>";
+        } catch(err) {
+          console.log(err)
+          console.log("proj failed to add")
+        }
       }
     }
   }
@@ -301,6 +324,11 @@ let project1 = {name: "Project 1"};
     margin-left: 5%;
     margin-top: 5%;
   }
+
+  .sidebar-homebutton:hover {
+  background: #e1e1e1;
+  cursor: pointer;
+}
   .sidebar-analyticsbutton{
     color: rgba(255, 255, 255, 1);
     height: auto;
@@ -317,6 +345,10 @@ let project1 = {name: "Project 1"};
     margin-left: 5%;
     margin-top: 5%;
   }
+  .sidebar-analyticsbutton:hover {
+  background: #e1e1e1;
+  cursor: pointer;
+}
 
   .sidebar-signout {
   border-color: transparent;

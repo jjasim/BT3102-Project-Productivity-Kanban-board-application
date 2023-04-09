@@ -5,6 +5,7 @@ import SignupPage from '@/views/SignupPage.vue';
 import ProjectTaskPage from '@/views/ProjectTaskPage.vue';
 import HomePage from '@/views/HomePage.vue'
 import CalendarPage from '@/views/CalendarPage.vue';
+import HomePage from '@/views/HomePage.vue';
 import SignUpDetails from '@/views/SignUpDetails.vue';
 
 const routes = [
@@ -42,6 +43,11 @@ const routes = [
         path: '/calendar',
         name: 'Calendar Page',
         component: CalendarPage,
+    },
+    {
+        path: '/home',
+        name: 'Home page',
+        component: HomePage,
     }
 ]
 

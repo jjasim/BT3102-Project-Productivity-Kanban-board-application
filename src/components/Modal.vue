@@ -35,6 +35,7 @@
 <script>
   import { CIcon } from '@coreui/icons-vue';
   import { cilX } from '@coreui/icons'; 
+  import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
 
   export default {
     name: 'Modal',
@@ -49,7 +50,15 @@
     methods: {
       close() {
         this.$emit('close');
-      },
+      }
+    },
+    mounted() {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          this.user = user;
+        }
+      })
     },
   };
 </script>
