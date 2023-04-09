@@ -4,6 +4,7 @@ import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestor
 
 export const useLists = () => {
   const lists = ref([]);
+  const loading = ref(true);
 
   onMounted(() => {
     const listsQuery = query(collection(db, 'lists'), where("userUID", "==", auth.currentUser.uid)); 
@@ -16,23 +17,41 @@ export const useLists = () => {
           tasks: []
         };
         
-        // Fetch tasks for the current list
-        const tasksQuery = query(collection(db, `lists/${doc.id}/tasks`));
-        onSnapshot(tasksQuery, (tasksSnapshot) => {
+        // Fetch tasks for the current list and listen for changes
+        const tasksQuery = query(collection(db, `lists/${doc.id}/tasks`), orderBy("endDate", "asc"));
+        let unsubscribeTasks = onSnapshot(tasksQuery, (tasksSnapshot) => {
           const tasksData = tasksSnapshot.docs.map((taskDoc) => {
+            const endDate = taskDoc.get('endDate').toDate()
+            const formattedDate = endDate.toLocaleDateString('en-GB', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric' 
+            })
+            console.log(taskDoc.get('about'))
             return {
               id: taskDoc.id,
+              listID: doc.id,
               taskName: taskDoc.get('taskName'),
+              endDate: taskDoc.get('endDate'),
+              formattedDate,
+              isChecked: taskDoc.get('isChecked'),
+              about: taskDoc.get('about')
             };
           });
           listData.tasks = tasksData;
         });
+        
+        // Unsubscribe from the tasks listener when the list is deleted
+        onUnmounted(() => {
+          unsubscribeTasks();
+        });
+        
         return listData;
       });
       lists.value = data;
     });
     onUnmounted(unsubscribe);
   });
-  console.log(lists)
+
   return lists;
 };

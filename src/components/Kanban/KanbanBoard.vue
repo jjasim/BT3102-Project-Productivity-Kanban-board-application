@@ -1,17 +1,17 @@
   <template>
+    <div>
       <div id="kanban">
         <div class="cards">
           <div
             v-for="column in columns"
             :key="column.id"
             class="col"
-            @click="selectedList = column"
           >
             <div class="col-header">
               <p class="col-name">{{column.name}}</p>
               <div class="options">
-                <CIcon class="plus-icon" :icon="cilPlus" size="sm" @click="showModal"/>
-                <CIcon class="trash-icon" :icon="cilTrash" size="sm" @click="deleteList(column)"/>
+                <CIcon class="plus-icon" :icon="cilPlus" size="sm" @click.prevent="showModal(column)"/>
+                <CIcon class="trash-icon" :icon="cilTrash" size="sm" @click.prevent="deleteList(column)"/>
               </div>
 
             </div>
@@ -22,7 +22,8 @@
                 class="list-group"
                 ghost-class="ghost-card"
                 group="tasks"
-                @move="move"
+                ref="listRef"
+                @change="onChange"
                 :animation="200"
                 >
                 <template #item="{element}">
@@ -45,22 +46,27 @@
                   </div>
                   <div class="addproject-addprojtitle">
                   <div class="addproject-projtitletext">Due Date:</div>
-                  
                     <input type="date" class="addproject-inputbg" id="newProjName" v-model="endDate">
-                  
                   </div>
-                  <div class="addproject-adduser">
-                    <div class="addproject-userstext">Authorised Users:</div>
+                  <div class="addproject-addprojtitle">
+                  <div class="addproject-projtitletext">Description</div>
+                    <textarea class="addproject-inputbg" id="newProjName" v-model="about"></textarea>
+                  </div>
                   
-                    <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" v-model="stakeHoldersID" required>
-                    <input type='button' class="addproj-adduser-btn" value='Add user' id='add'>
-                
+                  <div class="addproject-adduser">
+                    <div class="addproject-userstext">Stakeholders:</div>
+                  
+                    <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" v-model="stakeHolderEmail">
+                    <input type='button' class="addproj-adduser-btn" value='Add user' id='add' @click="addStakeholder">
+                    <div>
+                      {{ this.stakeHolderArrayEmail }}
+                    </div>
                 </div> 
               </form>
               </template>
               <template v-slot:footer>
                 <div class="addproject-pushbuttons">
-                  <button class="addproject-addbutton" @click="addCard(column)">Add Card</button>
+                  <button class="addproject-addbutton" @click.prevent="addCard()">Add Card</button>
                 </div>
               </template>
             </Modal>
@@ -68,11 +74,13 @@
         </div>
         <KanbanCreateList @create-list="createList" />
       </div>
+    </div>
+
 
   </template>
   
   <script>
-  import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc } from "firebase/firestore"
+  import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc, updateDoc, Timestamp, query, where, setDoc} from "firebase/firestore"
   import { auth, db } from "../../firebase/init.js"
   import { getAuth, onAuthStateChanged } from "@firebase/auth";
   import KanbanCard from "./KanbanCard.vue";
@@ -94,31 +102,61 @@
         Modal,
         CIcon
     },
+    data() {
+    return {
+      isModalVisible : false,
+      taskName: "",
+      endDate: new Date(),
+      selectedList: null,
+      clickedTask: "",
+      listFrom: "",
+      listTo: "",
+      about: "",
+      stakeHolderEmail: "",
+      stakeHolderArrayEmail: [],
+      stakeHolderArrayID: []
+    };
+  },
     setup() {
+      const columns = useLists();
       return {
         cilPlus, 
-        cilTrash
+        cilTrash, 
+        columns
       }
     },
     methods: {
-      async addCard(list) {
-        this.selectedList = list;
+      async addCard() {
         const auth = getAuth();
-        const taskCollectionRef = collection(db, `lists/${list.id}/tasks`);
+        const taskCollectionRef = collection(db, `lists/${this.selectedList.id}/tasks`);
+        const firebaseDate = Timestamp.fromDate(new Date(this.endDate));
+        this.stakeHolderArrayID.push(auth.currentUser.uid)
         const taskDoc = {
           listID: this.selectedList.id, // use the selected list to set the listID property
           taskName: this.taskName,
+          endDate: firebaseDate,
+          isChecked: false,
+          about: this.about,
+          stakeHolderArrayID: this.stakeHolderArrayID
         };
-        await addDoc(taskCollectionRef, taskDoc);
+        const docRef = await addDoc(taskCollectionRef, taskDoc); 
+        await setDoc(doc(db, "tasks", docRef.id), taskDoc)
         console.log("card added");
         this.taskName = "";
+        this.endDate = new Date();
+        this.selectedList = null;
         this.isModalVisible = false;
+        this.about = "";
+        this.stakeHolderArrayEmail = [];
+        this.stakeHolderArrayID = [];
       },
-      showModal() {
+      showModal(list) {
         this.isModalVisible = true; 
+        this.selectedList = list
       },
       closeModal() {
         this.isModalVisible = false;
+        this.taskName = "";
       },
       async deleteList(column) {
         const collectionRef = collection(db, "lists");
@@ -129,18 +167,34 @@
           const document = doc(taskCollection, taskDoc.id)
           deleteDoc(document); 
         })
-        await deleteDoc(listDoc);
-      }
-    },
-    data() {
-    return {
-      isModalVisible : false,
-      columns: useLists(),
-      taskName: "",
-      selectedList: null
+        const tasksCollectionRef = collection(db, "tasks");
+        const taskQuery = query(collection(db, "tasks"), where("listID", "==", column.id));
 
-    };
-  }
+        const mainTasksDocs = await getDocs(taskQuery)
+        mainTasksDocs.forEach(taskDoc => {
+          const document = doc(tasksCollectionRef, taskDoc.id)
+          deleteDoc(document); 
+        })
+        console.log(column);
+        await deleteDoc(listDoc);
+      },
+      async addStakeholder() {
+        const userQuery = query(collection(db, 'users'), where("email", "==", this.stakeHolderEmail));
+        const querySnapshot = await getDocs(userQuery);
+        const stakeholder = querySnapshot.docs[0];
+        if (stakeholder) {
+          this.stakeHolderArrayID.push(stakeholder.data().uid)
+          this.stakeHolderArrayEmail.push(this.stakeHolderEmail);
+        }
+        this.stakeHolderEmail = "";
+      },
+      onChange(e) {
+        let item = e.added || e.moved;
+        if (!item) {
+          return;
+        }
+      }
+    }
   };
   </script>
 <style scoped>
@@ -170,7 +224,7 @@
     background-color: #F3F4F6; 
     border-radius: 0.25rem; 
     border-radius: 0.5rem;
-    min-width: 305.12px;
+    min-width: 295px;
 }
 
 .col-header {
@@ -260,6 +314,14 @@ input[type="date"]::-webkit-inner-spin-button,
 input[type="date"]::-webkit-calendar-picker-indicator {
   padding-right: 1rem;
   
+}
+textarea.addproject-inputbg {
+  border: none;
+  background-color: #edf2f7;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
 

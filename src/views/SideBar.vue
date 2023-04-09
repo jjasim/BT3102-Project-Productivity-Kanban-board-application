@@ -11,7 +11,6 @@
         <span class="sidebar-usersname"><span>{{ userDetails[0].username }}</span></span>
       </div>
       <!-- users points -->
-      <div>
       <CIcon :icon="cilGem" size="custom"></CIcon>
       <span class="sidebar-pointstext"><span>{{ userDetails[0].points }}</span></span>
       </div>
