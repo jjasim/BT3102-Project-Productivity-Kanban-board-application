@@ -15,6 +15,12 @@
             </div>
             <button class="btn btn-primary" type="submit" @click.prevent="login">Log In</button>
             </form>
+            <div class="text-divider">
+                or
+            </div>
+            <button class="google-btn" type="submit" @click.prevent="loginWithGoogle">
+                Log In with Google
+            </button>
             <div class="login-bottom">
                 Forgot your password?
             </div>
@@ -29,7 +35,7 @@
 
 <script>
 import app from "../firebase/init.js"
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { collection, getDocs, getFirestore, doc, addDoc } from "firebase/firestore"
 import { auth, db } from "../firebase/init.js"
 import { getDoc, setDoc } from "firebase/firestore"
@@ -52,8 +58,20 @@ import { useRouter } from "vue-router";export default {
             this.errorMsg = err.message
             this.error = true;
         }
-
     },
+    async loginWithGoogle() {
+        const provider = new GoogleAuthProvider(); 
+        signInWithPopup(auth, provider)
+        .then((result) => {
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            const user = result.user;
+            this.$router.push('/tasks')
+        }).catch((err) => {
+            this.errorMsg = err.message;
+            this.error = true; 
+        });
+    }
   },
 }
 </script>
@@ -83,7 +101,7 @@ html, body {
 .login-container {
     display: block;
     width: 345px;
-    height: 475px;
+    height: 530px;
     text-align:center;
     background: #FFFFFF;
     mix-blend-mode: normal;
@@ -137,4 +155,38 @@ input {
     color: #FF9190;
     padding-top: 0.7rem;
 }
+
+.text-divider {
+  display: flex;
+  align-items: center;
+  color: #9D9D9D;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+
+}
+
+.text-divider::before,
+.text-divider::after {
+  content: '';
+  height: 1px;
+  background-color: #9D9D9D;
+  flex-grow: 1;
+}
+
+.google-btn {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: large;
+    color: white;
+    width: 300px;
+    height: 43px;
+    left: 652px;
+    top: 640px;
+    background: #eb5e5e;
+    border: #130D6F;
+    border-radius: 49px; 
+    cursor: pointer;
+}
+
 </style>
