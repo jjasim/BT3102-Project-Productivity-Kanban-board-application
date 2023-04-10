@@ -55,7 +55,7 @@
                 
                 <div class="addproject-addeduserstext">Added users:</div>
                 <ul class="addproject-currentusers" id='list'>
-                    <li>{{  userDetails[0].username  }}</li>
+                    <li>{{  userDetails[0] }}</li>
                 </ul>
               </div> 
             </form>
@@ -72,19 +72,19 @@
         <!-- signout -->
         <button class="sidebar-signout" @click.prevent="signOut"><span>Sign out</span></button>
       </div>
-    </div>
 </template>
   
   <script>
 import Modal from '@/components/Modal.vue';
 import dropdown from '@/components/Dropdown.vue';
-import { getUser } from '../components/SidebarAPI/userinfo.js';
 import { getProjects } from '../components/SidebarAPI/projects.js';
 import { CIcon } from '@coreui/icons-vue';
 import { cilGem } from '@coreui/icons';
 import { auth, db } from "../firebase/init.js"
 import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
 import { collection, getDocs, doc, addDoc, setDoc, query, where } from "firebase/firestore";
+import { getUser } from '../components/SidebarAPI/userinfo.js';
+
 
   export default {
     name: 'Sidebar',
@@ -94,26 +94,28 @@ import { collection, getDocs, doc, addDoc, setDoc, query, where } from "firebase
         cilGem,
       }
     },
-    mounted() {
-      const auth = getAuth();
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          this.user = user;
-        }
-      })
-    },
     data() {
       return { 
         isModalVisible: false,
         user : false,
         arrayOfProjects: getProjects(),
-        userDetails: getUser(),
         object: {
               name: 'Team Projects',
             },
         projName: "",
         projUsers: [],
+        userDetails: getUser()
       }
+    },
+    mounted() {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          this.user = user;
+        } else {
+          this.$router.push("/login")
+        }
+      })
     },
     methods: {
       async signOut() {

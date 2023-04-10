@@ -16,6 +16,7 @@ import SideBar from './views/SideBar.vue';
 import Modal from './components/Modal.vue';
 import dropdown from './components/Dropdown.vue';
 import MobileDevice from './views/MobileDevice.vue';
+import SignUpDetails from "./views/SignUpDetails.vue"
 
 export default {
   name: 'App',
@@ -28,7 +29,8 @@ export default {
     SideBar,
     Modal,
     dropdown,
-    MobileDevice
+    MobileDevice,
+    SignUpDetails
   },
   data(){
     return {
