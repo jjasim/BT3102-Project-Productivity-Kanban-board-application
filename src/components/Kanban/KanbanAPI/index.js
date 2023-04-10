@@ -7,6 +7,7 @@ export const useLists = () => {
   const loading = ref(true);
 
   onMounted(() => {
+    console.log(auth.currentUser)
     const listsQuery = query(collection(db, 'lists'), where("userUID", "==", auth.currentUser.uid)); 
     let unsubscribe = onSnapshot(listsQuery, (snapshot) => {
       const data = snapshot.docs.map((doc) => {
@@ -34,8 +35,10 @@ export const useLists = () => {
               taskName: taskDoc.get('taskName'),
               endDate: taskDoc.get('endDate'),
               formattedDate,
-              isChecked: taskDoc.get('isChecked'),
-              about: taskDoc.get('about')
+              completed: taskDoc.get('completed'),
+              about: taskDoc.get('about'),
+              stakeHolderArrayID: taskDoc.get('stakeHolderArrayID'),
+              stakeHolderArrayEmail: taskDoc.get('stakeHolderArrayEmail')
             };
           });
           listData.tasks = tasksData;

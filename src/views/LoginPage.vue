@@ -52,7 +52,8 @@ import { useRouter } from "vue-router";export default {
     async login() {
         try {
             const loginUser = await signInWithEmailAndPassword(auth, this.email, this.password);
-            this.$router.push('/home')
+            this.$router.push('/home');
+            console.log(loginUser.user.uid)
             return;
         } catch(err) {
             this.errorMsg = err.message
@@ -66,7 +67,7 @@ import { useRouter } from "vue-router";export default {
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const token = credential.accessToken;
             const user = result.user;
-            this.$router.push('/tasks')
+            this.$router.push('/home')
         }).catch((err) => {
             this.errorMsg = err.message;
             this.error = true; 

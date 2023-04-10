@@ -13,7 +13,7 @@
 
 <script>
 import KanbanBadge from "./KanbanBadge.vue";
-import { collection, getDocs, getFirestore, doc, addDoc } from "firebase/firestore"
+import { collection, getDocs, getFirestore, doc, addDoc, serverTimestamp, Timestamp } from "firebase/firestore"
 import { auth, db } from "../../firebase/init.js"
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
@@ -34,6 +34,7 @@ export default {
         const listDoc = {
             userUID : auth.currentUser.uid,
             name : this.newListName,
+            timestamp: Timestamp.now()
         }
         const docRef = await addDoc(collectionRef, listDoc);
         const id = docRef.id;
