@@ -11,6 +11,7 @@
         <span class="sidebar-usersname"><span>{{ userDetails[0].username }}</span></span>
       </div>
       <!-- users points -->
+      <div>
       <CIcon :icon="cilGem" size="custom"></CIcon>
       <span class="sidebar-pointstext"><span>{{ userDetails[0].points }}</span></span>
       </div>
@@ -55,7 +56,6 @@
                 
                 <div class="addproject-addeduserstext">Added users:</div>
                 <ul class="addproject-currentusers" id='list'>
-                    <li>{{  userDetails[0] }}</li>
                 </ul>
               </div> 
             </form>
