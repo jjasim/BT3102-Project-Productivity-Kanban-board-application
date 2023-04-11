@@ -5,7 +5,6 @@ import SignupPage from '@/views/SignupPage.vue';
 import ProjectTaskPage from '@/views/ProjectTaskPage.vue';
 import HomePage from '@/views/HomePage.vue'
 import CalendarPage from '@/views/CalendarPage.vue';
-import HomePage from '@/views/HomePage.vue';
 import SignUpDetails from '@/views/SignUpDetails.vue';
 
 const routes = [
