@@ -3,6 +3,8 @@
         <h1 class="logo">WorkWise</h1>
         <div class="login">
             <LogInBtn/>
+        </div>
+        <div class ="signup">
             <SignUpBtn/>
         </div>
     </div>
@@ -137,8 +139,7 @@ body {
 
 .signup {
     padding-top: 40px;
-    padding-left: 3%;
-    padding-right: 5%;
+    padding-right: 10%;
 }
 
 /* Carousel Component */
