@@ -6,6 +6,7 @@ import ProjectTaskPage from '@/views/ProjectTaskPage.vue';
 import HomePage from '@/views/HomePage.vue'
 import CalendarPage from '@/views/CalendarPage.vue';
 import SignUpDetails from '@/views/SignUpDetails.vue';
+import TestingPage from '@/views/TestingPage.vue';
 
 const routes = [
     {
@@ -42,6 +43,11 @@ const routes = [
         path: '/calendar',
         name: 'Calendar Page',
         component: CalendarPage,
+    },
+    {
+        path: '/test',
+        name: 'Testing Page',
+        component: TestingPage,
     }
 ]
 

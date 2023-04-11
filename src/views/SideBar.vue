@@ -55,7 +55,6 @@
                 
                 <div class="addproject-addeduserstext">Added users:</div>
                 <ul class="addproject-currentusers" id='list'>
-                    <li>{{  userDetails[0] }}</li>
                 </ul>
               </div> 
             </form>

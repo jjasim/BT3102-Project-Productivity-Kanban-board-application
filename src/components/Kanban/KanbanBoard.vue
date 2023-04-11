@@ -80,7 +80,6 @@
   </template>
   
   <script>
-  import { Container, Draggable } from "vue3-smooth-dnd"; 
   import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc, updateDoc, Timestamp, query, where, setDoc} from "firebase/firestore"
   import { auth, db } from "../../firebase/init.js"
   import { getAuth, onAuthStateChanged } from "@firebase/auth";
