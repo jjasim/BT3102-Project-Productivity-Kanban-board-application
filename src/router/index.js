@@ -42,11 +42,6 @@ const routes = [
         path: '/calendar',
         name: 'Calendar Page',
         component: CalendarPage,
-    },
-    {
-        path: '/home',
-        name: 'Home page',
-        component: HomePage,
     }
 ]
 

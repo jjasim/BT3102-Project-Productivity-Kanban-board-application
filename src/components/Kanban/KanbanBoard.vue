@@ -23,8 +23,9 @@
                 ghost-class="ghost-card"
                 group="tasks"
                 ref="listRef"
-                @change="onChange"
                 :animation="200"
+                @change="onChange(column, $event)"
+                :emptyInsertThreshold="100"
                 >
                 <template #item="{element}">
                     <kanban-card
@@ -33,7 +34,12 @@
                     ></kanban-card>
                 </template>
                 </draggable>
-                <Modal v-show="isModalVisible" @close="closeModal">
+          </div>
+        </div>
+        <KanbanCreateList @create-list="createList" />
+      </div>
+    </div>
+    <Modal v-show="isModalVisible" @close="closeModal">
                   <template v-slot:header>
                     Add Card
                   </template>
@@ -59,27 +65,22 @@
                     <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" v-model="stakeHolderEmail">
                     <input type='button' class="addproj-adduser-btn" value='Add user' id='add' @click="addStakeholder">
                     <div>
-                      {{ this.stakeHolderArrayEmail }}
+                      {{ formattedStakeHolders }}
                     </div>
                 </div> 
               </form>
               </template>
               <template v-slot:footer>
                 <div class="addproject-pushbuttons">
-                  <button class="addproject-addbutton" @click.prevent="addCard()">Add Card</button>
+                  <button class="addproject-addbutton" @click.prevent="addCard">Add Card</button>
                 </div>
               </template>
             </Modal>
-          </div>
-        </div>
-        <KanbanCreateList @create-list="createList" />
-      </div>
-    </div>
-
 
   </template>
   
   <script>
+  import { Container, Draggable } from "vue3-smooth-dnd"; 
   import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc, updateDoc, Timestamp, query, where, setDoc} from "firebase/firestore"
   import { auth, db } from "../../firebase/init.js"
   import { getAuth, onAuthStateChanged } from "@firebase/auth";
@@ -125,6 +126,11 @@
         columns
       }
     },
+    computed: {
+      formattedStakeHolders() {
+        return this.stakeHolderArrayEmail.join(", ")
+      }
+    },
     methods: {
       async addCard() {
         const auth = getAuth();
@@ -135,9 +141,10 @@
           listID: this.selectedList.id, // use the selected list to set the listID property
           taskName: this.taskName,
           endDate: firebaseDate,
-          isChecked: false,
+          completed: false,
           about: this.about,
-          stakeHolderArrayID: this.stakeHolderArrayID
+          stakeHolderArrayID: this.stakeHolderArrayID,
+          stakeHolderArrayEmail: this.stakeHolderArrayEmail
         };
         const docRef = await addDoc(taskCollectionRef, taskDoc); 
         await setDoc(doc(db, "tasks", docRef.id), taskDoc)
@@ -175,7 +182,6 @@
           const document = doc(tasksCollectionRef, taskDoc.id)
           deleteDoc(document); 
         })
-        console.log(column);
         await deleteDoc(listDoc);
       },
       async addStakeholder() {
@@ -188,10 +194,31 @@
         }
         this.stakeHolderEmail = "";
       },
-      onChange(e) {
-        let item = e.added || e.moved;
-        if (!item) {
-          return;
+      async onChange(column, e) {
+        if (e.added) {
+          const addedItem = e.added.element;
+          const auth = getAuth();
+          const newColumn = column
+          const taskCollectionRef = collection(db, `lists/${newColumn.id}/tasks`);
+          const taskDoc = {
+            listID: newColumn.id, // use the selected list to set the listID property
+            taskName: addedItem.taskName,
+            endDate: addedItem.endDate,
+            completed: addedItem.completed,
+            about: addedItem.about,
+            stakeHolderArrayID: addedItem.stakeHolderArrayID,
+            stakeHolderArrayEmail: this.stakeHolderArrayEmail
+          };
+          const docRef = await addDoc(taskCollectionRef, taskDoc);
+          console.log("card dragged!")
+        }
+
+        if (e.removed) {
+          const removedItem = e.removed.element;
+          const auth = getAuth();
+          const taskCollectionRef = collection(db, `lists/${removedItem.listID}/tasks`);
+          const taskDocument = doc(taskCollectionRef, removedItem.id);
+          await deleteDoc(taskDocument);
         }
       }
     }

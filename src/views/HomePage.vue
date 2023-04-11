@@ -29,22 +29,24 @@ import SideBar from "@/views/SideBar.vue";
 import ToDoList from "@/components/ToDoList.vue";
 
 export default {
-  name: "HomePage",  
+  name: "HomePage",
   mounted() {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        this.user = user; 
-      }
-    })
-  },
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          this.user = user;
+        } else {
+          this.$router.push("/login")
+        }
+      })
+    },
   data() {
     return {
-      user : false, 
       todaysdate: new Date().toLocaleString,
-      userDetails: getUser()
+      userDetails: getUser(),
+      user: false
     }
-  },
+  }, 
   methods: {
     currentDate() {
       const current = new Date();

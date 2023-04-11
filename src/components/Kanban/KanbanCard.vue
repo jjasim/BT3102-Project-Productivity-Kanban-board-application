@@ -1,9 +1,9 @@
 <template>
   <div class="card">
-    <div class="card-only" v-if="!isChecked">
+    <div class="card-only" v-if="!completed">
       <div class="card-contents">
         <div class="card-left">
-          <CIcon class="circle-icon" :icon="cilCircle" size="sm" @click="toggleCheck"/>
+          <CIcon class="circle-icon" :icon="cilCircle" size="sm" @click="toggleComplete"/>
           <p class="card-text">
             {{task.taskName}}
           </p>
@@ -25,7 +25,7 @@
     <div class="card-checked" v-else>
       <div class="card-contents">
         <div class="card-left">
-          <CIcon class="circle-icon" :icon="cilCheckCircle" size="sm" @click="toggleCheck"/>
+          <CIcon class="circle-icon" :icon="cilCheckCircle" size="sm" @click="toggleComplete"/>
           <p class="card-text">
             {{task.taskName}}
           </p>
@@ -64,8 +64,11 @@
           </div>
           <div class="addproject-adduser">
             <div class="addproject-userstext">Authorised Users:</div>
-            <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" v-model="stakeHoldersID" required>
-            <input type='button' class="addproj-adduser-btn" value='Add user' id='add'>
+            <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" v-model="stakeHolderEmail" required>
+            <input type='button' class="addproj-adduser-btn" value='Add user' id='add' @click="addStakeholder">
+            <div>
+                {{ formattedStakeHolders }}
+            </div>
           </div> 
         </form>
       </template>
@@ -84,7 +87,7 @@ import { CIcon } from '@coreui/icons-vue';
 import { cilCircle, cilPencil,cilCheckCircle } from '@coreui/icons'; 
 import Modal from "../Modal.vue"
 import { auth, db } from "../../firebase/init.js"
-import { updateDoc, collection, doc, Timestamp } from 'firebase/firestore';
+import { updateDoc, collection, doc, Timestamp, query, where, getDocs} from 'firebase/firestore';
 
 
 export default {
@@ -99,7 +102,10 @@ data() {
     taskName: this.task.taskName, 
     about: this.task.about,
     formattedDate: this.formatDate(this.task.formattedDate),
-    isChecked: this.task.isChecked
+    completed: this.task.completed,
+    stakeHolderArrayID: this.task.stakeHolderArrayID,
+    stakeHolderArrayEmail: this.task.stakeHolderArrayEmail,
+    stakeHolderEmail: ""
   }
 },
 setup() {
@@ -122,7 +128,12 @@ computed: {
     };
     return mappings[this.task.type] || mappings.default;
   }
-}, 
+},
+computed: {
+      formattedStakeHolders() {
+        return this.task.stakeHolderArrayEmail.join(", ")
+      }
+    },
 methods: {
   openModal() {
     this.isModalVisible = true; 
@@ -139,7 +150,9 @@ methods: {
     const updatedData = {
       taskName: this.taskName,
       endDate: firebaseDate,
-      about: this.about
+      about: this.about,
+      stakeHolderArrayEmail: this.stakeHolderArrayEmail,
+      stakeHolderArrayID: this.stakeHolderArrayID
     }
     await updateDoc(subTaskDoc, updatedData);
     await updateDoc(taskDoc, updatedData);
@@ -152,7 +165,8 @@ methods: {
     })
     this.formattedDate = formattedDate;
     this.task.about = this.about;
-
+    this.task.stakeHolderArrayEmail = this.stakeHolderArrayEmail;
+    this.task.stakeHolderArrayID = this.stakeHolderArrayID;
     this.isModalVisible = false;
   },
   formatDate(dateString) {
@@ -162,22 +176,30 @@ methods: {
     const day = date.getDate();
     return `${day} ${month} ${year}`;
   },
-  async toggleCheck() {
-    this.isChecked = !this.isChecked;
-    console.log(this.isChecked);
-
+  async toggleComplete() {
+    this.completed = !this.completed;
     const subTaskCollection = collection(db, `lists/${this.task.listID}/tasks`)
     const taskCollection = collection(db, "tasks");
     const subTaskDoc = doc(subTaskCollection, this.task.id);
     const taskDoc = doc(taskCollection, this.task.id);
 
     const updatedData = {
-      isChecked: this.isChecked
+      completed: this.completed
     }
 
     await updateDoc(subTaskDoc, updatedData)
     await updateDoc(taskDoc, updatedData)
-  }
+  },
+  async addStakeholder() {
+        const userQuery = query(collection(db, 'users'), where("email", "==", this.stakeHolderEmail));
+        const querySnapshot = await getDocs(userQuery);
+        const stakeholder = querySnapshot.docs[0];
+        if (stakeholder) {
+          this.task.stakeHolderArrayID.push(stakeholder.data().uid)
+          this.task.stakeHolderArrayEmail.push(this.stakeHolderEmail);
+        }
+        this.stakeHolderEmail = "";
+      }
 }
 };
 </script>
