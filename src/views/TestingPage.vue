@@ -23,7 +23,7 @@ export default {
 
 <style scoped>
 .disqus {
-    width: 20%;
-    float: right;
+    /* width: 20%;
+    float: right; */
 }
 </style>
