@@ -72,6 +72,7 @@
         <!-- signout -->
         <button class="sidebar-signout" @click.prevent="signOut"><span>Sign out</span></button>
       </div>
+      </div>
 </template>
   
   <script>

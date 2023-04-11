@@ -14,7 +14,7 @@
     </div>
 
     <div class="UsersInProject">
-      <UsersInProject/>
+      <Disqus shortname="workwise-1" />
     </div>
   </div>
 </template>
@@ -26,6 +26,7 @@ import Header from "@/components/Header.vue"
 import SideBar from "@/views/SideBar.vue";
 import Modal from "@/components/Modal.vue";
 import dropdown from '@/components/Dropdown.vue';
+import { Disqus } from 'vue-disqus'
 
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
@@ -64,7 +65,7 @@ export default {
       this.editElemPopupVisible = true;
     },
   },
-  components: {SideBar, Modal, dropdown, KanbanBoard, UsersInProject, Header}
+  components: {SideBar, Modal, dropdown, KanbanBoard, UsersInProject, Header, Disqus}
 };
 </script>
 
@@ -97,9 +98,7 @@ export default {
 }
 
 .UsersInProject {
-  display: flex;
   flex: 1;
-  padding: 1rem;
 }
 
 
