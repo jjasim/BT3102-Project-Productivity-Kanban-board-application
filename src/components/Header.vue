@@ -1,8 +1,8 @@
 <template>
     <div class="header">
       <div class="project-name">
-        Project 1
-    </div>
+        {{ this.$route.params.projName }}
+      </div>
       <div class="buttons">
         <button @click="goToTasks" :class="{ 'nav-button': true, 'clicked': $route.path === '/tasks'}" >Tasks</button>
         <button @click="goToCalendar" :class="{ 'nav-button': true, 'clicked': $route.path == '/calendar' }">Calendar</button>
@@ -14,6 +14,7 @@
   export default {
     name: "Header",
     mounted() {
+      console.log(this.$props.projName)
       const button = document.querySelector('.nav-button');
       console.log(button);
   

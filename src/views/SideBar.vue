@@ -22,57 +22,21 @@
         <router-link to="/home">Home</router-link>
       </div>
       <!-- team projects -->
-      <dropdown class="my-dropdown-toggle"
-          :options="arrayOfProjects" 
-          :selected="object" 
-          v-on:updateOption="methodToRunOnSelect" 
-          :closeOnOutsideClick="boolean">
-      </dropdown>
-        <!-- add project -->
-        <div class="sidebar-addproj" @click="showModal">+ Add Project</div>
+      <div class="sidebar-homebutton">
+        <router-link to="/projects">Team Projects</router-link>
+      </div>
           <!-- analytics -->
         <div class="sidebar-analyticsbutton">
           <router-link to="/signup">Analytics</router-link>
         </div>
       </div>
-        <!-- add project pop up -->
-          <Modal v-show="isModalVisible" @close="closeModal">
-            <template v-slot:header>
-              Add project
-            </template>
-            
-            <template v-slot:body>
-              <form>
-              <div class="addproject-addprojtitle">
-                <div class="addproject-projtitletext">Project title:</div>
-                  <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newProjName" v-model="projName" required>
-                
-              </div>
-                <div class="addproject-adduser">
-                  <div class="addproject-userstext">Authorised Users:</div>
-                
-                  <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers">
-                  <input type='button' class="addproj-adduser-btn" value='Add user' id='add' @click="addUser()">
-                
-                <div class="addproject-addeduserstext">Added users:</div>
-                <ul class="addproject-currentusers" id='list'>
-                </ul>
-              </div> 
-            </form>
-            </template>
 
-            <template v-slot:footer>
-              <div class="addproject-pushbuttons">
-                <button class="addproject-addbutton" type="submit" @click="addData()">Add project</button>
-              </div>
-            </template>
-          </Modal>
         
       <div class="sidebar-footer">
         <!-- signout -->
         <button class="sidebar-signout" @click.prevent="signOut"><span>Sign out</span></button>
       </div>
-    </div>
+      </div>
 </template>
   
   <script>
@@ -99,7 +63,6 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
       return { 
         isModalVisible: false,
         user : false,
-        arrayOfProjects: getProjects(),
         object: {
               name: 'Team Projects',
             },
@@ -126,6 +89,7 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
         this.$router.push("/login")
       },
       showModal() {
+        console.log(getProjects());
         this.isModalVisible = true;
       },
       closeModal() {
@@ -184,7 +148,7 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
     font-family: 'Josefin Sans', sans-serif;
   }
   .sidebar-bg {
-    width: 16%;
+    width: 15%;
     height: 100%;
     display: flex;
     position: fixed;
@@ -268,6 +232,7 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
     font-stretch: normal;
     text-decoration: none;
     padding: 10px;
+    cursor: pointer;
   }
 
   .sidebar-usersname {
