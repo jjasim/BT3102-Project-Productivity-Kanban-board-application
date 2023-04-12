@@ -34,7 +34,8 @@ export default {
         const listDoc = {
             userUID : auth.currentUser.uid,
             name : this.newListName,
-            timestamp: Timestamp.now()
+            timestamp: Timestamp.now(),
+            projID: this.$route.params.projID
         }
         const docRef = await addDoc(collectionRef, listDoc);
         const id = docRef.id;

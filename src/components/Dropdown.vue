@@ -14,7 +14,7 @@
             <li v-for="(option, idx) in options" :key="idx">
                 <a class="sidebar-proj" @click="updateOption(option)">
                     <router-link to="/tasks">
-                    {{ option.name }}
+                    {{ option.id }}
                     </router-link>
                 </a>
             </li>
@@ -45,6 +45,7 @@
         },
         mounted() {
             this.selectedOption = this.selected;
+            console.log(this.selectedOption)
             if (this.closeOnOutsideClick) {
               document.addEventListener('click', this.clickHandler);
             }

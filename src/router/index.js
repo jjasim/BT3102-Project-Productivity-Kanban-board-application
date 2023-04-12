@@ -7,6 +7,7 @@ import HomePage from '@/views/HomePage.vue'
 import CalendarPage from '@/views/CalendarPage.vue';
 import SignUpDetails from '@/views/SignUpDetails.vue';
 import TestingPage from '@/views/TestingPage.vue';
+import AllProjectsPage from '@/views/AllProjectsPage.vue'
 
 const routes = [
     {
@@ -35,7 +36,7 @@ const routes = [
         component: HomePage
     },
     {
-        path: '/tasks',
+        path: '/tasks/:projID/:projName',
         name: 'Project Task Page',
         component: ProjectTaskPage,
     },
@@ -48,7 +49,13 @@ const routes = [
         path: '/test',
         name: 'Testing Page',
         component: TestingPage,
+    },
+    {
+        path: '/projects',
+        name: 'All Projects Page',
+        component: AllProjectsPage,
     }
+
 ]
 
 const router = createRouter({
