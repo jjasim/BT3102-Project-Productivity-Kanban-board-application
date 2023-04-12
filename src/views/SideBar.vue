@@ -245,7 +245,6 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
   }
 
   .SideBar-Name{
-    align-self: auto;
     width: auto;
     flex-direction: row;
     justify-content: space-around;
@@ -285,7 +284,9 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
     font-stretch: normal;
     text-decoration: none;
     height: auto;
+    align-self: auto;
     font-size: 20px;
+    padding-left: 1%;
   }
   .sidebar-points {
     display: flex;

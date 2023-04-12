@@ -18,6 +18,8 @@
           </div>
           <div class="item-points">+ {{ item.points }} points</div>
           <div class="button btn-edit" @click="showEditModal(item)"><CIcon :icon="cilPencil" size="custom"></CIcon></div>
+
+          <div class="button btn-edit" @click="deleteItem(item)"><CIcon :icon="cilTrash" size="custom"></CIcon></div>
            <!-- edit indiv task pop up -->
           <Modal v-show="isEditModalVisible" @close="closeEditModal">
             <template v-slot:header>
@@ -28,11 +30,11 @@
               <form @submit.prevent="addData" >
                 <div class="addproject-addprojtitle">
                   <div class="addproject-projtitletext">Edit name:</div>
-                    <input type="text" class="addproject-inputbg" placeholder="New name" id="newTaskName" v-model="newItem" required>  
+                    <input type="text" class="addproject-inputbg" placeholder="New name" id="newTaskName" v-model="newItemEdit" required>  
                   </div>
                   <div class="addproject-adduser">
                   <div class="addproject-userstext">Edit Due date:</div>
-                    <Datepicker class="addproject-inputbg" id="dueDate" v-model="picked" placeholder="New due date"></Datepicker>
+                    <Datepicker class="addproject-inputbg" id="dueDate" v-model="pickedEdit" placeholder="New due date"></Datepicker>
                   </div> 
               </form>
             </template>
@@ -102,7 +104,7 @@
   import Datepicker from '@/components/Datepicker/Datepicker.vue';
   import { auth, db } from "../firebase/init.js"
   import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
-  import { collection, getDocs, doc, addDoc, setDoc, updateDoc, where, query } from "firebase/firestore";
+  import { collection, getDocs, doc, addDoc, setDoc, updateDoc, where, query, deleteDoc } from "firebase/firestore";
 
   export default {
     mounted() {
@@ -123,7 +125,8 @@
         picked: new Date(),
         completed: false,
         selectedItem: "",
-        selectedItemName: "",
+        newItemEdit: "",
+        pickedEdit: new Date(),
       };
     },
     components: {Modal, CIcon, Datepicker},
@@ -182,7 +185,7 @@
           await updateDoc(userDoc.ref, {
             points: newPoints 
           })
-          console.log("user updated") 
+          console.log("points updated") 
         } catch (error) {
           console.log("points not updating correctly")
         }
@@ -204,12 +207,25 @@
           this.completed = false;
         }
       },
-      async editTask(item) {
+      async editData() {
         try {
-          
+          const docRef = doc(db, 'individualtasks', this.selectedItem.id);
+          await updateDoc(docRef, {
+            Name: this.newItemEdit,
+            endDate: this.pickedEdit,
+          });
+          console.log("task updated")
+          this.isEditModalVisible = false;
+          this.selectedItem = "";
+          document.getElementById("dueDate").value = "";
+          document.getElementById("newTaskName").value = ""; 
         } catch (error) {
+          console.log(item.id),
           console.log(error);
         }
+      },
+      async deleteItem(item) {
+        await deleteDoc(doc(db, 'individualtasks', item.id));
       }
     }
   };
@@ -285,6 +301,11 @@ ul {
 .task-input{
   color: #616161;
 }
+
+.task-input:hover{
+  cursor: pointer;
+  color:#FF9190;
+}
 .btn-add{
   flex-shrink: 0;
   height: 34px;
@@ -295,12 +316,22 @@ ul {
   color: rgba(255, 255, 255, 1);
 }
 
+.btn-add:hover {
+  color:#FF9190;
+  cursor: pointer;
+}
+
 .btn-edit{
   margin-left: auto;
   border: none;
   background: none;
   color: #616161;
   float: right;
+}
+
+.btn-edit:hover {
+  color:#FF9190;
+  cursor: pointer;
 }
 .task-list {
   border-radius: 2px;
