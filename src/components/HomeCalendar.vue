@@ -174,56 +174,36 @@
         item.originalItem.endDate = CalendarMath.addDays(item.endDate, eLength)
     }
 
-async (projectID: string): Promise<ICalendarItem[]> => {
-    const firebaseConfig = {
+    const fetchTasks = async () => {
+        console.log("In fetch tasks")
+        const firebaseConfig = {
                 apiKey: "AIzaSyBPB1jmwH-3h1YmBAkkekTF8eDto4pfo9c",
                 authDomain: "workwise-b1604.firebaseapp.com",
                 projectId: "workwise-b1604",
                 storageBucket: "workwise-b1604.appspot.com",
                 messagingSenderId: "218806215802",
                 appId: "1:218806215802:web:258458dab46639a66e07c3"
-    };
-    console.log("In fetch tasks");
+            };
 
-    // Initialize the Firebase app and get the Firestore database reference
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app)
+        const tasksRef = collection(db, 'individualtasks');
+        const taskSnapshot = await getDocs(tasksRef);
+        const tasks: ICalendarItem[] = [];
 
-    // Fetch lists that are part of the given project
-    const listsRef = collection(db, 'lists');
-    const listSnapshot = await getDocs(listsRef);
-    const projectListIDs: string[] = [];
-
-    listSnapshot.forEach((doc) => {
-        const listData = doc.data();
-        if (listData.projID === projectID) {
-            projectListIDs.push(doc.id);
-        }
-    });
-
-    // Fetch tasks that belong to lists in the given project
-    const tasksRef = collection(db, 'tasks');
-    const taskSnapshot = await getDocs(tasksRef);
-    const tasks: ICalendarItem[] = [];
-
-    taskSnapshot.forEach((doc) => {
-        console.log("In task snapshot");
-        const taskData = doc.data();
-        if (taskData.listID && projectListIDs.includes(taskData.listID)) {
+        taskSnapshot.forEach((doc) => {
+            console.log("In task snapshot")
+            const taskData = doc.data();
             tasks.push({
                 id: doc.id,
-                title: taskData.taskName,
+                title: taskData.Name,
                 startDate: taskData.endDate.toDate(),
                 endDate: taskData.endDate.toDate(),
-                // color: taskData.completed ? '#00FF00' : '#FF0000', // Optional: different colors for completed and not completed tasks
+                //color: taskData.completed ? '#00FF00' : '#FF0000', // Optional: different colors for completed and not completed tasks
             });
-        }
-    });
-
-    return tasks;
-};
-
-    
+        });
+        return tasks;
+    };
 
     onMounted(async () => {
         console.log("In Mounted")
@@ -236,7 +216,6 @@ async (projectID: string): Promise<ICalendarItem[]> => {
 <script lang="ts">
     import { getFirestore, collection} from 'firebase/firestore';
     import { initializeApp } from "firebase/app";
-
 
     export default {
         name: 'Calendar',
@@ -251,7 +230,7 @@ async (projectID: string): Promise<ICalendarItem[]> => {
         components: {
             Sidebar,
             UsersInProject,
-        }, 
+        },
     }
 </script>
 
