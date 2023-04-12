@@ -2,7 +2,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { db, auth } from '../../firebase/init.js'
 import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 
-// gets tasks across all projects and individual
+// gets tasks across all projects
 export const getCards = () => {
     const data = ref([]);
     
@@ -22,31 +22,15 @@ export const getCards = () => {
 
                 const projectQuery = query(collection(db, 'projects'), where("lists", "array-contains", card.listID)); 
                 onSnapshot(projectQuery, (projectSnapshot) => {
-                    const locat = projectSnapshot.docs.map((projectDoc) => {
+                    projectSnapshot.docs.map((projectDoc) => {
                         card.location = projectDoc.get('Name');
                     })
                 });
                 cards.push(card)
             });
-        });               
-        const indivQuery = query(collection(db, 'individualtasks'), where("uid", "==", auth.currentUser.uid)); 
-        let unsubscribe2 = onSnapshot(indivQuery, (indivSnapshot) => {
-            indivSnapshot.docs.forEach((doc) => {
-            const card = {
-                id: doc.id,
-                completed: doc.get('completed'),
-                endDate: doc.get('endDate').toDate(),
-                name: doc.get('Name'),
-                points: doc.get('points'),
-                location: "Individual task",
-                uid: auth.currentUser.uid,
-            }
-            cards.push(card);
-        });
         data.value = cards;
     });
     onUnmounted(unsubscribe);
-    onUnmounted(unsubscribe2);
 });
 console.log(data); 
 return data;

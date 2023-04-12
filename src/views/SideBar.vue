@@ -72,6 +72,7 @@
         <!-- signout -->
         <button class="sidebar-signout" @click.prevent="signOut"><span>Sign out</span></button>
       </div>
+      </div>
 </template>
   
   <script>
@@ -269,6 +270,11 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
     padding: 10px;
   }
 
+  .sidebar-addproj:hover {
+  background: #e1e1e1;
+  cursor: pointer
+  }
+
   .sidebar-usersname {
     color: rgba(255, 255, 255, 1);
     font-style: Regular;
@@ -351,6 +357,7 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
   background: #e1e1e1;
   cursor: pointer;
 }
+
 
   .sidebar-signout {
   border-color: transparent;
