@@ -114,15 +114,14 @@
       about: "",
       stakeHolderEmail: "",
       stakeHolderArrayEmail: [],
-      stakeHolderArrayID: []
+      stakeHolderArrayID: [],
+      columns: useLists(this.$route.params.projID)
     };
   },
     setup() {
-      const columns = useLists();
       return {
         cilPlus, 
         cilTrash, 
-        columns
       }
     },
     computed: {
@@ -143,7 +142,8 @@
           completed: false,
           about: this.about,
           stakeHolderArrayID: this.stakeHolderArrayID,
-          stakeHolderArrayEmail: this.stakeHolderArrayEmail
+          stakeHolderArrayEmail: this.stakeHolderArrayEmail,
+          projID: this.$route.params.projID
         };
         const docRef = await addDoc(taskCollectionRef, taskDoc); 
         await setDoc(doc(db, "tasks", docRef.id), taskDoc)

@@ -2,20 +2,21 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { db, auth } from '../../../firebase/init.js'
 import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 
-export const useLists = () => {
+export const useLists = (projID) => {
   const lists = ref([]);
   const loading = ref(true);
 
   onMounted(() => {
     console.log(auth.currentUser)
-    const listsQuery = query(collection(db, 'lists'), where("userUID", "==", auth.currentUser.uid)); 
+    const listsQuery = query(collection(db, 'lists'), where("projID", "==", projID)); 
     let unsubscribe = onSnapshot(listsQuery, (snapshot) => {
       const data = snapshot.docs.map((doc) => {
         const listData = {
           id: doc.id,
           name: doc.get('name'),
           userUID: doc.get('userUID'),
-          tasks: []
+          projID: doc.get("projID"),
+          tasks: [],
         };
         
         // Fetch tasks for the current list and listen for changes

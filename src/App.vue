@@ -17,6 +17,7 @@ import Modal from './components/Modal.vue';
 import dropdown from './components/Dropdown.vue';
 import MobileDevice from './views/MobileDevice.vue';
 import SignUpDetails from "./views/SignUpDetails.vue"
+import AllProjectsPage from './views/AllProjectsPage.vue'
 
 export default {
   name: 'App',
@@ -30,7 +31,8 @@ export default {
     Modal,
     dropdown,
     MobileDevice,
-    SignUpDetails
+    SignUpDetails,
+    AllProjectsPage
   },
   data(){
     return {

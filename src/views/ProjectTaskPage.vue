@@ -6,10 +6,10 @@
     </div>
     <div class="Wrapper">
       <div class="Header">
-        <Header />
+        <Header/>
       </div>
       <div class="KanbanBoard">
-        <KanbanBoard />
+        <KanbanBoard/>
       </div>
     </div>
 
@@ -25,7 +25,6 @@ import UsersInProject from "@/components/UsersInProject/UsersInProject.vue"
 import Header from "@/components/Header.vue"
 import SideBar from "@/views/SideBar.vue";
 import Modal from "@/components/Modal.vue";
-import dropdown from '@/components/Dropdown.vue';
 import { Disqus } from 'vue-disqus'
 
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
@@ -41,6 +40,9 @@ export default {
       user : false 
     };
   },
+  created() {
+    console.log(this.$props.projName);
+  },
     mounted() {
       const auth = getAuth();
       onAuthStateChanged(auth, (user) => {
@@ -52,20 +54,8 @@ export default {
       })
     },
   methods: {
-    showAddCardPopup() {
-      this.addCardPopupVisible = true;
-    },
-    showAddUserPopup() {
-      this.addUserPopupVisible = true;
-    },
-    showListUserPopup() {
-      this.addListPopupVisible = true;
-    },
-    showEditElemPopup() {
-      this.editElemPopupVisible = true;
-    },
   },
-  components: {SideBar, Modal, dropdown, KanbanBoard, UsersInProject, Header, Disqus}
+  components: {SideBar, Modal, KanbanBoard, UsersInProject, Header, Disqus}
 };
 </script>
 

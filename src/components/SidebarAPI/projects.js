@@ -3,24 +3,22 @@ import { db, auth } from '../../firebase/init.js'
 import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 
 export const getProjects = () => {
-    const data = ref([]);
-  
-    onMounted(() => {
-      let projects = [];
-      const projQuery = query(collection(db, 'projects'), where("users", "array-contains", auth.currentUser.uid)); 
-      let unsubscribe = onSnapshot(projQuery, (snapshot) => {
-        snapshot.docs.forEach((doc) => {
-            const proj = {
-                projID: doc.id, 
-                name: doc.get('Name'),
-                link: doc.id,
-            }
-          projects.push(proj);    
-        });
-        data.value = projects;
+  const projects = ref(null);
+  onMounted(() => {
+    const projQuery = query(collection(db, 'projects'), where("users", "array-contains", auth.currentUser.uid)); 
+    let unsubscribe = onSnapshot(projQuery, (snapshot) => {
+      const data = snapshot.docs.map((doc) => {
+        const proj = {
+          projID: doc.id, 
+          name: doc.get('Name'),
+          users: doc.get('users')
+        };
+        return proj; 
       });
-      onUnmounted(unsubscribe);
+      projects.value = data;
     });
-    console.log(data); 
-    return data;
-  };
+    onUnmounted(unsubscribe);
+  });
+  console.log(projects)
+  return projects;
+};
