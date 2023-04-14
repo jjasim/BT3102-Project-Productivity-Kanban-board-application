@@ -209,7 +209,6 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
   }
 
   .SideBar-Name{
-    align-self: auto;
     width: auto;
     flex-direction: row;
     justify-content: space-around;
@@ -235,6 +234,11 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
     cursor: pointer;
   }
 
+  .sidebar-addproj:hover {
+  background: #e1e1e1;
+  cursor: pointer
+  }
+
   .sidebar-usersname {
     color: rgba(255, 255, 255, 1);
     font-style: Regular;
@@ -245,7 +249,9 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
     font-stretch: normal;
     text-decoration: none;
     height: auto;
+    align-self: auto;
     font-size: 20px;
+    padding-left: 1%;
   }
   .sidebar-points {
     display: flex;
@@ -317,6 +323,7 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
   background: #e1e1e1;
   cursor: pointer;
 }
+
 
   .sidebar-signout {
   border-color: transparent;

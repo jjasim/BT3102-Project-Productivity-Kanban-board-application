@@ -1,54 +1,39 @@
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, watchEffect } from 'vue';
 import { db, auth } from '../../firebase/init.js'
-import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 
-// gets tasks across all projects and individual
+
 export const getCards = () => {
-    const data = ref([]);
-    
+    const cards = ref([]);
+
     onMounted(() => {
-        let cards = [];
         const listQuery = query(collection(db, 'tasks'), where("stakeHolderArrayID", "array-contains", auth.currentUser.uid));
         let unsubscribe = onSnapshot(listQuery, (snapshot) => {
-            snapshot.docs.forEach((doc) => { 
+            const data = snapshot.docs.map((doc) => {
                 const card = {
                     id: doc.id,
                     completed: doc.get('isChecked'),
                     endDate: doc.get('endDate').toDate(),
-                    listID: doc.get('listID'), 
+                    listID: doc.get('listID'),
                     name: doc.get('taskName'),
                     points: doc.get('points'),
-                }
+                    location: "",
+                };
 
-                const projectQuery = query(collection(db, 'projects'), where("lists", "array-contains", card.listID)); 
-                onSnapshot(projectQuery, (projectSnapshot) => {
-                    const locat = projectSnapshot.docs.map((projectDoc) => {
-                        card.location = projectDoc.get('Name');
-                    })
+                const list_id = doc.get('listID');
+                const projectQuery = query(collection(db, 'projects'), where("lists", "array-contains", list_id));
+                let unsubscribeCards = onSnapshot(projectQuery, (projectSnapshot) => {
+                    const cardsData = projectSnapshot.docs.map((nameDoc) => {
+                        return nameDoc.get('Name');
+                    });
+                    card.location = cardsData;
                 });
-                cards.push(card)
+                onUnmounted(unsubscribeCards);
+                return card;
             });
-        });               
-        const indivQuery = query(collection(db, 'individualtasks'), where("uid", "==", auth.currentUser.uid)); 
-        let unsubscribe2 = onSnapshot(indivQuery, (indivSnapshot) => {
-            indivSnapshot.docs.forEach((doc) => {
-            const card = {
-                id: doc.id,
-                completed: doc.get('completed'),
-                endDate: doc.get('endDate').toDate(),
-                name: doc.get('Name'),
-                points: doc.get('points'),
-                location: "Individual task",
-                uid: auth.currentUser.uid,
-            }
-            cards.push(card);
-        });
-        data.value = cards;
+        cards.value = data;
     });
     onUnmounted(unsubscribe);
-    onUnmounted(unsubscribe2);
-});
-console.log(data); 
-return data;
+  });
+  return cards;
 };
-

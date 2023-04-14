@@ -1,13 +1,54 @@
 <template>
   <div class="todolist-bg">
     <div class="todolisttitle">Tasks</div>
-        <label> Completed tasks: {{ isComplete }} / {{ totalItems }}</label>
-
       <!-- Show added items in list view-->
       <ul class="task-list" id="list">
         <!-- v-for to iterates over the items array and create a list of item for each item in the array -->
         <!-- v-bind to check whether item is completed or not-->
-        <li class="task-list-item" v-for="(item) in items" :key="item.id" v-bind:class="{completed: item.completed}">
+        <!-- finding indiv tasks -->
+        <li class="task-list-item" v-for="(item) in indivitems" :key="item.id" v-bind:class="{completed: item.completed}">
+          <div class="item-details">
+            <input class="checkbox" type="checkbox" 
+            v-model="item.completed" v-on:change="clickChecked(item); updatePoints(item.points)"/>
+            <span class="item-title">{{ item.name }}</span>
+            <div>
+              <a class="item-duedate"><CIcon :icon="cilCalendar" size="custom"/> {{  `${item.endDate.getDate()}/${item.endDate.getMonth()+1}/${item.endDate.getFullYear()}` }}</a>
+              <a class="item-location">in {{ item.location }}</a>
+            </div>
+          </div>
+          <div class="item-points">+ {{ item.points }} points</div>
+          <div class="button btn-edit" @click="showEditModal(item)"><CIcon :icon="cilPencil" size="custom"></CIcon></div>
+
+          <div class="button btn-edit" @click="deleteItem(item)"><CIcon :icon="cilTrash" size="custom"></CIcon></div>
+           <!-- edit indiv task pop up -->
+          <Modal v-show="isEditModalVisible" @close="closeEditModal">
+            <template v-slot:header>
+              Edit individual task
+            </template>
+            
+            <template v-slot:body>
+              <form @submit.prevent="addData" >
+                <div class="addproject-addprojtitle">
+                  <div class="addproject-projtitletext">Edit name:</div>
+                    <input type="text" class="addproject-inputbg" placeholder="New name" id="newTaskName" v-model="newItemEdit" required>  
+                  </div>
+                  <div class="addproject-adduser">
+                  <div class="addproject-userstext">Edit Due date:</div>
+                    <Datepicker class="addproject-inputbg" id="dueDate" v-model="pickedEdit" placeholder="New due date"></Datepicker>
+                  </div> 
+              </form>
+            </template>
+
+            <template v-slot:footer>
+              <div class="addproject-pushbuttons">
+                <button class="addproject-addbutton" type="submit" @click="editData">Save</button>
+              </div>
+            </template>
+          </Modal>
+        </li>
+
+        <!-- finding project items-->
+        <li class="task-list-item" v-for="(item) in projitems" :key="item.id" v-bind:class="{completed: item.completed}">
           <div class="item-details">
             <input class="checkbox" type="checkbox" 
             v-model="item.completed" v-on:change="clickChecked(item); updatePoints(item.points)"/>
@@ -18,8 +59,6 @@
             </div>
         </div>
           <div class="item-points">+ {{ item.points }} points</div>
-          <button v-on:click= "deleteItem(index)"
-            class="button btn-delete"><CIcon :icon="cilTrash" size="custom"></CIcon> </button>
         </li>
       </ul>
 
@@ -59,12 +98,13 @@
   <script> 
   import Modal from '@/components/Modal.vue';
   import { getCards } from '@/components/ToDoListAPI/index.js';
+  import { getIndiv } from '@/components/ToDoListAPI/indivtasks.js';
   import { CIcon } from '@coreui/icons-vue';
-  import { cilCalendar, cilLibraryAdd, cilTrash } from '@coreui/icons';
+  import { cilCalendar, cilLibraryAdd, cilTrash, cilPencil } from '@coreui/icons';
   import Datepicker from '@/components/Datepicker/Datepicker.vue';
   import { auth, db } from "../firebase/init.js"
   import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
-  import { collection, getDocs, doc, addDoc, setDoc, updateDoc, where, query } from "firebase/firestore";
+  import { collection, getDocs, doc, addDoc, setDoc, updateDoc, where, query, deleteDoc } from "firebase/firestore";
 
   export default {
     mounted() {
@@ -78,10 +118,15 @@
     data() {
       return {
         newItem: "", //item before adding into array
-        items: getCards(),
+        indivitems: getIndiv(),
+        projitems: getCards(),
         isModalVisible: false,
+        isEditModalVisible: false,
         picked: new Date(),
         completed: false,
+        selectedItem: "",
+        newItemEdit: "",
+        pickedEdit: new Date(),
       };
     },
     components: {Modal, CIcon, Datepicker},
@@ -89,15 +134,8 @@
       return {
         cilCalendar,
         cilLibraryAdd,
-        cilTrash
-      }
-    },
-    computed: {
-      totalItems() {
-        return this.items.length; //auto increment of 1 of each items added into array
-      },
-      isComplete() {
-        return this.items.filter(item => item.completed).length; //to get completed [checkbox: checked] 
+        cilTrash,
+        cilPencil
       }
     },
     methods: {
@@ -119,14 +157,21 @@
           console.log("this also shouldnt run")
         }
       },
-      deleteItem(index) {
-        this.items.splice(index, 1); //remove item
-      },
       showModal() {
         this.isModalVisible = true;
       },
       closeModal() {
         this.isModalVisible = false;
+        document.getElementById("dueDate").value = "";
+        document.getElementById("newTaskName").value = "";
+      },
+      showEditModal(item) {
+        this.isEditModalVisible = true;
+        this.selectedItem = item;
+      },
+      closeEditModal() {
+        this.isEditModalVisible = false;
+        this.selectedItem = "";
         document.getElementById("dueDate").value = "";
         document.getElementById("newTaskName").value = "";
       },
@@ -140,7 +185,7 @@
           await updateDoc(userDoc.ref, {
             points: newPoints 
           })
-          console.log("user updated") 
+          console.log("points updated") 
         } catch (error) {
           console.log("points not updating correctly")
         }
@@ -161,6 +206,26 @@
           console.log('Field updated successfully.');
           this.completed = false;
         }
+      },
+      async editData() {
+        try {
+          const docRef = doc(db, 'individualtasks', this.selectedItem.id);
+          await updateDoc(docRef, {
+            Name: this.newItemEdit,
+            endDate: this.pickedEdit,
+          });
+          console.log("task updated")
+          this.isEditModalVisible = false;
+          this.selectedItem = "";
+          document.getElementById("dueDate").value = "";
+          document.getElementById("newTaskName").value = ""; 
+        } catch (error) {
+          console.log(item.id),
+          console.log(error);
+        }
+      },
+      async deleteItem(item) {
+        await deleteDoc(doc(db, 'individualtasks', item.id));
       }
     }
   };
@@ -236,6 +301,11 @@ ul {
 .task-input{
   color: #616161;
 }
+
+.task-input:hover{
+  cursor: pointer;
+  color:#FF9190;
+}
 .btn-add{
   flex-shrink: 0;
   height: 34px;
@@ -246,12 +316,22 @@ ul {
   color: rgba(255, 255, 255, 1);
 }
 
-.btn-delete{
+.btn-add:hover {
+  color:#FF9190;
+  cursor: pointer;
+}
+
+.btn-edit{
   margin-left: auto;
   border: none;
   background: none;
   color: #616161;
   float: right;
+}
+
+.btn-edit:hover {
+  color:#FF9190;
+  cursor: pointer;
 }
 .task-list {
   border-radius: 2px;
@@ -296,10 +376,7 @@ ul {
   font-family: Josefin Sans;
 }
 
-.vertical {
-  border-left: 1px solid black;
-  height: 5px;
-}
+
 
 .item-location {
   color: #616161;
@@ -314,6 +391,7 @@ ul {
 
 .item-points {
   color: #FF9190;
+  float: right;
 }
 .checkbox {
   color:#5E72EB;
