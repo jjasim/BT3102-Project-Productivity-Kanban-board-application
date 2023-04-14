@@ -70,6 +70,10 @@
                 {{ formattedStakeHolders }}
             </div>
           </div> 
+          <div class="addproject-addprojtitle">
+            <div class="addproject-projtitletext">Color:</div>
+            <input type="color" class="addproject-inputbg" id="colorPicker" v-model="color">
+          </div>
         </form>
       </template>
       <template v-slot:footer>
@@ -105,7 +109,8 @@ data() {
     completed: this.task.completed,
     stakeHolderArrayID: this.task.stakeHolderArrayID,
     stakeHolderArrayEmail: this.task.stakeHolderArrayEmail,
-    stakeHolderEmail: ""
+    stakeHolderEmail: "",
+    color: this.task.color || "#ffffff"
   }
 },
 setup() {
@@ -152,11 +157,13 @@ methods: {
       endDate: firebaseDate,
       about: this.about,
       stakeHolderArrayEmail: this.stakeHolderArrayEmail,
-      stakeHolderArrayID: this.stakeHolderArrayID
+      stakeHolderArrayID: this.stakeHolderArrayID,
+      color: this.color,
     }
     await updateDoc(subTaskDoc, updatedData);
     await updateDoc(taskDoc, updatedData);
     this.task.taskName = this.taskName;
+    this.task.color = this.color;
     const newDate = firebaseDate.toDate()
     const formattedDate = newDate.toLocaleDateString('en-GB', {
           day: 'numeric',

@@ -5,7 +5,7 @@
 
             <div id="calendar-proper">
                 <calendar-view
-                    :items="state.items"
+                    :items="itemsWithColor"
                     :enable-drag-drop="true"
                     @drop-on-date="onDrop"
                     :show-date="state.showDate"
@@ -13,11 +13,13 @@
                     :show-weekday="true"
                     :show-week-numbers="true"
                     :disablePast = "true"
+                    :item-classes="itemClasses"
                     class = "holiday-us-traditional holiday-us-official"
                     id = "calendar-body">
                     <template #header="{ headerProps }">
-                            <CalendarViewHeader :header-props="headerProps" @input="setShowDate" />
+                        <CalendarViewHeader :header-props="headerProps" @input="setShowDate" />
                     </template>
+
                 </calendar-view> 
             </div>
 
@@ -60,9 +62,10 @@
     } from "vue-simple-calendar"
 
     import {
-        ICalendarItem,
         INormalizedCalendarItem,
     } from  "vue-simple-calendar/dist/src/ICalendarItem"    
+
+    import { ICalendarItem } from "../components/CalendarAPI/ICalendarItem"
 
     import {
         onMounted,
@@ -78,6 +81,8 @@
     import Sidebar from "../views/SideBar.vue"
     import UsersInProject from "@/components/UsersInProject/UsersInProject.vue"
     import { getDocs } from 'firebase/firestore';
+    import { doc, updateDoc } from 'firebase/firestore';
+    import { computed } from 'vue';
 
 
     // Gets this month
@@ -165,24 +170,42 @@
     }
 */
     // For moving items around on calendar (check if its needed)
-    const onDrop = (item: INormalizedCalendarItem, date: Date): void => {
+    const onDrop = async (item: INormalizedCalendarItem, date: Date): Promise<void> => {
         state.message = `You dropped ${item.id} on ${date.toLocaleDateString()}`
         // Determine the delta between the old start date and the date chosen,
         // and apply that delta to both the start and end date to move the item.
         const eLength = CalendarMath.dayDiff(item.startDate, date)
         item.originalItem.startDate = CalendarMath.addDays(item.startDate, eLength)
         item.originalItem.endDate = CalendarMath.addDays(item.endDate, eLength)
+
+        // Update the item in Firestore
+        const firebaseConfig = {
+                    apiKey: "AIzaSyBPB1jmwH-3h1YmBAkkekTF8eDto4pfo9c",
+                    authDomain: "workwise-b1604.firebaseapp.com",
+                    projectId: "workwise-b1604",
+                    storageBucket: "workwise-b1604.appspot.com",
+                    messagingSenderId: "218806215802",
+                    appId: "1:218806215802:web:258458dab46639a66e07c3"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const taskRef = doc(db, 'tasks', item.id);
+        await updateDoc(taskRef, {
+            startDate: item.originalItem.startDate,
+            endDate: item.originalItem.endDate,
+        });
     }
 
-async (projectID: string): Promise<ICalendarItem[]> => {
-    const firebaseConfig = {
-                apiKey: "AIzaSyBPB1jmwH-3h1YmBAkkekTF8eDto4pfo9c",
-                authDomain: "workwise-b1604.firebaseapp.com",
-                projectId: "workwise-b1604",
-                storageBucket: "workwise-b1604.appspot.com",
-                messagingSenderId: "218806215802",
-                appId: "1:218806215802:web:258458dab46639a66e07c3"
-    };
+    const fetchTasks = async (projectID: string): Promise<ICalendarItem[]> => {
+        const firebaseConfig = {
+                    apiKey: "AIzaSyBPB1jmwH-3h1YmBAkkekTF8eDto4pfo9c",
+                    authDomain: "workwise-b1604.firebaseapp.com",
+                    projectId: "workwise-b1604",
+                    storageBucket: "workwise-b1604.appspot.com",
+                    messagingSenderId: "218806215802",
+                    appId: "1:218806215802:web:258458dab46639a66e07c3"
+        };
     console.log("In fetch tasks");
 
     // Initialize the Firebase app and get the Firestore database reference
@@ -207,7 +230,7 @@ async (projectID: string): Promise<ICalendarItem[]> => {
     const tasks: ICalendarItem[] = [];
 
     taskSnapshot.forEach((doc) => {
-        console.log("In task snapshot");
+        //console.log("In task snapshot");
         const taskData = doc.data();
         if (taskData.listID && projectListIDs.includes(taskData.listID)) {
             tasks.push({
@@ -215,28 +238,62 @@ async (projectID: string): Promise<ICalendarItem[]> => {
                 title: taskData.taskName,
                 startDate: taskData.endDate.toDate(),
                 endDate: taskData.endDate.toDate(),
-                // color: taskData.completed ? '#00FF00' : '#FF0000', // Optional: different colors for completed and not completed tasks
+                color: taskData.cardColor
             });
+        }
+        //console.log(tasks);
+    });
+
+        return tasks;
+    };
+
+    onMounted(async () => {
+    //console.log("IN MOUNTED")
+    const route = useRoute();
+    const projID = route.params.projID as string;
+    //console.log(typeof projID);
+    //console.log(projID)
+
+        if (projID) {
+            state.items = await fetchTasks(projID);
         }
     });
 
-    return tasks;
-};
+    // to setup for the task colors
+    const itemClasses = (item: ICalendarItem): string[] => {
+        console.log(item);
+        const classes = ['rounded-border']; // Add the custom class here
+        if (item && item.color) {
+            classes.push(`bg-color-${item.color.replace('#', '')}`)
+            console.log("colors found!")
+        } else {
+            console.log(`No color found for item ${item}`);
+        }
+        return classes;
+    }
 
-    
+    const itemStyles = (item: ICalendarItem): string => {
+        const bgColor = item.color ? `background-color: ${item.color};` : '';
+        const borderRadius = 'border-radius: 8%;';
+        const paddingTop = 'padding-top: 0.1em';
+        const textAlign = 'text-align: center';
+        return `${bgColor} ${borderRadius} ${paddingTop} ${textAlign}`;
+    };
 
-    onMounted(async () => {
-        console.log("In Mounted")
-        const tasks = await fetchTasks();
-        state.items.push(...tasks);
-        //console.log(tasks)
+    const itemsWithColor = computed(() => {
+        return state.items.map(item => {
+            return {
+                ...item,
+                style: itemStyles(item),
+            };
+        });
     });
 </script>
 
 <script lang="ts">
     import { getFirestore, collection} from 'firebase/firestore';
     import { initializeApp } from "firebase/app";
-
+    import { useRoute } from "vue-router";
 
     export default {
         name: 'Calendar',
@@ -252,6 +309,7 @@ async (projectID: string): Promise<ICalendarItem[]> => {
             Sidebar,
             UsersInProject,
         }, 
+        
     }
 </script>
 
@@ -364,5 +422,15 @@ async (projectID: string): Promise<ICalendarItem[]> => {
 
     .cv-day.outsideOfMonth {
         background-color: #f7f7f7 !important;
+    }
+
+    .calendar-item {
+        padding: 3px;
+        border-radius: 3px;
+        color: white;
+    }
+
+    .rounded-border {
+        border-radius: 50% !important; 
     }
 </style>

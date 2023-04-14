@@ -41,7 +41,7 @@ const routes = [
         component: ProjectTaskPage,
     },
     {
-        path: '/calendar',
+        path: '/calendar/:projID/:projName',
         name: 'Calendar Page',
         component: CalendarPage,
     },
