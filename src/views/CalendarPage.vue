@@ -18,7 +18,6 @@
         </div>
 
         <div class="users-in-project">
-            <UsersInProject />
         </div>
     </div>
 
@@ -28,7 +27,6 @@
 <script>  
 
     import Sidebar from "./SideBar.vue"
-    import UsersInProject from "@/components/UsersInProject/UsersInProject.vue"
     import Calendar from "../components/Calendar.vue"
     import Header from "../components/Header.vue"
     import { getUser } from '../components/SidebarAPI/userinfo.js';
@@ -39,8 +37,7 @@
         components: {
             Sidebar,
             Header,
-            Calendar,
-            UsersInProject
+            Calendar
         },
         data() {
             return {
