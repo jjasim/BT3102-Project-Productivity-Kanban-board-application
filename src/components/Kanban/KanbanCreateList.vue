@@ -12,14 +12,13 @@
 </template>
 
 <script>
-import KanbanBadge from "./KanbanBadge.vue";
 import { collection, getDocs, getFirestore, doc, addDoc, serverTimestamp, Timestamp } from "firebase/firestore"
 import { auth, db } from "../../firebase/init.js"
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 export default {
     components: {
-        KanbanBadge,
+
     },
     data() {
     return {

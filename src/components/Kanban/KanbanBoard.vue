@@ -22,7 +22,6 @@
                 class="list-group"
                 ghost-class="ghost-card"
                 group="tasks"
-                ref="listRef"
                 :animation="200"
                 @change="onChange(column, $event)"
                 :emptyInsertThreshold="100"
@@ -84,7 +83,7 @@
               </template>
               <template v-slot:footer>
                 <div class="addproject-pushbuttons">
-                  <button class="addproject-addbutton" @click.prevent="addCard">Add Card</button>
+                  <button class="addproject-addbutton" @click.prevent="">Add Card</button>
                 </div>
               </template>
             </Modal>
@@ -177,6 +176,7 @@
           stakeHolderArrayEmail: this.stakeHolderArrayEmail,
           projID: this.$route.params.projID,
           cardColor: this.cardColor,
+          points: 100
         };
         const docRef = await addDoc(taskCollectionRef, taskDoc); 
         await setDoc(doc(db, "tasks", docRef.id), taskDoc)

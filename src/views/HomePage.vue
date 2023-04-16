@@ -30,6 +30,13 @@ import ToDoList from "@/components/ToDoList.vue";
 
 export default {
   name: "HomePage",
+  data() {
+    return {
+      todaysdate: new Date().toLocaleString,
+      userDetails: getUser(),
+      user: false
+    }
+  }, 
   mounted() {
       const auth = getAuth();
       onAuthStateChanged(auth, (user) => {
@@ -40,13 +47,6 @@ export default {
         }
       })
     },
-  data() {
-    return {
-      todaysdate: new Date().toLocaleString,
-      userDetails: getUser(),
-      user: false
-    }
-  }, 
   methods: {
     currentDate() {
       const current = new Date();

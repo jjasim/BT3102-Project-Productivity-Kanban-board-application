@@ -107,14 +107,6 @@
   import { collection, getDocs, doc, addDoc, setDoc, updateDoc, where, query, deleteDoc } from "firebase/firestore";
 
   export default {
-    mounted() {
-      const auth = getAuth();
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          this.user = user;
-        }
-      })
-    },
     data() {
       return {
         newItem: "", //item before adding into array

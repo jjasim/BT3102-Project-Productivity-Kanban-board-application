@@ -1,6 +1,6 @@
 <template>
-  <div class="All-Projects-Container">
-    <div class="sidebar" v-if="user">
+  <div class="All-Projects-Container" v-if="user">
+    <div class="sidebar">
         <SideBar />
     </div>
     <div class="Wrapper">

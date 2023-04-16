@@ -30,7 +30,7 @@
       </template>
       <template v-slot:footer>
         <div class="addproject-pushbuttons">
-          <button class="addproject-addbutton" @click.prevent="createProject()">Submit</button>
+          <button class="addproject-addbutton" @click.prevent="createProject">Submit</button>
         </div>
       </template>
     </Modal>

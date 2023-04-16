@@ -11,7 +11,6 @@ export const getUser = () => {
         const userData = {
           uid: doc.get('uid'),
           name: doc.get('name'),
-          username: doc.get('username'), 
           email: doc.get('email'),
           points: doc.get('points'),
           projects: doc.get('projects'),
