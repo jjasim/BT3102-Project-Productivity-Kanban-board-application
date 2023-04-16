@@ -1,15 +1,12 @@
 <template>
   <div class="todolist-bg">
     <div class="todolisttitle">Tasks</div>
-      <!-- Show added items in list view-->
+      <!-- Show tasks in list view-->
       <ul class="task-list" id="list">
-        <!-- v-for to iterates over the items array and create a list of item for each item in the array -->
-        <!-- v-bind to check whether item is completed or not-->
         <!-- finding indiv tasks -->
         <li class="task-list-item" v-for="(item) in indivitems" :key="item.id" v-bind:class="{completed: item.completed}">
           <div class="item-details">
-            <input class="checkbox" type="checkbox" 
-            v-model="item.completed" v-on:change="clickChecked(item); updatePoints(item.points)"/>
+            <input class="checkbox" type="checkbox" v-model="item.completed" v-on:change="clickChecked(item); updatePoints(item.points)" :disabled="item.completed"/>
             <span class="item-title">{{ item.name }}</span>
             <div>
               <a class="item-duedate"><CIcon :icon="cilCalendar" size="custom"/> {{  `${item.endDate.getDate()}/${item.endDate.getMonth()+1}/${item.endDate.getFullYear()}` }}</a>
@@ -48,10 +45,8 @@
         </li>
 
         <!-- finding project items-->
-        <li class="task-list-item" v-for="(item) in projitems" :key="item.id" v-bind:class="{completed: item.completed}">
-          <div class="item-details">
-            <input class="checkbox" type="checkbox" 
-            v-model="item.completed" v-on:change="clickChecked(item); updatePoints(item.points)"/>
+        <li class="task-list-item" v-for="(item) in projitems" :key="item.id">
+          <div class="item-details"> 
             <span class="item-title">{{ item.name }}</span>
             <div>
               <a class="item-duedate"><CIcon :icon="cilCalendar" size="custom"/> {{  `${item.endDate.getDate()}/${item.endDate.getMonth()+1}/${item.endDate.getFullYear()}` }}</a>
@@ -107,14 +102,6 @@
   import { collection, getDocs, doc, addDoc, setDoc, updateDoc, where, query, deleteDoc } from "firebase/firestore";
 
   export default {
-    mounted() {
-      const auth = getAuth();
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          this.user = user;
-        }
-      })
-    },
     data() {
       return {
         newItem: "", //item before adding into array
@@ -139,6 +126,7 @@
       }
     },
     methods: {
+      // ability to add new individual tasks, updates to firebase at the same time
       async addData() {
         try {
           const docRef = await addDoc(collection(db, 'individualtasks'), {
@@ -178,6 +166,7 @@
         document.getElementById("newTaskName").value = "";
         this.$emit('task-added');
       },
+      // updating of points when a task is clicked as completed
       async updatePoints(pointsAdded) {
         try {
           const quer = query(collection(db, 'users'), where('uid', '==', auth.currentUser.uid));
@@ -193,6 +182,7 @@
           console.log("points not updating correctly")
         }
       },
+      // update firebase when a task is clicked as completed
       async clickChecked(item) {
         try {
           const docRef = doc(db, 'individualtasks', item.id);
@@ -210,6 +200,7 @@
           this.completed = false;
         }
       },
+      // ability to edit individual task created by user, and update firebase
       async editData() {
         try {
           const docRef = doc(db, 'individualtasks', this.selectedItem.id);
@@ -224,10 +215,10 @@
           document.getElementById("newTaskName").value = ""; 
           this.$emit('task-added');
         } catch (error) {
-          console.log(item.id),
           console.log(error);
         }
       },
+      // ability to delete individual task created by user
       async deleteItem(item) {
         await deleteDoc(doc(db, 'individualtasks', item.id));
         this.$emit('task-added');

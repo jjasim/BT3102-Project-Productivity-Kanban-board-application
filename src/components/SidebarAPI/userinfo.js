@@ -2,6 +2,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { db, auth } from '../../firebase/init.js'
 import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 
+// get details of a user
 export const getUser = () => {
   const user = ref(null);
   onMounted(() => {
@@ -11,11 +12,8 @@ export const getUser = () => {
         const userData = {
           uid: doc.get('uid'),
           name: doc.get('name'),
-          username: doc.get('username'), 
           email: doc.get('email'),
           points: doc.get('points'),
-          projects: doc.get('projects'),
-          projectArray: []
         };
         return userData;
       });

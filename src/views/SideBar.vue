@@ -3,12 +3,8 @@
     <div class="sidebar-header" >
        <!-- user's name -->
       <div class="SideBar-Name">
-        <img
-            alt="Icon"
-            src="src/assets/sidebar-person-icon.png"
-            class="UserIcon"
-          />
-        <span class="sidebar-usersname"><span>{{ userDetails[0].username }}</span></span>
+        <CIcon :icon="cilUser" size="custom"></CIcon>
+        <span class="sidebar-usersname"><span>{{ userDetails[0].name }}</span></span>
       </div>
       <!-- users points -->
       <div>
@@ -27,10 +23,9 @@
       </div>
           <!-- analytics -->
         <div class="sidebar-analyticsbutton">
-          <router-link to="/signup">Analytics</router-link>
+          <router-link to="/home">Analytics</router-link>
         </div>
       </div>
-
         
       <div class="sidebar-footer">
         <!-- signout -->
@@ -40,11 +35,10 @@
 </template>
   
   <script>
-import Modal from '@/components/Modal.vue';
 import dropdown from '@/components/Dropdown.vue';
 import { getProjects } from '../components/SidebarAPI/projects.js';
 import { CIcon } from '@coreui/icons-vue';
-import { cilGem } from '@coreui/icons';
+import { cilGem, cilUser } from '@coreui/icons';
 import { auth, db } from "../firebase/init.js"
 import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
 import { collection, getDocs, doc, addDoc, setDoc, query, where } from "firebase/firestore";
@@ -53,21 +47,18 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
 
   export default {
     name: 'Sidebar',
-    components: {Modal, dropdown, CIcon},
+    components: {CIcon},
     setup() {
       return {
         cilGem,
+        cilUser
       }
     },
     data() {
       return { 
         isModalVisible: false,
         user : false,
-        object: {
-              name: 'Team Projects',
-            },
         projName: "",
-        projUsers: [],
         userDetails: getUser()
       }
     },
@@ -81,61 +72,18 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
         }
       })
     },
+    data() {
+      return {
+        user : false,
+        userDetails: getUser(),
+      }
+    },
     methods: {
       async signOut() {
         const auth = getAuth();
         const user = auth.currentUser;
         await signOut(auth, user);
         this.$router.push("/login")
-      },
-      showModal() {
-        console.log(getProjects());
-        this.isModalVisible = true;
-      },
-      closeModal() {
-        this.isModalVisible = false;
-        this.projName = "";
-        this.projUsers = [];
-        document.getElementById("newUsers").value = "";
-        document.getElementById("newProjName").value = "";
-        document.getElementById("list").innerHTML = "";
-        document.getElementById("list").innerHTML = "<li>" + this.userDetails[0].username + "</li>";
-      },
-      async addUser() {
-        try {
-        var input = document.getElementById("newUsers").value;
-        this.projUsers.push(input);
-        var list = document.getElementById("list");
-        var item = document.createElement("li");
-        item.append(document.createTextNode(input));
-        list.append(item);
-        document.getElementById("newUsers").value = "";
-        } catch(error) {
-          console.log('error');
-        }
-      },
-      async addData() {
-        try {
-          this.projUsers.push(this.userDetails[0].username);
-          console.log(this.projUsers);
-          console.log(this.projName);
-          const querySnapshot = await getDocs(query(collection(db, 'users'), where('username', 'in', this.projUsers)));
-          const userIds = querySnapshot.docs.map((doc) => doc.get('uid'));
-          const docRef = await addDoc(collection(db, 'projects'), {
-            Name: this.projName,
-            users: userIds,
-          });
-          this.isModalVisible = false;
-        this.projName = "";
-        this.projUsers = [];
-        document.getElementById("newUsers").value = "";
-        document.getElementById("newProjName").value = "";
-        document.getElementById("list").innerHTML = "";
-        document.getElementById("list").innerHTML = "<li>" + this.userDetails[0].username + "</li>";
-        } catch(err) {
-          console.log(err)
-          console.log("proj failed to add")
-        }
       }
     }
   }
@@ -250,8 +198,9 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
     text-decoration: none;
     height: auto;
     align-self: auto;
-    font-size: 20px;
-    padding-left: 1%;
+    font-size: 23px;
+    padding-left: 2%;
+    
   }
   .sidebar-points {
     display: flex;

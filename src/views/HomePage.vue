@@ -6,7 +6,7 @@
 
     <div class="Homepage-body">
       <div class="Homepage-title">
-        <span class="Homepage-greeting-hellotext">Hello, {{ userDetails[0].username }}</span>
+        <span class="Homepage-greeting-hellotext">Hello, let's get to work!</span>
         <div class="Homepage-date">
           <span class="Homepage-todaytext">Today</span>
           <span class="Homepage-datetext">{{currentDate()}}</span>
@@ -37,6 +37,12 @@ import HomeCalendar from "@/components/HomeCalendar.vue"
 
 export default {
   name: "HomePage",
+  data() {
+    return {
+      todaysdate: new Date().toLocaleString,
+      user: false
+    }
+  }, 
   mounted() {
       const auth = getAuth();
       onAuthStateChanged(auth, (user) => {
@@ -52,8 +58,6 @@ export default {
     return {
       todaysdate: new Date().toLocaleString,
       userDetails: getUser(),
-      user: false,
-      shouldRefreshCalendar: false,
     }
   }, 
   methods: {
@@ -61,7 +65,6 @@ export default {
       const current = new Date();
       const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
       return date;
-    },
     refreshCalendar() {
       this.shouldRefreshCalendar = true;
       setTimeout(() => {
