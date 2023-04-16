@@ -13,7 +13,7 @@ export const getCards = () => {
             const data = snapshot.docs.map((doc) => {
                 const card = {
                     id: doc.id,
-                    completed: doc.get('isChecked'),
+                    completed: doc.get('completed'),
                     endDate: doc.get('endDate').toDate(),
                     listID: doc.get('listID'),
                     name: doc.get('taskName'),

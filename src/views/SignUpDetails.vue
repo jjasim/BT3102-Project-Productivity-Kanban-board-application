@@ -1,13 +1,9 @@
 <template>
     <div id="screenfiller">
         <div class="login-container">
-            <h2 id="login-statement">Enter your WorkWise Details</h2>
+            <h2 id="login-statement">What is your name?</h2>
             <form>
-            <input class="form-control" type="text" v-model="name" required placeholder="Full Name">
-            <br><br>
-            <input class="form-control" type="text" v-model="username" required placeholder="Preferred Username">
-            <br><br>
-            <input class="form-control" type="text" v-model="companyCode" required placeholder="Company Code">
+            <input class="form-control" type="text" v-model="name" required placeholder="Name">
             <br><br>
             <div v-show = "error" class="error">
                 {{ this.errorMsg }}
@@ -32,9 +28,6 @@ export default {
   data() {
     return {
         name: '', 
-        username: '',
-        password: '',
-        companyCode: '',
         points : 0,
         projects : [],
         error: false,
@@ -67,7 +60,7 @@ export default {
             await addDoc(collectionRef, userDoc);
 
             console.log("doc created")
-            this.$router.push('/tasks')
+            this.$router.push('/home')
             return;
         } catch(err) {
             this.errorMsg = err.message
@@ -104,7 +97,7 @@ html, body {
 .login-container {
     display: block;
     width: 345px;
-    height: 550px;
+    height: 320px;
     text-align:center;
     background: #FFFFFF;
     mix-blend-mode: normal;

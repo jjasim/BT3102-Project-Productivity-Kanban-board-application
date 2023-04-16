@@ -14,9 +14,11 @@
             </div>
           </div>
           <div class="item-points">+ {{ item.points }} points</div>
-          <div class="button btn-edit" @click="showEditModal(item)"><CIcon :icon="cilPencil" size="custom"></CIcon></div>
+          <div class="buttons">
+            <div class="button btn-edit" @click="showEditModal(item)"><CIcon :icon="cilPencil" size="custom"></CIcon></div>
+            <div class="button btn-edit" @click="deleteItem(item)"><CIcon :icon="cilTrash" size="custom"></CIcon></div>
+          </div>
 
-          <div class="button btn-edit" @click="deleteItem(item)"><CIcon :icon="cilTrash" size="custom"></CIcon></div>
            <!-- edit indiv task pop up -->
           <Modal v-show="isEditModalVisible" @close="closeEditModal" style="margin-right: 20em;">
             <template v-slot:header>
@@ -87,6 +89,31 @@
           </div>
         </template>
       </Modal>
+
+      <Modal class="blank-modal" v-show="isModalVisibleBlank" @close="closeBlankModal">
+        <template v-slot:header>
+          Add individual task
+        </template>
+            
+        <template v-slot:body>
+          <form @submit.prevent="addData" >
+            <div class="addproject-addprojtitle">
+              <div class="addproject-projtitletext">Task:</div>
+                <input type="text" class="addproject-inputbg" placeholder="eg. Stakeholder Analysis" id="newTaskName" v-model="newItem" required>  
+              </div>
+              <div class="addproject-adduser">
+                <div class="addproject-userstext">Due date:</div>
+                  <Datepicker class="addproject-inputbg" id="dueDate" v-model="picked" placeholder="YYYY-MM-DD"></Datepicker>
+              </div> 
+          </form>
+        </template>
+
+        <template v-slot:footer>
+          <div class="addproject-pushbuttons">
+            <button class="addproject-addbutton" type="submit" @click="addData">Add task</button>
+          </div>
+        </template>
+      </Modal>
     </div>
   </template>
   
@@ -108,6 +135,7 @@
         indivitems: getIndiv(),
         projitems: getCards(),
         isModalVisible: false,
+        isModalVisibleBlank: false,
         isEditModalVisible: false,
         picked: new Date(),
         completed: false,
@@ -124,6 +152,12 @@
         cilTrash,
         cilPencil
       }
+    },
+    created() {
+      this.isModalVisibleBlank = true;
+      setTimeout(() => {
+          this.isModalVisibleBlank = false;
+        }, 200); // 200 milliseconds delay before setting isModalVisible to false
     },
     methods: {
       // ability to add new individual tasks, updates to firebase at the same time
@@ -154,6 +188,9 @@
         document.getElementById("dueDate").value = "";
         document.getElementById("newTaskName").value = "";
         this.$emit('task-added');
+      },
+      closeBlankModal() {
+        this.isModalVisibleBlank = false;
       },
       showEditModal(item) {
         this.isEditModalVisible = true;
@@ -312,6 +349,12 @@ ul {
   color: rgba(255, 255, 255, 1);
 }
 
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
 .btn-add:hover {
   color:#FF9190;
   cursor: pointer;
@@ -400,5 +443,10 @@ ul {
 .modal-mask {
   position: fixed;
   z-index: 9999; 
+}
+
+.blank-modal {
+  opacity: 0;
+  z-index: -1000;
 }
   </style>

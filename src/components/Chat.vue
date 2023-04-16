@@ -85,6 +85,9 @@ export default {
 }
 </script>
 <style scoped>
+* {
+font-family: 'Josefin Sans', sans-serif;
+}
 .container{max-width:300px; margin:auto;}
 img{ max-width:100%;}
 

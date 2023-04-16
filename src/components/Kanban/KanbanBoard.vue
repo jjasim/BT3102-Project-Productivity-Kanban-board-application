@@ -27,10 +27,7 @@
               :emptyInsertThreshold="100"
               >
               <template #item="{element}">
-                  <kanban-card
-                  :task="element"
-                  class="card"
-                  ></kanban-card>
+                <KanbanCard :task="element" class="card"/>
               </template>
               </draggable>
         </div>
@@ -38,7 +35,56 @@
       <KanbanCreateList @create-list="createList" />
     </div>
   </div>
-  <Modal v-show="isModalVisible" @close="closeModal">
+  <Modal class="kanban-modal" v-if="isModalVisible" @close="closeModal">
+                <template v-slot:header>
+                  Add Card
+                </template>
+                <template v-slot:body>
+                  <form>
+                    <div class="addproject-addprojtitle">
+                <div class="addproject-projtitletext">Card title:</div>
+                
+                  <input type="text" class="addproject-inputbg" placeholder="Card title..." id="newProjName" v-model="taskName" required>
+                </div>
+                <div class="addproject-addprojtitle">
+                <div class="addproject-projtitletext">Due Date:</div>
+                  <input type="date" class="addproject-inputbg" id="newProjName" v-model="endDate">
+                </div>
+                <div class="addproject-addprojtitle">
+                <div class="addproject-projtitletext">Description</div>
+                  <textarea class="addproject-inputbg" id="newProjName" v-model="about"></textarea>
+                </div>
+                
+                <div class="addproject-adduser">
+                  <div class="addproject-userstext">Stakeholders:</div>
+                
+                  <input type="text" class="addproject-inputbg" placeholder="Username" id="newUsers" v-model="stakeHolderEmail">
+                  <input type='button' class="addproj-adduser-btn" value='Add user' id='add' @click="addStakeholder">
+                  <div>
+                    {{ formattedStakeHolders }}
+                  </div>
+              </div> 
+              <div class="addproject-addprojtitle">
+                <div class="addproject-projtitletext">Color:</div>
+                <div class="color-picker">
+                  <div
+                    v-for="color in colorOptions"
+                    :key="color"
+                    :style="{ backgroundColor: color }"
+                    :class="{ 'color-swatch': true, 'selected': isSelectedColor(color) }"
+                    @click="cardColor = color"
+                  ></div>
+                </div>
+              </div>
+            </form>
+            </template>
+            <template v-slot:footer>
+              <div class="addproject-pushbuttons">
+                <button class="addproject-addbutton" @click.prevent="addCard">Add Card</button>
+              </div>
+            </template>
+          </Modal>
+          <Modal class="blank-modal" v-if="isModalVisibleBlank" @close="closeBlankModal">
                 <template v-slot:header>
                   Add Card
                 </template>
@@ -116,6 +162,7 @@
     data() {
     return {
       isModalVisible : false,
+      isModalVisibleBlank: false,
       taskName: "",
       endDate: new Date(),
       selectedList: null,
@@ -141,7 +188,6 @@
         "#FFDAB9", // peach puff
         "#FFD700", // gold
       ]
-
     };
   },
     setup() {
@@ -149,6 +195,12 @@
         cilPlus, 
         cilTrash, 
       }
+    },
+    created() {
+      this.isModalVisibleBlank = true;
+      setTimeout(() => {
+        this.isModalVisibleBlank = false;
+      }, 200); // 200 milliseconds delay before setting isModalVisible to false
     },
     computed: {
       formattedStakeHolders() {
@@ -190,12 +242,15 @@
         this.stakeHolderArrayID = [];
       },
       showModal(list) {
-        this.isModalVisible = true; 
+        this.isModalVisible = true;
         this.selectedList = list
       },
       closeModal() {
         this.isModalVisible = false;
         this.taskName = "";
+      },
+      closeBlankModal() {
+        this.isModalVisibleBlank = false
       },
       async deleteList(column) {
         const collectionRef = collection(db, "lists");
@@ -215,6 +270,11 @@
         deleteDoc(document); 
       })
       await deleteDoc(listDoc);
+      this.isModalVisibleBlank = true;
+      setTimeout(() => {
+        this.isModalVisibleBlank = false;
+      }, 200); // 200 milliseconds delay before setting isModalVisible to false
+
     },
     async addStakeholder() {
       const userQuery = query(collection(db, 'users'), where("email", "==", this.stakeHolderEmail));
@@ -252,6 +312,12 @@
           const taskDocument = doc(taskCollectionRef, removedItem.id);
           await deleteDoc(taskDocument);
         }
+      },
+      createList() {
+        this.isModalVisibleBlank = true;
+        setTimeout(() => {
+          this.isModalVisibleBlank = false;
+        }, 200); // 200 milliseconds delay before setting isModalVisible to false
       }
     }
   };
@@ -402,4 +468,10 @@ width: 17px;
 height: 17px;
 border: 2px solid #000;
 }
+
+.blank-modal {
+  opacity: 0;
+  z-index: -1000;
+}
+
 </style>
