@@ -13,7 +13,7 @@
                     :show-month="true"
                     :show-weekday="true"
                     :show-week-numbers="true"
-                    :disablePast = "true"
+                    :disablePast = "false"
                     class = "holiday-us-traditional holiday-us-official"
                     id = "calendar-body">
                     <template #header="{ headerProps }">

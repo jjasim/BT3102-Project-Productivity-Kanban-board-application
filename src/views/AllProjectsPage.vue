@@ -19,7 +19,6 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import SideBar from './SideBar.vue'
 import AllProjectsDisplay from '../components/Projects/AllProjectsDisplay.vue'
 import ProjectHeader from '../components/Projects/ProjectHeader.vue'
-import Chat from './Chat.vue';
 import { CCard, CCardHeader, CCardSubtitle, CCardText, CCardTitle } from '@coreui/vue'; 
 
 
@@ -41,7 +40,7 @@ export default {
     })
   },
   components: {
-        SideBar, AllProjectsDisplay, ProjectHeader, Chat
+        SideBar, AllProjectsDisplay, ProjectHeader
     }
 
 }

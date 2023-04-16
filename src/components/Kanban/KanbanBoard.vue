@@ -91,7 +91,7 @@
   </template>
   
   <script>
-  import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc, updateDoc, Timestamp, query, where, setDoc} from "firebase/firestore"
+  import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc, updateDoc, Timestamp, query, where, setDoc, orderBy, onSnapshot} from "firebase/firestore"
   import { auth, db } from "../../firebase/init.js"
   import { getAuth, onAuthStateChanged } from "@firebase/auth";
   import KanbanCard from "./KanbanCard.vue";
@@ -101,7 +101,7 @@
   import { useLists } from "./KanbanAPI";
   import { CIcon } from '@coreui/icons-vue';
   import { cilPlus, cilTrash } from '@coreui/icons'; 
-  import { getCurrentInstance } from 'vue';
+  import { getCurrentInstance, ref} from 'vue';
 
   export default {
     name: "KanbanBoard",
@@ -112,7 +112,7 @@
         KanbanCard,
         KanbanCreateList,
         Modal,
-        CIcon
+        CIcon,
     },
     data() {
     return {
@@ -140,13 +140,12 @@
         "#00CED1", // dark turquoise
         "#FFDAB9", // peach puff
         "#FFD700", // gold
-      ]
-
+      ],
     };
   },
     setup() {
       const instance = getCurrentInstance();
-      const columns = useLists(instance.proxy.$route.params.projID)
+      const columns = useLists(instance.proxy.$route.params.projID);
       return {
         cilPlus, 
         cilTrash, 
@@ -160,7 +159,8 @@
       isSelectedColor() {
         return (color) => {
         return this.cardColor === color;
-      };
+      }
+
   },
     },
     methods: {
@@ -255,7 +255,7 @@
           const taskDocument = doc(taskCollectionRef, removedItem.id);
           await deleteDoc(taskDocument);
         }
-      }
+      },
     }
   };
   </script>
