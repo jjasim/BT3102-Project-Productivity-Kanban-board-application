@@ -10,7 +10,7 @@
         <button ref="calendarButton" @click="goToCalendar" :class="{ 'nav-button': true, 'clicked': $route.path.match(/calendar/i) }">Calendar</button>
       </div>
     </div>
-    <Modal v-show="isModalVisible" @close="closeModal">
+    <Modal class="Modal" v-show="isModalVisible" @close="closeModal">
       <template v-slot:header>
         Edit Project
       </template>
@@ -28,7 +28,7 @@
                       {{ formattedStakeHolders }}
                     </div>
                     <button class="copy-link" v-if="!linkCopied" @click.prevent="copyLink">Copy Link!</button>
-                    <button class="copied-link" v-else> Link Copied!</button>
+                    <button class="copied-link" v-else @click.prevent> Link Copied!</button>
           </div> 
         </form>
       </template>
@@ -184,6 +184,10 @@ import { getAuth } from 'firebase/auth';
   @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
   * {
     font-family: 'Josefin Sans', sans-serif;
+  }
+
+  .Modal {
+    z-index: 1000;
   }
   .header {
     display: flex;

@@ -101,6 +101,7 @@
   import { useLists } from "./KanbanAPI";
   import { CIcon } from '@coreui/icons-vue';
   import { cilPlus, cilTrash } from '@coreui/icons'; 
+  import { getCurrentInstance } from 'vue';
 
   export default {
     name: "KanbanBoard",
@@ -126,7 +127,6 @@
       stakeHolderEmail: "",
       stakeHolderArrayEmail: [],
       stakeHolderArrayID: [],
-      columns: useLists(this.$route.params.projID),
       cardColor: "#ffffff",
       colorOptions: [
         "#D3D3D3", // light gray
@@ -145,9 +145,12 @@
     };
   },
     setup() {
+      const instance = getCurrentInstance();
+      const columns = useLists(instance.proxy.$route.params.projID)
       return {
         cilPlus, 
         cilTrash, 
+        columns
       }
     },
     computed: {

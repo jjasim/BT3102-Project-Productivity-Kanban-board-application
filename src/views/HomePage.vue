@@ -55,7 +55,7 @@ export default {
         }
       })
     },
-    methods: {
+  methods: {
     currentDate() {
       const current = new Date();
       const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
@@ -69,7 +69,7 @@ export default {
     },
   },
   components: {SideBar, ToDoList, HomeCalendar}
-  }
+ }
 </script>
 
 <style scoped>
