@@ -141,6 +141,7 @@
           this.newItem = "";
           this.picked = new Date();
           document.getElementById("newTaskName").value = "";
+          this.$emit('task-added');
         } catch (error) {
           console.log("this also shouldnt run")
         }
@@ -152,6 +153,7 @@
         this.isModalVisible = false;
         document.getElementById("dueDate").value = "";
         document.getElementById("newTaskName").value = "";
+        this.$emit('task-added');
       },
       showEditModal(item) {
         this.isEditModalVisible = true;
@@ -162,6 +164,7 @@
         this.selectedItem = "";
         document.getElementById("dueDate").value = "";
         document.getElementById("newTaskName").value = "";
+        this.$emit('task-added');
       },
       // updating of points when a task is clicked as completed
       async updatePoints(pointsAdded) {
@@ -210,6 +213,7 @@
           this.selectedItem = "";
           document.getElementById("dueDate").value = "";
           document.getElementById("newTaskName").value = ""; 
+          this.$emit('task-added');
         } catch (error) {
           console.log(error);
         }
@@ -217,6 +221,7 @@
       // ability to delete individual task created by user
       async deleteItem(item) {
         await deleteDoc(doc(db, 'individualtasks', item.id));
+        this.$emit('task-added');
       }
     }
   };

@@ -12,45 +12,43 @@
                     :show-month="true"
                     :show-weekday="true"
                     :show-week-numbers="true"
-                    :disablePast = "true"
+                    :disable-past="true"
                     :item-classes="itemClasses"
-                    class = "holiday-us-traditional holiday-us-official"
-                    id = "calendar-body">
+                    class="holiday-us-traditional holiday-us-official"
+                    id="calendar-body">
                     <template #header="{ headerProps }">
                         <CalendarViewHeader :header-props="headerProps" @input="setShowDate" />
                     </template>
 
-                </calendar-view> 
+                </calendar-view>
             </div>
 
             <div class="box" id="add-item" v-if="addItems">
-                        <h1 class="title">Add an item</h1>                        
-                        <div class="field">
-                            <label class="label">Title</label>
-                                <div class="control">
-                                    <input v-model="state.newItemTitle" class="input" type="text" />
-                                </div>
-                            </div>
-
-                        <div class="field">
-                            <label class="label">Start date</label>
-                                <div class="control">
-                                    <input v-model="state.newItemStartDate" class="input" type="date" />
-                                </div>
-                            </div>
-
-                        <div class="field">
-                            <label class="label">End date</label>
-                            <div class="control">
-                                <input v-model="state.newItemEndDate" class="input" type="date" />
-                            </div>
+                <h1 class="title">Add an item</h1>
+                <div class="field">
+                    <label class="label">Title</label>
+                    <div class="control">
+                        <input v-model="state.newItemTitle" class="input" type="text" />
                     </div>
-                    <button class="button is-info" @click="clickTestAddItem">Add Item</button>
                 </div>
+
+                <div class="field">
+                    <label class="label">Start date</label>
+                    <div class="control">
+                        <input v-model="state.newItemStartDate" class="input" type="date" />
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">End date</label>
+                    <div class="control">
+                        <input v-model="state.newItemEndDate" class="input" type="date" />
+                    </div>
+                </div>
+                <button class="button is-info" @click="clickTestAddItem">Add Item</button>
+            </div>
         </div>
     </div>
-
-
 </template>
 
 <script setup lang="ts">
@@ -82,7 +80,7 @@
     import { getDocs } from 'firebase/firestore';
     import { doc, updateDoc } from 'firebase/firestore';
     import { computed } from 'vue';
-
+    import VTooltip from 'v-tooltip';
 
     // Gets this month
     const thisMonth = (d: number, h?: number, m?: number): Date => {
@@ -128,17 +126,11 @@
         newItemTitle: "",
         newItemStartDate: "",
         newItemEndDate: "",
-        newItemColor:"",
+        newItemColor: "",
         useDefaultTheme: false,
         useHolidayTheme: true,
         useTodayIcons: false,
-        items: [
-            /*{
-                id: "e0",
-                startDate: "2018-01-05",
-            },*/
-
-        ],
+        items: [],
     } as IExampleState)
 
     const setShowDate = (d: Date): void => {
@@ -226,10 +218,6 @@
             }
         });
     }
-
-
-
-
 
     const fetchTasks = async (projectID: string): Promise<ICalendarItem[]> => {
         const firebaseConfig = {
@@ -342,7 +330,9 @@
         components: {
             Sidebar
         }, 
-        
+        directives: {
+            tooltip: VTooltip,
+        },
     }
 </script>
 

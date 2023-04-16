@@ -2,10 +2,13 @@
     <div id="calendar-display" class="flex-column">
 
         <div id="calendar-body" class="flex-row">
+            <div class="title">
+                <h1>Calendar</h1>
+            </div>
             <div id="calendar-proper">
                 <calendar-view
-                    :items="state.items"
-                    :enable-drag-drop="true"
+                    :items="itemsWithColor"
+                    :enable-drag-drop="false"
                     @drop-on-date="onDrop"
                     :show-date="state.showDate"
                     :show-month="true"
@@ -59,9 +62,10 @@
     } from "vue-simple-calendar"
 
     import {
-        ICalendarItem,
         INormalizedCalendarItem,
     } from  "vue-simple-calendar/dist/src/ICalendarItem"    
+
+    import { ICalendarItem } from "../components/CalendarAPI/ICalendarItem"
 
     import {
         onMounted,
@@ -76,6 +80,7 @@
     //import "../../../node_modules/vue-simple-calendar/dist/src/CalendarViewHeader.vue"
     import Sidebar from "../views/SideBar.vue"
     import { getDocs } from 'firebase/firestore';
+    import { computed } from 'vue';
 
 
     // Gets this month
@@ -173,44 +178,91 @@
     }
 
     const fetchTasks = async () => {
-        console.log("In fetch tasks")
+        //console.log("In fetch tasks")
+
         const firebaseConfig = {
-                apiKey: "AIzaSyBPB1jmwH-3h1YmBAkkekTF8eDto4pfo9c",
-                authDomain: "workwise-b1604.firebaseapp.com",
-                projectId: "workwise-b1604",
-                storageBucket: "workwise-b1604.appspot.com",
-                messagingSenderId: "218806215802",
-                appId: "1:218806215802:web:258458dab46639a66e07c3"
-            };
+            apiKey: "AIzaSyBPB1jmwH-3h1YmBAkkekTF8eDto4pfo9c",
+            authDomain: "workwise-b1604.firebaseapp.com",
+            projectId: "workwise-b1604",
+            storageBucket: "workwise-b1604.appspot.com",
+            messagingSenderId: "218806215802",
+            appId: "1:218806215802:web:258458dab46639a66e07c3"
+        };
+
+        let userID: string | undefined;
+        const auth = getAuth();
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userID = user.uid;
+                    //console.log(user.uid);
+                }
+        })
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app)
-        const tasksRef = collection(db, 'individualtasks');
-        const taskSnapshot = await getDocs(tasksRef);
+        const db = getFirestore(app);
+
+        const tasksSnapshot = await getDocs(collection(db, "tasks"));
+        const individualTasksSnapshot = await getDocs(collection(db, "individualtasks"));
+        //console.log(individualTasksSnapshot)
+
         const tasks: ICalendarItem[] = [];
 
-        taskSnapshot.forEach((doc) => {
-            console.log("In task snapshot")
+        tasksSnapshot.forEach((doc) => {
             const taskData = doc.data();
-            tasks.push({
-                id: doc.id,
-                title: taskData.Name,
-                startDate: taskData.endDate.toDate(),
-                endDate: taskData.endDate.toDate(),
-                //color: taskData.completed ? '#00FF00' : '#FF0000', // Optional: different colors for completed and not completed tasks
-            });
+            if (taskData.stakeHolderArrayID.includes(userID)) {
+                //console.log(taskData)
+                tasks.push({
+                    id: doc.id,
+                    title: taskData.taskName,
+                    startDate: taskData.endDate.toDate(),
+                    endDate: taskData.endDate.toDate(),
+                    //color: taskData.completed ? '#00FF00' : '#FF0000', // Optional: different colors for completed and not completed tasks
+                    color: taskData.cardColor
+                });
+            }
         });
-        //state.items = tasks; // update state.items with the new data
-        //console.log('Data refreshed');
+
+        individualTasksSnapshot.forEach((doc) => {
+            //console.log("In individualTasks snapshot")
+            const taskData2 = doc.data();
+            if (taskData2.uid.includes(userID)) {
+                //console.log(taskData2)
+                tasks.push({
+                    id: doc.id,
+                    title: taskData2.Name,
+                    startDate: taskData2.endDate.toDate(),
+                    endDate: taskData2.endDate.toDate(),
+                    //color: taskData.completed ? '#00FF00' : '#FF0000', // Optional: different colors for completed and not completed tasks
+                });
+            }
+        });
+
         return tasks;
     };
 
     onMounted(async () => {
-        console.log("In Mounted")
+        //console.log("In Mounted")
         const tasks = await fetchTasks();
         state.items.push(...tasks);
         //console.log(this.userID)
     });
+
+    const itemsWithColor = computed(() => {
+        return state.items.map(item => {
+            return {
+                ...item,
+                style: itemStyles(item),
+            };
+        });
+    });
+
+    const itemStyles = (item: ICalendarItem): string => {
+        const bgColor = item.color ? `background-color: ${item.color};` : '';
+        const borderRadius = 'border-radius: 8%;';
+        const paddingTop = 'padding-top: 0.1em';
+        const textAlign = 'text-align: center';
+        return `${bgColor} ${borderRadius} ${paddingTop} ${textAlign}`;
+    };
 </script>
 
 <script lang="ts">
@@ -223,6 +275,10 @@
         props: {
             addItems: Boolean,
             userID: String,
+            shouldRefresh: {
+                type: Boolean,
+                default: false,
+            },
         },
         data() {
             return {
@@ -236,14 +292,14 @@
             const auth = getAuth();
             onAuthStateChanged(auth, (user) => {
                 if (user) {
-                    console.log(user.uid);
+                    //console.log(user.uid);
                     //const userID = user.uid;
                 } else {
                 this.$router.push("/login")
                 }
             })
             //console.log(this.userID);
-        }
+        },
     }
 </script>
 
@@ -257,6 +313,25 @@
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
+    }
+    
+    #calendar-body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .title h1 {
+        color: rgba(0, 0, 0, 1);
+        height: auto;
+        font-size: 30px;
+        font-style: Regular;
+        text-align: left;
+        font-family: Yeseva One;
+        font-weight: 400;
+        line-height: normal;
+        font-stretch: normal;
+        text-decoration: none;
+        margin-top: 0;
     }
 
     .calendar-header h1 {
