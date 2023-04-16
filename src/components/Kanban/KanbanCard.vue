@@ -72,7 +72,9 @@
           </div> 
           <div class="addproject-addprojtitle">
             <div class="addproject-projtitletext">Color:</div>
-            <input type="color" class="addproject-inputbg" id="colorPicker" v-model="color">
+            <div class="color-picker">
+              <div class="color-option" v-for="option in colorOptions" :key="option" :style="{ backgroundColor: option }" @click="setColor(option)"></div>
+            </div>
           </div>
         </form>
       </template>
@@ -110,7 +112,20 @@ data() {
     stakeHolderArrayID: this.task.stakeHolderArrayID,
     stakeHolderArrayEmail: this.task.stakeHolderArrayEmail,
     stakeHolderEmail: "",
-    color: this.task.color || "#ffffff"
+    color: this.task.color || "#ffffff",
+    colorOptions: [
+        "#D3D3D3", // light gray
+        "#C0C0C0", // silver
+        "#B0C4DE", // light steel blue
+        "#D8BFD8", // thistle
+        "#F08080", // light coral
+        "#FFA07A", // light salmon
+        "#CD5C5C", // indian red
+        "#8FBC8F", // dark sea green
+        "#00CED1", // dark turquoise
+        "#FFDAB9", // peach puff
+        "#FFD700", // gold
+      ]
   }
 },
 setup() {
@@ -120,18 +135,6 @@ props: {
   task: {
     type: Object,
     default: () => ({})
-  }
-},
-computed: {
-  badgeColor() {
-    const mappings = {
-      Design: "purple",
-      "Feature Request": "teal",
-      Backend: "blue",
-      QA: "green",
-      default: "teal"
-    };
-    return mappings[this.task.type] || mappings.default;
   }
 },
 computed: {
@@ -158,12 +161,11 @@ methods: {
       about: this.about,
       stakeHolderArrayEmail: this.stakeHolderArrayEmail,
       stakeHolderArrayID: this.stakeHolderArrayID,
-      color: this.color,
+      color: this.color 
     }
     await updateDoc(subTaskDoc, updatedData);
     await updateDoc(taskDoc, updatedData);
     this.task.taskName = this.taskName;
-    this.task.color = this.color;
     const newDate = firebaseDate.toDate()
     const formattedDate = newDate.toLocaleDateString('en-GB', {
           day: 'numeric',
@@ -281,6 +283,8 @@ methods: {
   line-height: 1.25rem; 
   font-weight: 600; 
   letter-spacing: 0.025em; 
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
 }
 .card-body {
   overflow-wrap: break-word;
@@ -316,6 +320,20 @@ textarea.addproject-inputbg {
   border-radius: 0.25rem;
   font-size: 1rem;
   line-height: 1.5rem;
+}
+
+.color-picker {
+  display: flex;
+  width: 20em;
+  margin-top: 4px;
+}
+
+.color-option {
+  width: 20px;
+  height: 20px;
+  margin: 2px;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 </style>

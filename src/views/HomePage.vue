@@ -13,11 +13,17 @@
         </div>
       </div>
 
-
-    <div class="ToDoList">
-      <ToDoList />
+    
+    <div class="Homepage-items">
+      <div class="ToDoList">
+        <ToDoList />
+      </div>
+      <div class="HomeCalendar">
+        <HomeCalendar />
+      </div>
     </div>
-     
+
+
   </div>
   </div>
 </template>
@@ -27,6 +33,7 @@ import { getAuth, onAuthStateChanged } from '@firebase/auth';
 import { getUser } from '../components/SidebarAPI/userinfo.js';
 import SideBar from "@/views/SideBar.vue";
 import ToDoList from "@/components/ToDoList.vue";
+import HomeCalendar from "@/components/HomeCalendar.vue"
 
 export default {
   name: "HomePage",
@@ -35,6 +42,7 @@ export default {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           this.user = user;
+          
         } else {
           this.$router.push("/login")
         }
@@ -54,7 +62,7 @@ export default {
       return date;
     }
   },
-  components: {SideBar, ToDoList}
+  components: {SideBar, ToDoList, HomeCalendar}
 }
 </script>
 
@@ -137,8 +145,10 @@ export default {
   text-decoration: none;
 }
 .ToDoList{
-  margin-left: 15%;
-  width: 100%;
+  margin-left: 5%;
+  width: 32em;
+  padding-top: 0.5em;
+  z-index: 100;
 }
 
 body {
@@ -205,4 +215,14 @@ button {
   vertical-align: middle;
 }
 
+.Homepage-items {
+  display: flex;
+  justify-content: space-between;
+}
+
+.HomeCalendar {
+  padding-left: 10em;
+  padding-top: 3em;
+  z-index: 0;
+}
 </style>

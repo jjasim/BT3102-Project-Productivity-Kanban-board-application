@@ -2,7 +2,6 @@
     <div id="calendar-display" class="flex-column">
 
         <div id="calendar-body" class="flex-row">
-
             <div id="calendar-proper">
                 <calendar-view
                     :items="state.items"
@@ -202,6 +201,8 @@
                 //color: taskData.completed ? '#00FF00' : '#FF0000', // Optional: different colors for completed and not completed tasks
             });
         });
+        //state.items = tasks; // update state.items with the new data
+        //console.log('Data refreshed');
         return tasks;
     };
 
@@ -209,18 +210,20 @@
         console.log("In Mounted")
         const tasks = await fetchTasks();
         state.items.push(...tasks);
-        //console.log(tasks)
+        //console.log(this.userID)
     });
 </script>
 
 <script lang="ts">
     import { getFirestore, collection} from 'firebase/firestore';
     import { initializeApp } from "firebase/app";
+    import { getAuth, onAuthStateChanged } from '@firebase/auth';
 
     export default {
         name: 'Calendar',
         props: {
             addItems: Boolean,
+            userID: String,
         },
         data() {
             return {
@@ -229,8 +232,19 @@
         },
         components: {
             Sidebar,
-            UsersInProject,
-        },
+            UsersInProject,        },
+        mounted() {
+            const auth = getAuth();
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    console.log(user.uid);
+                    //const userID = user.uid;
+                } else {
+                this.$router.push("/login")
+                }
+            })
+            //console.log(this.userID);
+        }
     }
 </script>
 
@@ -260,9 +274,9 @@
         align-items: center;
     }
 
-    #calendar-body {
-        width: 55vw;
-        height: 85vh;
+    .Homepage-items #calendar-body {
+        width: 35vw !important;
+        height: 65vh !important;
     }
 
     #add-item {

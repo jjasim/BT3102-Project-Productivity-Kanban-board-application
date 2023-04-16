@@ -385,6 +385,7 @@ textarea.addproject-inputbg {
 .color-picker {
   display: flex;
   flex-wrap: wrap;
+  cursor: pointer;
 }
 
 .color-swatch {
