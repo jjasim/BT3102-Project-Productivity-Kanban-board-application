@@ -1,4 +1,4 @@
-import { ref, reactive, onMounted, onUnmounted, watchEffect } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { db, auth } from '../../firebase/init.js'
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 
@@ -6,6 +6,7 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 export const getCards = () => {
     const cards = ref([]);
 
+    // retrieve all tasks a user has across all their projects
     onMounted(() => {
         const listQuery = query(collection(db, 'tasks'), where("stakeHolderArrayID", "array-contains", auth.currentUser.uid));
         let unsubscribe = onSnapshot(listQuery, (snapshot) => {
@@ -18,15 +19,15 @@ export const getCards = () => {
                     name: doc.get('taskName'),
                     points: doc.get('points'),
                     location: "",
+                    projID: doc.get("projID")
                 };
-
-                const list_id = doc.get('listID');
-                const projectQuery = query(collection(db, 'projects'), where("lists", "array-contains", list_id));
-                let unsubscribeCards = onSnapshot(projectQuery, (projectSnapshot) => {
-                    const cardsData = projectSnapshot.docs.map((nameDoc) => {
-                        return nameDoc.get('Name');
+                const projectQuery = query(collection(db, 'projects'));
+                let unsubscribeCards = onSnapshot(projectQuery, (querySnapshot) => {
+                    const matchingDocs = querySnapshot.docs.filter(projdoc => projdoc.id === doc.get("projID"));
+                    matchingDocs.forEach((pdoc) => {
+                        card.location = pdoc.get('Name');
                     });
-                    card.location = cardsData;
+                    console.log("running correctly");
                 });
                 onUnmounted(unsubscribeCards);
                 return card;

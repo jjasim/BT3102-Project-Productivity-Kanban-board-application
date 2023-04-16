@@ -2,6 +2,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { db, auth } from '../../firebase/init.js'
 import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 
+// get all projects of a user
 export const getProjects = () => {
   const projects = ref(null);
   onMounted(() => {

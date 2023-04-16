@@ -2,7 +2,7 @@ import { ref, reactive, onMounted, onUnmounted, watchEffect } from 'vue';
 import { db, auth } from '../../firebase/init.js'
 import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 
-// gets tasks across individual
+// retrieve all of a user's individually created tasks
 export const getIndiv = () => {
   const indivs = ref([]);
 

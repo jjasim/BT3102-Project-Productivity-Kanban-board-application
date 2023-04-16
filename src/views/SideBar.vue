@@ -30,7 +30,6 @@
           <router-link to="/signup">Analytics</router-link>
         </div>
       </div>
-
         
       <div class="sidebar-footer">
         <!-- signout -->
@@ -71,11 +70,6 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
     data() {
       return {
         user : false,
-        object: {
-              name: 'Team Projects',
-            },
-        projName: "",
-        projUsers: [],
         userDetails: getUser(),
       }
     },
@@ -85,20 +79,7 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
         const user = auth.currentUser;
         await signOut(auth, user);
         this.$router.push("/login")
-      }, 
-      async addUser() {
-        try {
-        var input = document.getElementById("newUsers").value;
-        this.projUsers.push(input);
-        var list = document.getElementById("list");
-        var item = document.createElement("li");
-        item.append(document.createTextNode(input));
-        list.append(item);
-        document.getElementById("newUsers").value = "";
-        } catch(error) {
-          console.log('error');
-        }
-      }
+      } 
     }
   }
 
