@@ -51,15 +51,7 @@
       close() {
         this.$emit('close');
       }
-    },
-    mounted() {
-      const auth = getAuth();
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          this.user = user;
-        }
-      })
-    },
+    }
   };
 </script>
 

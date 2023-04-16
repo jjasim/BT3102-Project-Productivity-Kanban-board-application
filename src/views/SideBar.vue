@@ -26,7 +26,6 @@
           <router-link to="/home">Analytics</router-link>
         </div>
       </div>
-
         
       <div class="sidebar-footer">
         <!-- signout -->
@@ -76,11 +75,6 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
     data() {
       return {
         user : false,
-        object: {
-              name: 'Team Projects',
-            },
-        projName: "",
-        projUsers: [],
         userDetails: getUser(),
       }
     },
