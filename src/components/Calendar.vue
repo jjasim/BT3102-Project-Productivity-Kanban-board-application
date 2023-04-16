@@ -79,7 +79,6 @@
     import "../../node_modules/vue-simple-calendar/dist/css/holidays-us.css"
     //import "../../../node_modules/vue-simple-calendar/dist/src/CalendarViewHeader.vue"
     import Sidebar from "../views/SideBar.vue"
-    import UsersInProject from "@/components/UsersInProject/UsersInProject.vue"
     import { getDocs } from 'firebase/firestore';
     import { doc, updateDoc } from 'firebase/firestore';
     import { computed } from 'vue';
@@ -341,8 +340,7 @@
             }
         },
         components: {
-            Sidebar,
-            UsersInProject,
+            Sidebar
         }, 
         
     }
