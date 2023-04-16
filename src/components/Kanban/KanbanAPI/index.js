@@ -4,7 +4,6 @@ import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestor
 
 export const useLists = (projID) => {
   const lists = ref([]);
-  const loading = ref(true);
 
   onMounted(() => {
     console.log(auth.currentUser)
@@ -39,7 +38,9 @@ export const useLists = (projID) => {
               completed: taskDoc.get('completed'),
               about: taskDoc.get('about'),
               stakeHolderArrayID: taskDoc.get('stakeHolderArrayID'),
-              stakeHolderArrayEmail: taskDoc.get('stakeHolderArrayEmail')
+              stakeHolderArrayEmail: taskDoc.get('stakeHolderArrayEmail'),
+              points: taskDoc.get('points'),
+              cardColour: taskDoc.get('cardColour')
             };
           });
           listData.tasks = tasksData;
