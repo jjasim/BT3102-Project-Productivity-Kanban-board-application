@@ -347,6 +347,7 @@
     #calendar-body {
         width: 55vw;
         height: 85vh;
+        font-family: 'Josefin Sans', sans-serif !important;
     }
 
     #add-item {
@@ -380,7 +381,7 @@
     }
 
     .cv-weeks {
-        font-family: Cambria;
+        font-family: 'Josefin Sans', sans-serif;
     }
 
     #users img {

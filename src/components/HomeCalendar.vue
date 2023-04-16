@@ -363,7 +363,7 @@
     }
 
     .cv-weeks {
-        font-family: Cambria;
+        font-family: 'Josefin Sans', sans-serif;
     }
 
     #users img {
