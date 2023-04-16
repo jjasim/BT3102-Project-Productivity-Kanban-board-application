@@ -79,7 +79,6 @@
     import "../../node_modules/vue-simple-calendar/dist/css/holidays-us.css"
     //import "../../../node_modules/vue-simple-calendar/dist/src/CalendarViewHeader.vue"
     import Sidebar from "../views/SideBar.vue"
-    import UsersInProject from "@/components/UsersInProject/UsersInProject.vue"
     import { getDocs } from 'firebase/firestore';
     import { doc, updateDoc } from 'firebase/firestore';
     import { computed } from 'vue';
@@ -171,31 +170,66 @@
 */
     // For moving items around on calendar (check if its needed)
     const onDrop = async (item: INormalizedCalendarItem, date: Date): Promise<void> => {
+        console.log("Dropped item:", item);
         state.message = `You dropped ${item.id} on ${date.toLocaleDateString()}`
-        // Determine the delta between the old start date and the date chosen,
-        // and apply that delta to both the start and end date to move the item.
         const eLength = CalendarMath.dayDiff(item.startDate, date)
         item.originalItem.startDate = CalendarMath.addDays(item.startDate, eLength)
         item.originalItem.endDate = CalendarMath.addDays(item.endDate, eLength)
 
-        // Update the item in Firestore
         const firebaseConfig = {
-                    apiKey: "AIzaSyBPB1jmwH-3h1YmBAkkekTF8eDto4pfo9c",
-                    authDomain: "workwise-b1604.firebaseapp.com",
-                    projectId: "workwise-b1604",
-                    storageBucket: "workwise-b1604.appspot.com",
-                    messagingSenderId: "218806215802",
-                    appId: "1:218806215802:web:258458dab46639a66e07c3"
+            apiKey: "AIzaSyBPB1jmwH-3h1YmBAkkekTF8eDto4pfo9c",
+            authDomain: "workwise-b1604.firebaseapp.com",
+            projectId: "workwise-b1604",
+            storageBucket: "workwise-b1604.appspot.com",
+            messagingSenderId: "218806215802",
+            appId: "1:218806215802:web:258458dab46639a66e07c3"
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Update task in 'tasks' collection
         const taskRef = doc(db, 'tasks', item.id);
         await updateDoc(taskRef, {
             startDate: item.originalItem.startDate,
             endDate: item.originalItem.endDate,
         });
+        console.log("Task updated in tasks collection:", item.id);
+
+        // Update task in tasks sub-collection within the 'lists' collection
+        const listsRef = collection(db, 'lists');
+        const listSnapshot = await getDocs(listsRef);
+
+        listSnapshot.forEach(async (docSnapshot) => {
+            const listID = docSnapshot.id;
+
+            // Get the tasks sub-collection reference
+            const tasksCollectionRef = collection(db, 'lists', listID, 'tasks');
+
+            // Get the task document with the matching item.id
+            const taskSnapshot = await getDocs(tasksCollectionRef);
+            let taskID;
+            taskSnapshot.forEach((doc) => {
+                if (doc.id === item.id) {
+                    console.log("MATCH FOUND")
+                    taskID = doc.id;
+                }
+            });
+
+            // If the task is found, update the task in the sub-collection
+            if (taskID) {
+                const taskRef = doc(db, 'lists', listID, 'tasks', taskID);
+                await updateDoc(taskRef, {
+                    startDate: item.originalItem.startDate,
+                    endDate: item.originalItem.endDate,
+                });
+                console.log(`Task updated in list ${listID}:`, item.id);
+            }
+        });
     }
+
+
+
+
 
     const fetchTasks = async (projectID: string): Promise<ICalendarItem[]> => {
         const firebaseConfig = {
@@ -306,8 +340,7 @@
             }
         },
         components: {
-            Sidebar,
-            UsersInProject,
+            Sidebar
         }, 
         
     }

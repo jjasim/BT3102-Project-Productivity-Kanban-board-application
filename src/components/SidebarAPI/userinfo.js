@@ -13,8 +13,6 @@ export const getUser = () => {
           name: doc.get('name'),
           email: doc.get('email'),
           points: doc.get('points'),
-          projects: doc.get('projects'),
-          projectArray: []
         };
         return userData;
       });

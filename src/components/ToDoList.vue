@@ -21,7 +21,7 @@
 
           <div class="button btn-edit" @click="deleteItem(item)"><CIcon :icon="cilTrash" size="custom"></CIcon></div>
            <!-- edit indiv task pop up -->
-          <Modal v-show="isEditModalVisible" @close="closeEditModal">
+          <Modal v-show="isEditModalVisible" @close="closeEditModal" style="margin-right: 20em;">
             <template v-slot:header>
               Edit individual task
             </template>
@@ -391,5 +391,10 @@ ul {
 
 .icon {
   height: 20px;
+}
+
+.modal-mask {
+  position: fixed;
+  z-index: 9999; 
 }
   </style>

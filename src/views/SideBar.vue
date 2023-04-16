@@ -36,7 +36,6 @@
 </template>
   
   <script>
-import Modal from '@/components/Modal.vue';
 import dropdown from '@/components/Dropdown.vue';
 import { getProjects } from '../components/SidebarAPI/projects.js';
 import { CIcon } from '@coreui/icons-vue';
@@ -49,7 +48,7 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
 
   export default {
     name: 'Sidebar',
-    components: {Modal, dropdown, CIcon},
+    components: {CIcon},
     setup() {
       return {
         cilGem,
@@ -74,19 +73,23 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
         }
       })
     },
+    data() {
+      return {
+        user : false,
+        object: {
+              name: 'Team Projects',
+            },
+        projName: "",
+        projUsers: [],
+        userDetails: getUser(),
+      }
+    },
     methods: {
       async signOut() {
         const auth = getAuth();
         const user = auth.currentUser;
         await signOut(auth, user);
         this.$router.push("/login")
-      },
-      showModal() {
-        console.log(getProjects());
-        this.isModalVisible = true;
-      },
-      closeModal() {
-        this.isModalVisible = false;
       }
     }
   }

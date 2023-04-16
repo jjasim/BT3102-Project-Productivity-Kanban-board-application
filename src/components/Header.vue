@@ -1,5 +1,6 @@
 <template>
     <div class="header">
+
       <div class="project-name">
           {{ this.$route.params.projName }}
       </div>
@@ -95,6 +96,17 @@ import { getAuth } from 'firebase/auth';
         calendarButton.classList.add('clicked');
       }
     },
+    data() {
+      return {
+        isModalVisible: false
+      }
+    },
+    components: {Modal, cilUserPlus},
+    setup() {
+      return {
+        cilUserPlus,
+      }
+    },
     methods: {
       goToCalendar() {
         this.$router.push("/calendar/" + this.$route.params.projID + '/' + this.$route.params.projName)
@@ -109,6 +121,7 @@ import { getAuth } from 'firebase/auth';
       closeModal() {
         this.isModalVisible = false;
       },
+
       async editProject() {
         const auth = getAuth();
         const projDoc = doc(collection(db, 'projects'), this.$route.params.projID)
@@ -229,8 +242,7 @@ import { getAuth } from 'firebase/auth';
   }
   .btn:hover {
       cursor: pointer;
-  }
-  
+  } 
   .addproject-pushbuttons {
     display: flex;
     flex-direction: row;
@@ -250,7 +262,6 @@ import { getAuth } from 'firebase/auth';
 
   .copied-link {
     background-color: rgb(3, 73, 3);
-
   }
   </style>
   
