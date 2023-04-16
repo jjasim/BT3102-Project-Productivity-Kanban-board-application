@@ -228,11 +228,15 @@ button {
 .Homepage-items {
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
 }
 
 .HomeCalendar {
-  padding-left: 10em;
+  padding-top: 3em;
+  padding-left: -2em;
   padding-bottom: 5em;
+  padding-left:  5em;
   z-index: 0;
   height: 50em;
 }
