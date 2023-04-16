@@ -43,18 +43,10 @@ export const useLists = (projID) => {
           });
           listData.tasks = tasksData;
         });
-
-        let unsubscribeList = onSnapshot(doc.ref, (docSnapshot) => {
-          listData.name = docSnapshot.get('name');
-          listData.userUID = docSnapshot.get('userUID');
-          listData.projID = docSnapshot.get('projID');
-          listData.tasks = docSnapshot.get('tasks');
-        });
         
         // Unsubscribe from the tasks listener when the list is deleted
         onUnmounted(() => {
           unsubscribeTasks();
-          unsubscribeList()
         });
         
         return listData;
