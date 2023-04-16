@@ -80,7 +80,6 @@
     import { getDocs } from 'firebase/firestore';
     import { doc, updateDoc } from 'firebase/firestore';
     import { computed } from 'vue';
-    import VTooltip from 'v-tooltip';
 
     // Gets this month
     const thisMonth = (d: number, h?: number, m?: number): Date => {
@@ -329,10 +328,7 @@
         },
         components: {
             Sidebar
-        }, 
-        directives: {
-            tooltip: VTooltip,
-        },
+        }
     }
 </script>
 

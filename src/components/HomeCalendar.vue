@@ -3,7 +3,6 @@
 
         <div id="calendar-body" class="flex-row">
             <div class="title">
-                <h1>Calendar</h1>
             </div>
             <div id="calendar-proper">
                 <calendar-view
@@ -349,8 +348,8 @@
     }
 
     .Homepage-items #calendar-body {
-        width: 35vw !important;
-        height: 65vh !important;
+        width: 50vw !important;
+        height: 90vh !important;
     }
 
     #add-item {
