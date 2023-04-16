@@ -14,11 +14,10 @@
 </template>
 
 <script>
-import { getProjects } from '../SidebarAPI/projects'
-import ProjectCard from './ProjectCard.vue'
+import { getProjects } from './projects.js';
 export default {
     name: 'AllProjectsDisplay',
-    components: { ProjectCard },
+    components: {},
     data() {
         return {
             projects: getProjects(),
@@ -84,5 +83,9 @@ li:hover {
     align-items: center;
     padding-top: 34px;
 
+}
+
+ul {
+    list-style-type: none;
 }
 </style>

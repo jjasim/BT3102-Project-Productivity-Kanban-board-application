@@ -35,8 +35,7 @@
 </template>
   
   <script>
-import dropdown from '@/components/Dropdown.vue';
-import { getProjects } from '../components/SidebarAPI/projects.js';
+import { getProjects } from '../components/Projects/projects.js'
 import { CIcon } from '@coreui/icons-vue';
 import { cilGem, cilUser } from '@coreui/icons';
 import { auth, db } from "../firebase/init.js"

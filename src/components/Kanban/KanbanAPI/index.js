@@ -6,7 +6,6 @@ export const useLists = (projID) => {
   const lists = ref([]);
 
   onMounted(() => {
-    console.log(auth.currentUser)
     const listsQuery = query(collection(db, 'lists'), where("projID", "==", projID)); 
     let unsubscribe = onSnapshot(listsQuery, (snapshot) => {
       const data = snapshot.docs.map((doc) => {
@@ -15,7 +14,7 @@ export const useLists = (projID) => {
           name: doc.get('name'),
           userUID: doc.get('userUID'),
           projID: doc.get("projID"),
-          tasks: [],
+          tasks: []
         };
         
         // Fetch tasks for the current list and listen for changes
@@ -28,7 +27,6 @@ export const useLists = (projID) => {
               month: 'short',
               year: 'numeric' 
             })
-            console.log(taskDoc.get('about'))
             return {
               id: taskDoc.id,
               listID: doc.id,
@@ -45,10 +43,18 @@ export const useLists = (projID) => {
           });
           listData.tasks = tasksData;
         });
+
+        let unsubscribeList = onSnapshot(doc.ref, (docSnapshot) => {
+          listData.name = docSnapshot.get('name');
+          listData.userUID = docSnapshot.get('userUID');
+          listData.projID = docSnapshot.get('projID');
+          listData.tasks = docSnapshot.get('tasks');
+        });
         
         // Unsubscribe from the tasks listener when the list is deleted
         onUnmounted(() => {
           unsubscribeTasks();
+          unsubscribeList()
         });
         
         return listData;

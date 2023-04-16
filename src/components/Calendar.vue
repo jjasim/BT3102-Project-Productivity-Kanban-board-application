@@ -12,7 +12,7 @@
                     :show-month="true"
                     :show-weekday="true"
                     :show-week-numbers="true"
-                    :disable-past="true"
+                    :disable-past="false"
                     :item-classes="itemClasses"
                     class="holiday-us-traditional holiday-us-official"
                     id="calendar-body">

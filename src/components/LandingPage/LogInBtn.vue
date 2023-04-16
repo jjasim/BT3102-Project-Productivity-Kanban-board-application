@@ -1,5 +1,5 @@
 <template>
-    <button class="login-btn" type="button" @click.native="login">Log In</button>
+    <button class="login-btn" type="button" @click.prevent="login">Log In</button>
 </template>
 
 <script>

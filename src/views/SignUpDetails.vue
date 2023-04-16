@@ -7,8 +7,6 @@
             <br><br>
             <input class="form-control" type="text" v-model="username" required placeholder="Preferred Username">
             <br><br>
-            <input class="form-control" type="password" v-model="password" required placeholder="Password">
-            <br><br>
             <input class="form-control" type="text" v-model="companyCode" required placeholder="Company Code">
             <br><br>
             <div v-show = "error" class="error">
@@ -63,8 +61,6 @@ export default {
                 uid: user.uid,
                 email: user.email, 
                 name : this.name,
-                username : this.username,
-                companyCode : this.companyCode,
                 points : this.points,
                 projects : this.projects
             }
