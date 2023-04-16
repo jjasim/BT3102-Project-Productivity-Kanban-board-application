@@ -37,6 +37,12 @@ import HomeCalendar from "@/components/HomeCalendar.vue"
 
 export default {
   name: "HomePage",
+  data() {
+    return {
+      todaysdate: new Date().toLocaleString,
+      user: false
+    }
+  }, 
   mounted() {
       const auth = getAuth();
       onAuthStateChanged(auth, (user) => {
@@ -48,12 +54,6 @@ export default {
         }
       })
     },
-  data() {
-    return {
-      todaysdate: new Date().toLocaleString,
-      user: false
-    }
-  }, 
   methods: {
     currentDate() {
       const current = new Date();

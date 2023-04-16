@@ -88,7 +88,6 @@
 </template>
 
 <script>
-import KanbanBadge from "./KanbanBadge.vue";
 import { CIcon } from '@coreui/icons-vue';
 import { cilCircle, cilPencil,cilCheckCircle } from '@coreui/icons'; 
 import Modal from "../Modal.vue"
@@ -98,7 +97,6 @@ import { updateDoc, collection, doc, Timestamp, query, where, getDocs} from 'fir
 
 export default {
 components: {
-  KanbanBadge,
   CIcon,
   Modal
 },
