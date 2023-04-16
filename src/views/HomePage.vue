@@ -16,10 +16,10 @@
     
     <div class="Homepage-items">
       <div class="ToDoList">
-        <ToDoList />
+        <ToDoList @task-added="refreshCalendar"/>
       </div>
       <div class="HomeCalendar">
-        <HomeCalendar />
+        <HomeCalendar :key="shouldRefreshCalendar"/>
       </div>
     </div>
 
@@ -52,7 +52,8 @@ export default {
     return {
       todaysdate: new Date().toLocaleString,
       userDetails: getUser(),
-      user: false
+      user: false,
+      shouldRefreshCalendar: false,
     }
   }, 
   methods: {
@@ -60,7 +61,13 @@ export default {
       const current = new Date();
       const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
       return date;
-    }
+    },
+    refreshCalendar() {
+      this.shouldRefreshCalendar = true;
+      setTimeout(() => {
+        this.shouldRefreshCalendar = false;
+      }, 100);
+    },
   },
   components: {SideBar, ToDoList, HomeCalendar}
 }
@@ -222,7 +229,8 @@ button {
 
 .HomeCalendar {
   padding-left: 10em;
-  padding-top: 3em;
+  padding-bottom: 5em;
   z-index: 0;
+  height: 50em;
 }
 </style>
