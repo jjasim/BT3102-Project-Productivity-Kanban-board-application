@@ -73,7 +73,7 @@ export default {
     },
   },
   components: {SideBar, ToDoList, HomeCalendar}
-}
+  }}
 </script>
 
 <style scoped>
