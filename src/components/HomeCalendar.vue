@@ -60,11 +60,7 @@
         CalendarMath
     } from "vue-simple-calendar"
 
-    import {
-        INormalizedCalendarItem,
-    } from  "vue-simple-calendar/dist/src/ICalendarItem"    
-
-    import { ICalendarItem } from "../components/CalendarAPI/ICalendarItem"
+    import { ICalendarItem, INormalizedCalendarItem } from "../components/CalendarAPI/ICalendarItem"
 
     import {
         onMounted,
@@ -274,10 +270,6 @@
         props: {
             addItems: Boolean,
             userID: String,
-            shouldRefresh: {
-                type: Boolean,
-                default: false,
-            },
         },
         data() {
             return {

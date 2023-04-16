@@ -13,7 +13,8 @@
       </div>
     </div>
 
-    <div class="UsersInProject">
+    <div class="Chat">
+      <Chat/>
     </div>
   </div>
 </template>
@@ -23,6 +24,7 @@ import KanbanBoard from "@/components/Kanban/KanbanBoard.vue";
 import Header from "@/components/Header.vue"
 import SideBar from "@/views/SideBar.vue";
 import Modal from "@/components/Modal.vue";
+import Chat from "@/components/Chat.vue"
 
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
@@ -52,7 +54,7 @@ export default {
     },
   methods: {
   },
-  components: {SideBar, Modal, KanbanBoard, Header}
+  components: {SideBar, Modal, KanbanBoard, Header, Chat}
 };
 </script>
 
@@ -84,7 +86,7 @@ export default {
   overflow-x: scroll;
 }
 
-.UsersInProject {
+.Chat {
   flex: 1;
 }
 
