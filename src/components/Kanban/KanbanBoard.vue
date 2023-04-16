@@ -83,7 +83,7 @@
               </template>
               <template v-slot:footer>
                 <div class="addproject-pushbuttons">
-                  <button class="addproject-addbutton" @click.prevent="">Add Card</button>
+                  <button class="addproject-addbutton" @click.prevent="addCard">Add Card</button>
                 </div>
               </template>
             </Modal>
