@@ -12,7 +12,7 @@
                     :show-month="true"
                     :show-weekday="true"
                     :show-week-numbers="true"
-                    :disable-past="true"
+                    :disable-past="false"
                     :item-classes="itemClasses"
                     class="holiday-us-traditional holiday-us-official"
                     id="calendar-body">
@@ -76,6 +76,7 @@
     import { getDocs } from 'firebase/firestore';
     import { doc, updateDoc } from 'firebase/firestore';
     import { computed } from 'vue';
+    import { db } from '../firebase/init.js'
 
     // Gets this month
     const thisMonth = (d: number, h?: number, m?: number): Date => {
@@ -162,17 +163,6 @@
         const eLength = CalendarMath.dayDiff(item.startDate, date)
         item.originalItem.startDate = CalendarMath.addDays(item.startDate, eLength)
         item.originalItem.endDate = CalendarMath.addDays(item.endDate, eLength)
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBPB1jmwH-3h1YmBAkkekTF8eDto4pfo9c",
-            authDomain: "workwise-b1604.firebaseapp.com",
-            projectId: "workwise-b1604",
-            storageBucket: "workwise-b1604.appspot.com",
-            messagingSenderId: "218806215802",
-            appId: "1:218806215802:web:258458dab46639a66e07c3"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
 
         // Update task in 'tasks' collection
         const taskRef = doc(db, 'tasks', item.id);

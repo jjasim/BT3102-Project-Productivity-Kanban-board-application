@@ -13,7 +13,7 @@
                     :show-month="true"
                     :show-weekday="true"
                     :show-week-numbers="true"
-                    :disablePast = "true"
+                    :disablePast = "false"
                     class = "holiday-us-traditional holiday-us-official"
                     id = "calendar-body">
                     <template #header="{ headerProps }">
@@ -76,6 +76,7 @@
     import Sidebar from "../views/SideBar.vue"
     import { getDocs } from 'firebase/firestore';
     import { computed } from 'vue';
+    import { db } from '../firebase/init.js';
 
 
     // Gets this month
@@ -175,15 +176,6 @@
     const fetchTasks = async () => {
         //console.log("In fetch tasks")
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBPB1jmwH-3h1YmBAkkekTF8eDto4pfo9c",
-            authDomain: "workwise-b1604.firebaseapp.com",
-            projectId: "workwise-b1604",
-            storageBucket: "workwise-b1604.appspot.com",
-            messagingSenderId: "218806215802",
-            appId: "1:218806215802:web:258458dab46639a66e07c3"
-        };
-
         let userID: string | undefined;
         const auth = getAuth();
             onAuthStateChanged(auth, (user) => {
@@ -192,9 +184,6 @@
                     //console.log(user.uid);
                 }
         })
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
 
         const tasksSnapshot = await getDocs(collection(db, "tasks"));
         const individualTasksSnapshot = await getDocs(collection(db, "individualtasks"));
@@ -261,8 +250,7 @@
 </script>
 
 <script lang="ts">
-    import { getFirestore, collection} from 'firebase/firestore';
-    import { initializeApp } from "firebase/app";
+    import { collection } from 'firebase/firestore';
     import { getAuth, onAuthStateChanged } from '@firebase/auth';
 
     export default {

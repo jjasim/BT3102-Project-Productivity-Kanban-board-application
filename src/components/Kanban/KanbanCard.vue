@@ -73,7 +73,7 @@
           <div class="addproject-addprojtitle">
             <div class="addproject-projtitletext">Color:</div>
             <div class="color-picker">
-              <div class="color-option" v-for="option in colorOptions" :key="option" :style="{ backgroundColor: option }" @click="setColor(option)"></div>
+              <div class="color-option" v-for="option in colorOptions" :key="option" :style="{ backgroundColor: option, border: color === option ? '3px solid black' : '' }" @click="setColor(option)"></div>
             </div>
           </div>
         </form>
@@ -110,7 +110,7 @@ data() {
     stakeHolderArrayID: this.task.stakeHolderArrayID,
     stakeHolderArrayEmail: this.task.stakeHolderArrayEmail,
     stakeHolderEmail: "",
-    color: this.task.color || "#ffffff",
+    color: "#D3D3D3",
     colorOptions: [
         "#D3D3D3", // light gray
         "#C0C0C0", // silver
@@ -148,6 +148,7 @@ methods: {
     this.isModalVisible = false; 
   }, 
   async editCard() {
+    //console.log("Inside edit card!")
     const subTaskCollection = collection(db, `lists/${this.task.listID}/tasks`)
     const taskCollection = collection(db, "tasks");
     const subTaskDoc = doc(subTaskCollection, this.task.id);
@@ -159,7 +160,7 @@ methods: {
       about: this.about,
       stakeHolderArrayEmail: this.stakeHolderArrayEmail,
       stakeHolderArrayID: this.stakeHolderArrayID,
-      color: this.color 
+      cardColor: this.color
     }
     await updateDoc(subTaskDoc, updatedData);
     await updateDoc(taskDoc, updatedData);
@@ -206,9 +207,12 @@ methods: {
           this.task.stakeHolderArrayEmail.push(this.stakeHolderEmail);
         }
         this.stakeHolderEmail = "";
-      }
-}
-};
+  },
+  setColor(option) {
+    this.color = option;
+  }
+    }
+  };
 </script>
 
 <style scoped>
