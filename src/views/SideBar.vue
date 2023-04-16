@@ -8,7 +8,7 @@
             src="src/assets/sidebar-person-icon.png"
             class="UserIcon"
           />
-        <span class="sidebar-usersname"><span>{{ userDetails[0].username }}</span></span>
+        <span class="sidebar-usersname"><span>{{ userDetails[0].name }}</span></span>
       </div>
       <!-- users points -->
       <div>
@@ -40,7 +40,6 @@
 </template>
   
   <script>
-import Modal from '@/components/Modal.vue';
 import dropdown from '@/components/Dropdown.vue';
 import { getProjects } from '../components/SidebarAPI/projects.js';
 import { CIcon } from '@coreui/icons-vue';
@@ -53,22 +52,10 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
 
   export default {
     name: 'Sidebar',
-    components: {Modal, dropdown, CIcon},
+    components: {CIcon},
     setup() {
       return {
         cilGem,
-      }
-    },
-    data() {
-      return { 
-        isModalVisible: false,
-        user : false,
-        object: {
-              name: 'Team Projects',
-            },
-        projName: "",
-        projUsers: [],
-        userDetails: getUser()
       }
     },
     mounted() {
@@ -81,26 +68,24 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
         }
       })
     },
+    data() {
+      return {
+        user : false,
+        object: {
+              name: 'Team Projects',
+            },
+        projName: "",
+        projUsers: [],
+        userDetails: getUser(),
+      }
+    },
     methods: {
       async signOut() {
         const auth = getAuth();
         const user = auth.currentUser;
         await signOut(auth, user);
         this.$router.push("/login")
-      },
-      showModal() {
-        console.log(getProjects());
-        this.isModalVisible = true;
-      },
-      closeModal() {
-        this.isModalVisible = false;
-        this.projName = "";
-        this.projUsers = [];
-        document.getElementById("newUsers").value = "";
-        document.getElementById("newProjName").value = "";
-        document.getElementById("list").innerHTML = "";
-        document.getElementById("list").innerHTML = "<li>" + this.userDetails[0].username + "</li>";
-      },
+      }, 
       async addUser() {
         try {
         var input = document.getElementById("newUsers").value;
@@ -112,29 +97,6 @@ import { getUser } from '../components/SidebarAPI/userinfo.js';
         document.getElementById("newUsers").value = "";
         } catch(error) {
           console.log('error');
-        }
-      },
-      async addData() {
-        try {
-          this.projUsers.push(this.userDetails[0].username);
-          console.log(this.projUsers);
-          console.log(this.projName);
-          const querySnapshot = await getDocs(query(collection(db, 'users'), where('username', 'in', this.projUsers)));
-          const userIds = querySnapshot.docs.map((doc) => doc.get('uid'));
-          const docRef = await addDoc(collection(db, 'projects'), {
-            Name: this.projName,
-            users: userIds,
-          });
-          this.isModalVisible = false;
-        this.projName = "";
-        this.projUsers = [];
-        document.getElementById("newUsers").value = "";
-        document.getElementById("newProjName").value = "";
-        document.getElementById("list").innerHTML = "";
-        document.getElementById("list").innerHTML = "<li>" + this.userDetails[0].username + "</li>";
-        } catch(err) {
-          console.log(err)
-          console.log("proj failed to add")
         }
       }
     }
