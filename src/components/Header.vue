@@ -45,7 +45,7 @@
     import { CIcon } from '@coreui/icons-vue';
     import { cilPlus, cilTrash, cilArrowThickLeft, cilSettings} from '@coreui/icons'; 
     import Modal from './Modal.vue';
-import { collection, deleteDoc, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../firebase/init';
 import { getAuth } from 'firebase/auth';
 
@@ -114,10 +114,15 @@ import { getAuth } from 'firebase/auth';
       async editProject() {
         const auth = getAuth();
         const projDoc = doc(collection(db, 'projects'), this.$route.params.projID)
+        const projData = await getDoc(projDoc)
+        const projUsers = projData.data().users;
+        const updatedUsers = projUsers.concat(this.stakeHolderArrayID)
+        console.log(this.stakeHolderArrayID)
         const updateData = {
-          projName: this.projName,
-          users: this.stakeHolderArrayID,
+          Name: this.projName,
+          users: updatedUsers
         }
+
         await updateDoc(projDoc, updateData);
         this.$router.push({
                 name: "Project Task Page",
@@ -137,6 +142,7 @@ import { getAuth } from 'firebase/auth';
         if (stakeholder) {
           this.stakeHolderArrayID.push(stakeholder.data().uid)
           this.stakeHolderArrayEmail.push(this.stakeHolderEmail);
+          console.log(this.stakeHolderArrayID)
         }
         this.stakeHolderEmail = "";
       },
@@ -146,22 +152,32 @@ import { getAuth } from 'firebase/auth';
         if (confirmDelete) {
           const listQuery = query(collection(db, 'lists'), where("projID", "==", this.$route.params.projID))
           const listDocs = await getDocs(listQuery)
-          listDocs.forEach(listDoc => {
+          for (let i = 0; i < listDocs.size; i++) {
+            const listDoc = listDocs.docs[i];
             const document = doc(collection(db, "lists"), listDoc.id)
-            const taskCollection = collection(db, `lists/${listDoc.id}/tasks`)
-            const tasksDocs = getDocs(taskCollection, listDoc.id)
-            tasksDocs.forEach(taskDoc => {
-              const taskDocument = doc(taskCollection, taskDoc.id)
-              deleteDoc(taskDocument)
-            })
-            deleteDoc(document);
-          })
+            const subTaskQuery = query(collection(db, `lists/${listDoc.id}/tasks`), where("projID", "==", this.$route.params.projID))
+            const tasksDocs = await getDocs(subTaskQuery)
+            for (let j = 0; j < tasksDocs.size; j++) {
+              const taskDoc = tasksDocs.docs[j];
+              const taskDocument = doc(collection(db, `lists/${listDoc.id}/tasks`), taskDoc.id)
+              await deleteDoc(taskDocument)
+            }
+            await deleteDoc(document);
+          }
           const tasksCollectionRef = collection(db, "tasks");
-          const taskQuery = query(collection(db, "tasks"), where("projID", "==", this.$route.params.projID));
+          const taskQuery = query(tasksCollectionRef, where("projID", "==", this.$route.params.projID));
           const mainTasksDocs = await getDocs(taskQuery)
           mainTasksDocs.forEach(taskDoc => {
             const document = doc(tasksCollectionRef, taskDoc.id)
             deleteDoc(document); 
+          })
+
+          const chatCollectionRef = collection(db, 'chat');
+          const chatQuery = query(chatCollectionRef, where("proj", "==", this.$route.params.projID))
+          const chatDocs = await getDocs(chatQuery);
+          chatDocs.forEach(chatDoc => {
+            const chatDocument = doc(chatCollectionRef, chatDoc.id);
+            deleteDoc(chatDocument)
           })
           
           const projDoc = doc(collection(db, "projects"), this.$route.params.projID)

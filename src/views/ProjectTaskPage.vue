@@ -9,7 +9,7 @@
         <Header/>
       </div>
       <div class="KanbanBoard">
-        <KanbanBoard/>
+        <KanbanBoard @card-deleted="change"/>
       </div>
     </div>
 
@@ -35,7 +35,8 @@ export default {
       addUserPopupVisible: false,
       addListPopupVisible: false,
       editElemPopupVisible: false,
-      user : false 
+      user : false,
+      refreshComp: 0
     };
   },
   created() {
@@ -52,6 +53,9 @@ export default {
       })
     },
   methods: {
+    change() {
+      this.refreshComp += 1
+    }
   },
   components: {SideBar, Modal, KanbanBoard, Header, Chat}
 };

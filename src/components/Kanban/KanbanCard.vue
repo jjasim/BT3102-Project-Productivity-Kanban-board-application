@@ -189,6 +189,7 @@ methods: {
       await deleteDoc(subTaskDoc);
       await deleteDoc(taskDoc);
       this.isModalVisible = false;
+      location.reload()
     }
   },
   formatDate(dateString) {

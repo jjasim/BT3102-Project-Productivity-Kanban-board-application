@@ -67,4 +67,8 @@ export default {
     color: red;
     padding-bottom: 0.5rem;
 }
+
+input {
+  text-indent: 8px;
+}
 </style>
