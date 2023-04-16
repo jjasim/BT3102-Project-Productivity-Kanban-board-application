@@ -14,7 +14,6 @@ import ProjectTaskPage from './views/ProjectTaskPage.vue';
 import { RouterView } from 'vue-router';
 import SideBar from './views/SideBar.vue';
 import Modal from './components/Modal.vue';
-import dropdown from './components/Dropdown.vue';
 import MobileDevice from './views/MobileDevice.vue';
 import SignUpDetails from "./views/SignUpDetails.vue"
 import AllProjectsPage from './views/AllProjectsPage.vue'
@@ -29,7 +28,6 @@ export default {
     ProjectTaskPage,
     SideBar,
     Modal,
-    dropdown,
     MobileDevice,
     SignUpDetails,
     AllProjectsPage

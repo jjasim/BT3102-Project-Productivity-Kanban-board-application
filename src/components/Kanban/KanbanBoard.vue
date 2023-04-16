@@ -88,129 +88,126 @@
             </template>
           </Modal>
 
-</template>
+  </template>
+  
+  <script>
+  import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc, updateDoc, Timestamp, query, where, setDoc} from "firebase/firestore"
+  import { auth, db } from "../../firebase/init.js"
+  import { getAuth, onAuthStateChanged } from "@firebase/auth";
+  import KanbanCard from "./KanbanCard.vue";
+  import draggable from "vuedraggable";
+  import KanbanCreateList from "./KanbanCreateList.vue";
+  import Modal from "../Modal.vue"
+  import { useLists } from "./KanbanAPI";
+  import { CIcon } from '@coreui/icons-vue';
+  import { cilPlus, cilTrash } from '@coreui/icons'; 
 
-<script>
-import { collection, getDocs, getFirestore, doc, addDoc, deleteDoc, updateDoc, Timestamp, query, where, setDoc} from "firebase/firestore"
-import { auth, db } from "../../firebase/init.js"
-import { getAuth, onAuthStateChanged } from "@firebase/auth";
-import KanbanCard from "./KanbanCard.vue";
-import draggable from "vuedraggable";
-import KanbanCreateList from "./KanbanCreateList.vue";
-import Modal from "../Modal.vue"
-import { useLists } from "./KanbanAPI";
-import { CIcon } from '@coreui/icons-vue';
-import { cilPlus, cilTrash } from '@coreui/icons'; 
-import { getCurrentInstance } from 'vue';
-
-export default {
-  name: "KanbanBoard",
-  display: "Simple",
-  order: 0,
-  components: {
-      draggable,
-      KanbanCard,
-      KanbanCreateList,
-      Modal,
-      CIcon
-  },
-  data() {
-  return {
-    isModalVisible : false,
-    taskName: "",
-    endDate: new Date(),
-    selectedList: null,
-    clickedTask: "",
-    listFrom: "",
-    listTo: "",
-    about: "",
-    stakeHolderEmail: "",
-    stakeHolderArrayEmail: [],
-    stakeHolderArrayID: [],
-    cardColor: "#ffffff",
-    colorOptions: [
-      "#D3D3D3", // light gray
-      "#C0C0C0", // silver
-      "#B0C4DE", // light steel blue
-      "#D8BFD8", // thistle
-      "#F08080", // light coral
-      "#FFA07A", // light salmon
-      "#CD5C5C", // indian red
-      "#8FBC8F", // dark sea green
-      "#00CED1", // dark turquoise
-      "#FFDAB9", // peach puff
-      "#FFD700", // gold
-    ]
-
-  };
-},
-  setup() {
-    const instance = getCurrentInstance();
-    const columns = useLists(instance.proxy.$route.params.projID)
+  export default {
+    name: "KanbanBoard",
+    display: "Simple",
+    order: 0,
+    components: {
+        draggable,
+        KanbanCard,
+        KanbanCreateList,
+        Modal,
+        CIcon
+    },
+    data() {
     return {
-      cilPlus, 
-      cilTrash, 
-      columns
-    }
-  },
-  computed: {
-    formattedStakeHolders() {
-      return this.stakeHolderArrayEmail.join(", ")
-    },
-    isSelectedColor() {
-      return (color) => {
-      return this.cardColor === color;
+      isModalVisible : false,
+      taskName: "",
+      endDate: new Date(),
+      selectedList: null,
+      clickedTask: "",
+      listFrom: "",
+      listTo: "",
+      about: "",
+      stakeHolderEmail: "",
+      stakeHolderArrayEmail: [],
+      stakeHolderArrayID: [],
+      columns: useLists(this.$route.params.projID),
+      cardColor: "#ffffff",
+      colorOptions: [
+        "#D3D3D3", // light gray
+        "#C0C0C0", // silver
+        "#B0C4DE", // light steel blue
+        "#D8BFD8", // thistle
+        "#F08080", // light coral
+        "#FFA07A", // light salmon
+        "#CD5C5C", // indian red
+        "#8FBC8F", // dark sea green
+        "#00CED1", // dark turquoise
+        "#FFDAB9", // peach puff
+        "#FFD700", // gold
+      ]
+
     };
-},
   },
-  methods: {
-    async addCard() {
-      const auth = getAuth();
-      const taskCollectionRef = collection(db, `lists/${this.selectedList.id}/tasks`);
-      const firebaseDate = Timestamp.fromDate(new Date(this.endDate));
-      this.stakeHolderArrayID.push(auth.currentUser.uid)
-      const taskDoc = {
-        listID: this.selectedList.id, // use the selected list to set the listID property
-        taskName: this.taskName,
-        endDate: firebaseDate,
-        completed: false,
-        about: this.about,
-        stakeHolderArrayID: this.stakeHolderArrayID,
-        stakeHolderArrayEmail: this.stakeHolderArrayEmail,
-        projID: this.$route.params.projID,
-        cardColor: this.cardColor,
-        points: 100
+    setup() {
+      return {
+        cilPlus, 
+        cilTrash, 
+      }
+    },
+    computed: {
+      formattedStakeHolders() {
+        return this.stakeHolderArrayEmail.join(", ")
+      },
+      isSelectedColor() {
+        return (color) => {
+        return this.cardColor === color;
       };
-      const docRef = await addDoc(taskCollectionRef, taskDoc); 
-      await setDoc(doc(db, "tasks", docRef.id), taskDoc)
-      console.log("card added");
-      this.taskName = "";
-      this.endDate = new Date();
-      this.selectedList = null;
-      this.isModalVisible = false;
-      this.about = "";
-      this.stakeHolderArrayEmail = [];
-      this.stakeHolderArrayID = [];
+  },
     },
-    showModal(list) {
-      this.isModalVisible = true; 
-      this.selectedList = list
-    },
-    closeModal() {
-      this.isModalVisible = false;
-      this.taskName = "";
-    },
-    async deleteList(column) {
-      const collectionRef = collection(db, "lists");
-      const listDoc = doc(collectionRef, column.id);
-      const taskCollection = collection(db, `lists/${column.id}/tasks`)
-      const tasksDocs = await getDocs(taskCollection, column.id)
-      tasksDocs.forEach(taskDoc => {
-        const document = doc(taskCollection, taskDoc.id)
-        deleteDoc(document); 
-      })
-      const tasksCollectionRef = collection(db, "tasks");
-      const taskQuery = query(collection(db, "tasks"), where("listID", "==", column.id));
+    methods: {
+      async addCard() {
+        const auth = getAuth();
+        const taskCollectionRef = collection(db, `lists/${this.selectedList.id}/tasks`);
+        const firebaseDate = Timestamp.fromDate(new Date(this.endDate));
+        this.stakeHolderArrayID.push(auth.currentUser.uid)
+        const taskDoc = {
+          listID: this.selectedList.id, // use the selected list to set the listID property
+          taskName: this.taskName,
+          endDate: firebaseDate,
+          completed: false,
+          about: this.about,
+          stakeHolderArrayID: this.stakeHolderArrayID,
+          stakeHolderArrayEmail: this.stakeHolderArrayEmail,
+          projID: this.$route.params.projID,
+          cardColor: this.cardColor,
+          points: 100
+        };
+        const docRef = await addDoc(taskCollectionRef, taskDoc); 
+        await setDoc(doc(db, "tasks", docRef.id), taskDoc)
+        console.log("card added");
+        this.taskName = "";
+        this.endDate = new Date();
+        this.selectedList = null;
+        this.isModalVisible = false;
+        this.about = "";
+        this.stakeHolderArrayEmail = [];
+        this.stakeHolderArrayID = [];
+      },
+      showModal(list) {
+        this.isModalVisible = true; 
+        this.selectedList = list
+      },
+      closeModal() {
+        this.isModalVisible = false;
+        this.taskName = "";
+      },
+      async deleteList(column) {
+        const collectionRef = collection(db, "lists");
+        const listDoc = doc(collectionRef, column.id);
+        const taskCollection = collection(db, `lists/${column.id}/tasks`)
+        const tasksDocs = await getDocs(taskCollection, column.id)
+        tasksDocs.forEach(taskDoc => {
+          const document = doc(taskCollection, taskDoc.id)
+          deleteDoc(document); 
+        })
+        const tasksCollectionRef = collection(db, "tasks");
+        const taskQuery = query(collection(db, "tasks"), where("listID", "==", column.id));
 
       const mainTasksDocs = await getDocs(taskQuery)
       mainTasksDocs.forEach(taskDoc => {
@@ -248,17 +245,17 @@ export default {
         console.log("card dragged!")
       }
 
-      if (e.removed) {
-        const removedItem = e.removed.element;
-        const auth = getAuth();
-        const taskCollectionRef = collection(db, `lists/${removedItem.listID}/tasks`);
-        const taskDocument = doc(taskCollectionRef, removedItem.id);
-        await deleteDoc(taskDocument);
+        if (e.removed) {
+          const removedItem = e.removed.element;
+          const auth = getAuth();
+          const taskCollectionRef = collection(db, `lists/${removedItem.listID}/tasks`);
+          const taskDocument = doc(taskCollectionRef, removedItem.id);
+          await deleteDoc(taskDocument);
+        }
       }
     }
-  }
-};
-</script>
+  };
+  </script>
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
 * {

@@ -80,7 +80,8 @@
       </template>
       <template v-slot:footer>
         <div class="addproject-pushbuttons">
-          <button class="addproject-addbutton" @click.prevent="editCard()">Edit Card</button>
+          <button class="delete-button" @click.prevent="deleteCard">Delete</button>
+          <button class="addproject-addbutton" @click.prevent="editCard">Edit</button>
         </div>
       </template>
     </Modal>
@@ -92,7 +93,7 @@ import { CIcon } from '@coreui/icons-vue';
 import { cilCircle, cilPencil,cilCheckCircle } from '@coreui/icons'; 
 import Modal from "../Modal.vue"
 import { auth, db } from "../../firebase/init.js"
-import { updateDoc, collection, doc, Timestamp, query, where, getDocs} from 'firebase/firestore';
+import { updateDoc, collection, doc, Timestamp, query, where, getDocs, deleteDoc} from 'firebase/firestore';
 
 
 export default {
@@ -177,6 +178,19 @@ methods: {
     this.task.stakeHolderArrayID = this.stakeHolderArrayID;
     this.isModalVisible = false;
   },
+  async deleteCard() {
+    const confirmDelete = window.confirm("Are you sure you want to delete this project?");
+    if (confirmDelete) {
+      const subTaskCollection = collection(db, `lists/${this.task.listID}/tasks`)
+      const taskCollection = collection(db, "tasks");
+      const subTaskDoc = doc(subTaskCollection, this.task.id);
+      const taskDoc = doc(taskCollection, this.task.id);
+
+      await deleteDoc(subTaskDoc);
+      await deleteDoc(taskDoc);
+      this.isModalVisible = false;
+    }
+  },
   formatDate(dateString) {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -194,7 +208,13 @@ methods: {
     const updatedData = {
       completed: this.completed
     }
-
+    if (this.completed) {
+      this.updatePoints(100);
+    }
+    
+    if (!this.completed) {
+      this.updatePoints(-100);
+    }
     await updateDoc(subTaskDoc, updatedData)
     await updateDoc(taskDoc, updatedData)
   },
@@ -207,6 +227,21 @@ methods: {
           this.task.stakeHolderArrayEmail.push(this.stakeHolderEmail);
         }
         this.stakeHolderEmail = "";
+  },
+  async updatePoints(pointsAdded) {
+        try {
+          const quer = query(collection(db, 'users'), where('uid', '==', auth.currentUser.uid));
+          const userRef = await getDocs(quer);
+          const userDoc = userRef.docs[0]; 
+          const userPoints = userDoc.data().points;
+          const newPoints = userPoints + pointsAdded;
+          await updateDoc(userDoc.ref, {
+            points: newPoints 
+          })
+          console.log("points updated") 
+        } catch (error) {
+          console.log("points not updating correctly")
+        }
   },
   setColor(option) {
     this.color = option;
@@ -253,6 +288,22 @@ methods: {
   max-height: 50px;
 }
 
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #5E72EB;
+    color: white;
+    border: none;
+    border-radius: 49px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .addproject-pushbuttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
 .card-left {
   display: flex;
   min-width: 200px;
@@ -336,6 +387,10 @@ textarea.addproject-inputbg {
   margin: 2px;
   border-radius: 50%;
   cursor: pointer;
+}
+
+.delete-button {
+  background-color: red;
 }
 
 </style>

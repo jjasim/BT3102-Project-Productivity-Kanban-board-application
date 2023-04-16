@@ -73,4 +73,8 @@ export default {
   overflow-x: scroll;
 }
 
+.chat {
+
+}
+
 </style>
