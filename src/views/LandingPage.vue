@@ -1,12 +1,15 @@
 <template>
     <div class="header">
         <h1 class="logo">WorkWise</h1>
-        <div class="login">
-            <LogInBtn/>
+        <div class="buttons">
+            <div class="login">
+                <button class="login-btn" type="button" @click.prevent="goToLogin">Log In</button>
+            </div>
+            <div class ="signup">
+                <button class="signup-btn" type="button" @click.prevent="goToSignUp">Sign Up</button>
+            </div>
         </div>
-        <div class ="signup">
-            <SignUpBtn/>
-        </div>
+
     </div>
     <v-carousel cycle :show-arrows="false" hide-delimiters interval="3000" height="680px">
         <v-carousel-item 
@@ -77,12 +80,10 @@
 </template>
 
 <script>
-import LogInBtn from "../components/LandingPage/LogInBtn.vue"
 import SignUpBtn from "../components/LandingPage/SignUpBtn.vue"
 
 export default {
     components : {
-        LogInBtn,
         SignUpBtn
     },
 
@@ -100,7 +101,15 @@ export default {
           }
         ]
       }
-    },       
+    },
+    methods: {
+        goToLogin() {
+            this.$router.push('/login')
+        },
+        goToSignUp() {
+            this.$router.push('/signup')
+        }
+    }
 }
 
 </script>
@@ -118,9 +127,16 @@ body {
 .header {
     background-color: rgba(19, 13, 111, 1);
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     padding: 0px;
+}
 
+.buttons {
+    display: flex;
+    padding-top: 40px;
+    gap: 10px;
+    margin-right: 10px;
 }
 .logo {
     color: rgba(254,193,149,1);
@@ -130,16 +146,22 @@ body {
     font-weight: 400;
     padding: 0px 0px 0px 40px;
 }
-
-.login {
-    padding-left: 40%;
-    padding-top: 40px;
-
+button {
+    width: 161px;
+    height: 50px;
+    color: white;
+    font-size: 25px;
+    font-style: Regular;
+    font-family: Josefin Sans;
+    font-weight: 400;
+    background-color: #5e72eb;
+    border-radius: 49px;
+    border: 0;
+    cursor: pointer;
 }
 
-.signup {
-    padding-top: 40px;
-    padding-right: 10%;
+button:hover {
+    background-color: #000d59;;
 }
 
 /* Carousel Component */
