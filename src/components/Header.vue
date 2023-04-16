@@ -1,16 +1,39 @@
 <template>
     <div class="header">
-      <div class="project-name">
-        {{ this.$route.params.projName }}
-      </div>
+      <div class="project-name">{{ this.$route.params.projName }}</div>
+      
       <div class="buttons">
+        <CIcon class="share-icon" :icon="cilUserPlus" size="custom" @click.prevent="showModal()" />
         <button ref="tasksButton" @click="goToTasks" :class="{ 'nav-button': true, 'clicked': $route.path.match(/tasks/i) }" >Tasks</button>
         <button ref="calendarButton" @click="goToCalendar" :class="{ 'nav-button': true, 'clicked': $route.path.match(/calendar/i) }">Calendar</button>
       </div>
     </div>
+    
+    <Modal v-show="isModalVisible" @close="closeModal">
+          <template v-slot:header>
+            Project Code
+          </template>
+            
+          <template v-slot:body>
+              <div class="addproject-addprojtitle">
+                <div class="addproject-projtitletext">Share this project's ID</div>
+                <div class="addproject-inputbg">{{ this.$route.params.id }}</div>
+              </div>
+          </template>
+
+        <template v-slot:footer>
+          <div class="addproject-pushbuttons">
+            Input under "Join project"
+          </div>
+        </template>
+      </Modal>
   </template>
   
   <script>
+  import Modal from '@/components/Modal.vue';
+  import { CIcon } from '@coreui/icons-vue';
+  import { cilUserPlus } from '@coreui/icons';
+
   export default {
     name: "Header",
     mounted() {
@@ -36,13 +59,30 @@
         calendarButton.classList.add('clicked');
       }
     },
+    data() {
+      return {
+        isModalVisible: false
+      }
+    },
+    components: {Modal, cilUserPlus},
+    setup() {
+      return {
+        cilUserPlus,
+      }
+    },
     methods: {
       goToCalendar() {
         this.$router.push("/calendar/" + this.$route.params.projID + '/' + this.$route.params.projName)
       },
       goToTasks() {
         this.$router.push("/tasks/" + this.$route.params.projID + '/' + this.$route.params.projName)
-      }
+      },
+      showModal() {
+        this.isModalVisible = true;
+      },
+      closeModal() {
+        this.isModalVisible = false;
+      },
     }
   };
   </script>
@@ -87,6 +127,16 @@
   }
   .btn:hover {
       cursor: pointer;
+  }
+
+  .share-icon {
+    color: #616161;
+    height: 20px;
+    min-width: 20px;
+  }
+
+  .share-icon:hover {
+    cursor: pointer;
   }
   </style>
   

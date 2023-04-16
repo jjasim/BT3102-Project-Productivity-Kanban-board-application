@@ -34,13 +34,32 @@
         </div>
       </template>
     </Modal>
+
+    <Modal v-show="isModalVisibleJoin" @close="closeModalJoin">
+      <template v-slot:header>
+        Join a project
+      </template>
+      <template v-slot:body>
+        <form>
+          <div class="addproject-addprojtitle">
+            <div class="addproject-projtitletext">Project ID:</div>
+            <input type="text" class="addproject-inputbg" placeholder="Request ID from an existing member" id="newProjID" v-model="projID" required>
+          </div>
+        </form>
+      </template>
+      <template v-slot:footer>
+        <div class="addproject-pushbuttons">
+          <button class="addproject-addbutton" @click.prevent="joinProject()">Submit</button>
+        </div>
+      </template>
+    </Modal> 
   </template>
   
   <script>
-import { addDoc, collection, doc, getDocs, query, where } from 'firebase/firestore';
+import { getFirestore, addDoc, collection, doc, getDocs, query, where, updateDoc } from 'firebase/firestore';
 import Modal from '../Modal.vue';
 import { db } from '../../firebase/init';
-import { getAuth } from 'firebase/auth';
+import { getAuth } from '@firebase/auth';
   export default {
     name: "Header",
     components: {
@@ -54,8 +73,9 @@ import { getAuth } from 'firebase/auth';
     data() {
       return {
         isModalVisibleCreate: false,
-        isMoadlVisibleJoin: false,
+        isModalVisibleJoin: false,
         projName: "",
+        projID: "",
         stakeHolderEmail: "",
         stakeHolderArrayEmail: [],
         stakeHolderArrayID: []
@@ -68,10 +88,14 @@ import { getAuth } from 'firebase/auth';
         this.isModalVisibleCreate = true;
       },
       showModalJoin() {
-        this.isMoadlVisibleJoin = true;
+        this.isModalVisibleJoin = true;
       },
       closeModalCreate() {
         this.isModalVisibleCreate = false;
+      },
+      closeModalJoin() {
+        this.isModalVisibleJoin = false;
+        document.getElementById("newProjID").value = "";
       },
       async createProject() {
         const auth = getAuth();
@@ -96,6 +120,27 @@ import { getAuth } from 'firebase/auth';
           this.stakeHolderArrayEmail.push(this.stakeHolderEmail);
         }
         this.stakeHolderEmail = "";
+      },
+      //adding current user id to an existing project
+      async joinProject() {
+        try{ 
+        const auth = getAuth();
+        const projRef = collection(db, 'projects');
+        const querySnapshot = await getDocs(projRef);
+        const matchingDocs = querySnapshot.docs.filter(doc => doc.id === this.projID);
+        matchingDocs.forEach(async (doc) => {
+          const existingUsers = doc.data().users;
+          existingUsers.push(auth.currentUser.uid);
+          await updateDoc(doc.ref, {
+            users: existingUsers
+          });
+        });
+        document.getElementById("newProjID").value = "";
+        console.log("user added to project");
+        this.isModalVisibleJoin = false;
+      } catch(error) {
+        console.log(error)
+      }
       }
     }
   };
