@@ -7,6 +7,7 @@ import HomePage from '@/views/HomePage.vue'
 import CalendarPage from '@/views/CalendarPage.vue';
 import SignUpDetails from '@/views/SignUpDetails.vue';
 import AllProjectsPage from '@/views/AllProjectsPage.vue'
+import AnalyticsPage from '@/views/AnalyticsPage.vue'
 
 const routes = [
     {
@@ -48,6 +49,11 @@ const routes = [
         path: '/projects',
         name: 'All Projects Page',
         component: AllProjectsPage,
+    },
+    {
+        path: '/analytics',
+        name: 'Analytics Page',
+        component: AnalyticsPage,
     }
 
 ]

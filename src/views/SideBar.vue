@@ -23,7 +23,7 @@
       </div>
           <!-- analytics -->
         <div class="sidebar-analyticsbutton">
-          <router-link to="/home">Analytics</router-link>
+          <router-link to="/analytics">Analytics</router-link>
         </div>
       </div>
         
