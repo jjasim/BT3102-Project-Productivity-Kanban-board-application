@@ -17,6 +17,7 @@ import Modal from './components/Modal.vue';
 import MobileDevice from './views/MobileDevice.vue';
 import SignUpDetails from "./views/SignUpDetails.vue"
 import AllProjectsPage from './views/AllProjectsPage.vue'
+import AnalyticsPage from './views/AnalyticsPage.vue';
 
 export default {
   name: 'App',
@@ -30,7 +31,8 @@ export default {
     Modal,
     MobileDevice,
     SignUpDetails,
-    AllProjectsPage
+    AllProjectsPage,
+    AnalyticsPage
   },
   data(){
     return {
