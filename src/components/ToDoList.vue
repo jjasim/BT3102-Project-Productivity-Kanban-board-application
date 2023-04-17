@@ -48,7 +48,7 @@
 
         <!-- finding project items-->
         <li class="task-list-item" v-for="(item) in projitems" :key="item.id">
-          <div class="item-details"> 
+          <div class="item-details-project" @click.prevent="goToProject(item)"> 
             <span class="item-title">{{ item.name }}</span>
             <div>
               <a class="item-duedate"><CIcon :icon="cilCalendar" size="custom"/> {{  `${item.endDate.getDate()}/${item.endDate.getMonth()+1}/${item.endDate.getFullYear()}` }}</a>
@@ -259,7 +259,17 @@
       async deleteItem(item) {
         await deleteDoc(doc(db, 'individualtasks', item.id));
         this.$emit('task-added');
-      }
+      },
+      goToProject(project) {
+            this.$router.push({
+                name: "Project Task Page",
+                params: {
+                    projID: project.projID,
+                    projName: project.name
+                }
+
+            })
+        }
     }
   };
   </script>
@@ -398,6 +408,14 @@ ul {
   width: 100%;
   justify-content: space-around;
 }
+
+.item-details-project {
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-around;
+  cursor: pointer;
+}
+
 
 .item-title {
   font-style: Regular;
