@@ -157,7 +157,7 @@
       this.isModalVisibleBlank = true;
       setTimeout(() => {
           this.isModalVisibleBlank = false;
-        }, 200); // 200 milliseconds delay before setting isModalVisible to false
+        }, 1000); // 200 milliseconds delay before setting isModalVisible to false
     },
     methods: {
       // ability to add new individual tasks, updates to firebase at the same time
