@@ -200,7 +200,7 @@
       this.isModalVisibleBlank = true;
       setTimeout(() => {
         this.isModalVisibleBlank = false;
-      }, 1000); // 200 milliseconds delay before setting isModalVisible to false
+      }, 1000); // 1000 milliseconds delay before setting isModalVisible to false
     },
     computed: {
       formattedStakeHolders() {
@@ -273,7 +273,7 @@
       this.isModalVisibleBlank = true;
       setTimeout(() => {
         this.isModalVisibleBlank = false;
-      }, 200); // 200 milliseconds delay before setting isModalVisible to false
+      }, 1000); // 200 milliseconds delay before setting isModalVisible to false
 
     },
     async addStakeholder() {
@@ -317,7 +317,7 @@
         this.isModalVisibleBlank = true;
         setTimeout(() => {
           this.isModalVisibleBlank = false;
-        }, 200); // 200 milliseconds delay before setting isModalVisible to false
+        }, 1000); // 1000 milliseconds delay before setting isModalVisible to false
       }
     }
   };
