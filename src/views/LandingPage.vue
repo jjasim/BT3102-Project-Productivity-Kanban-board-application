@@ -90,13 +90,13 @@ export default {
       return {
         images: [
           {
-            src: '../../public/Picture1.jpg',
+            src: '@/Picture1.jpg',
           },
           {
-            src: '../../public/Picture2.jpg',
+            src: '@/Picture2.jpg',
           },
           {
-            src: '../../public/Picture3.jpg',
+            src: '@/Picture3.jpg',
           }
         ]
       }
