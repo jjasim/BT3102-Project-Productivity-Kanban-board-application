@@ -82,7 +82,6 @@
 <script>
 import SignUpBtn from "../components/LandingPage/SignUpBtn.vue"
 
-
 export default {
     components : {
         SignUpBtn
@@ -92,13 +91,13 @@ export default {
       return {
         images: [
           {
-            src: 'https://github.com/BT3103AppDev1/l2-final-project-group-7/blob/main/src/assets/LP/Picture1.jpg?raw=true',
+            src: '@/assets/LP/Picture1.jpg',
           },
           {
-            src: '@/assets/LP/Picture2.jpg',
+            src: '@/assets/LP/Picture1.jpg',
           },
           {
-            src: '@/assets/LP/Picture3.jpg',
+            src: '@/src/assets/LP/Picture1.jpg',
           }
         ]
       }
