@@ -21,7 +21,7 @@
   
   export default {
     name: "AllProjectsPage",
-    data() {
+    data() { 
       return {
         user : false 
       }
