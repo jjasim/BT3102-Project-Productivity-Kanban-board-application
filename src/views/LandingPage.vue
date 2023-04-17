@@ -91,13 +91,13 @@ export default {
       return {
         images: [
           {
-            src: '../src/assets/LP/Picture1.jpg',
+            src: '@/assets/LP/Picture1.jpg',
           },
           {
-            src: '../src/assets/LP/Picture2.jpg',
+            src: '@/assets/LP/Picture2.jpg',
           },
           {
-            src: '../src/assets/LP/Picture3.jpg',
+            src: '@/assets/LP/Picture3.jpg',
           }
         ]
       }

@@ -93,7 +93,7 @@ html, body {
     height: 100vh;
     overflow: hidden;
     background-color: #130D6F;
-    background-image: url("src/assets/ellipsis.png");
+    background-image: url("@/assets/ellipsis.png");
     background-size: 100% 100%;
     position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;
