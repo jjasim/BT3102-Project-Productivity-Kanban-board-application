@@ -265,7 +265,7 @@
                 name: "Project Task Page",
                 params: {
                     projID: project.projID,
-                    projName: project.name
+                    projName: project.location
                 }
 
             })
