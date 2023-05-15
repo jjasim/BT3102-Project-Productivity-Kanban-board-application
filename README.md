@@ -1,5 +1,9 @@
 # WorkWise
 
+Check out the website at https://workwise-b1604.web.app/
+
+# For developrs
+
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
