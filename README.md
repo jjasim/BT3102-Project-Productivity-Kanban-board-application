@@ -1,6 +1,8 @@
 # WorkWise
 
-Check out the website at https://workwise-b1604.web.app/
+WorkWise, a simple and effective productivity tool that gamifies a user’s day of productivity. With a points and rewards system in place, users will be incentivised to use the application for a prolonged period of time to maximise the benefits earned. This ensures a high user retention rate and improved productivity levels for the company. We have also ensured that only important features, such as a collaborative Kanban board and a chat function, are added to our application so as not to overwhelm users with features. This lessens the learning curve for our application and elevates the user experience.
+
+Check out the web application at https://workwise-b1604.web.app/
 
 # For developrs
 
