@@ -4,7 +4,7 @@ WorkWise, a simple and effective productivity tool that gamifies a user’s day 
 
 Check out the web application at https://workwise-b1604.web.app/
 
-# For developrs
+# For developers
 
 This template should help get you started developing with Vue 3 in Vite.
 
